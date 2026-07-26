@@ -1,0 +1,27 @@
+{
+  "opis": "WYROCZNIA testowa GREENSTRAT. Wartości wyliczone niezależnie od kodu aplikacji, formułami zgodnymi z dokumentem wskaźników zadań 4/8. Plik NIENARUSZALNY: test czerwony = błąd w kodzie, nie tutaj.",
+  "tolerancja_wskaznikow": 0.1,
+  "tolerancja_eirsi": 0.005,
+  "zestawy": {
+    "GREENSTRAT_test_proba_1000.xlsx":  { "wiersze": 1000,  "eco_n": 329,   "eifii": 34.90, "isbi": 84.65, "cri": 23.00, "eirsi_max": { "region": "opolskie",            "wartosc": 1.628 }, "eirsi_min": { "region": "podkarpackie",        "wartosc": 0.619 } },
+    "GREENSTRAT_test_proba_5000.xlsx":  { "wiersze": 5000,  "eco_n": 1742,  "eifii": 35.21, "isbi": 90.52, "cri": 22.35, "eirsi_max": { "region": "mazowieckie",         "wartosc": 1.325 }, "eirsi_min": { "region": "świętokrzyskie",      "wartosc": 0.545 } },
+    "GREENSTRAT_test_czesc_1.xlsx":     { "wiersze": 10434, "eco_n": 3717,  "eifii": 35.37, "isbi": 90.48, "cri": 22.15, "eirsi_max": { "region": "mazowieckie",         "wartosc": 1.254 }, "eirsi_min": { "region": "świętokrzyskie",      "wartosc": 0.682 } },
+    "GREENSTRAT_test_pelna_baza_31301.xlsx": { "wiersze": 31301, "eco_n": 11148, "eifii": 35.71, "isbi": 88.97, "cri": 21.81, "eirsi_max": { "region": "mazowieckie",   "wartosc": 1.215 }, "eirsi_min": { "region": "warmińsko-mazurskie", "wartosc": 0.718 } }
+  },
+  "uwaga_przyrostowa": "czesc_1 + czesc_2 + czesc_3 = pelna_baza (identyczne wiersze); po załadowaniu trzech części obowiązują liczby kontrolne pełnej bazy.",
+  "manifest_negatywny": {
+    "plik": "GREENSTRAT_test_walidacja_negatywna_1000.xlsx",
+    "wiersze_czyste": 880,
+    "bledy": {
+      "E1": { "opis": "CZY_EKOINNOWACJA=1, ale jedna z czterech ocen = 0", "wierszy": 30, "dzialanie": "ODRZUC" },
+      "E2": { "opis": "CZY_EKOINNOWACJA=0, ale oceny > 0",                 "wierszy": 30, "dzialanie": "ODRZUC" },
+      "E3": { "opis": "Zduplikowany ID_PROJ (20 kopii jednego rekordu)",   "wierszy": 20, "dzialanie": "ODRZUC" },
+      "E4": { "opis": "Pusta wartość WART_PROJ_PLN",                       "wierszy": 20, "dzialanie": "ODRZUC" },
+      "E5": { "opis": "TRL_KONIEC < TRL_START (7 -> 3)",                   "wierszy": 10, "dzialanie": "ODRZUC" },
+      "E6": { "opis": "Nazwa regionu spoza słownika (Mazowsze)",           "wierszy": 10, "dzialanie": "ODRZUC" }
+    },
+    "oczekiwane_po_Z4": { "odrzucone_razem": 130, "przyjete": 870 },
+    "stan_bramki_przed_Z4": "łapie tylko E1+E2 (ok. 60); E3/E5/E6 przechodzą — udokumentowana luka 11.1.e"
+  },
+  "wersja": "1.0", "data": "2026-07-26"
+}

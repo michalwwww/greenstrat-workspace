@@ -1,0 +1,147 @@
+﻿SPECYFIKACJA SYSTEMOWA: SYSTEM MONITOROWANIA I WSPOMAGANIA DECYZJI POLITYKI EKOINNOWACYJNEJ (GREENSTRAT & EKO_LOKACJE)
+Wersja: 2.0 (Google Native Ecosystem Streamlined Edition)
+Przeznaczenie: Dokumentacja architektury, logiki biznesowej i wymagań wdrażaniowych dla zespołu deweloperskiego lub modelu AI (LLM Orchestrator).
+1. CEL SYSTEMU I ZAŁOŻENIA GŁÓWNE
+System służy do ciągłego monitorowania, benchmarkingu, oceny ryzyka oraz wspomagania decyzji administracji publicznej w obszarze ekoinnowacji na poziomie krajowym i regionalnym. System integruje dane z 31 301 projektów Funduszy Europejskich 2021–2027 oraz dane zewnętrznosystemowe (GUS, Eurostat, RIS).
+Kluczowe Zasady Projektowe (Guardrails):
+1. Natywne Środowisko Google: Architektura opiera się wyłącznie na ekosystemie Google Cloud Platform (BigQuery, Vertex AI / Gemini) i Google Workspace (Looker Studio, AppSheet, Sheets, NotebookLM). Brak zewnętrznych silników integracyjnych i dedykowanych aplikacji pisanych od zera.
+2. Human-in-the-Loop (HITL): Żadna decyzja o alokacji, skalowaniu lub wycofaniu finansowania nie jest podejmowana automatycznie przez AI. Gemini generuje wyłącznie rekomendacje tekstowe i uzasadnienia.
+3. Analityczny Bezpiecznik Efektu Niskiej Bazy: Automatyczna blokada rekomendacji o „pełnym skalowaniu” w przypadku, gdy wysoka dynamika procentowa wynika z niskiej wartości początkowej, małej liczby obserwacji lub pojedynczego dominującego projektu.
+4. Pełna Audytowalność (Data Lineage): Każdy wynik, alarm i rekomendacja musi posiadać unikalny identyfikator i odtworzalny łańcuch:
+$$\text{Źródło Danych} \rightarrow \text{Transformacja SQL} \rightarrow \text{Wskaźnik KPI} \rightarrow \text{Próg Alarmowy} \rightarrow \text{Reguła DSS} \rightarrow \text{Rekomendacja Gemini} \rightarrow \text{Decyzja Eksperta}$$
+
+2. ARCHITEKTURA TECHNICZNA (STACK GOOGLE)
+
+
+
+
+
+
+[ BigQuery ] ──> [ Looker Studio ] ──> [ Vertex AI / Gemini ] ──> [ AppSheet / Sheets ]
+(Data Vault)      (Visual BI)          (DSS & Generation)         (HITL Approval Hub)
+
+
+
+Warstwa Architektury
+	Komponent Google
+	Funkcja Techniczna
+	1. Warstwa Danych
+	Google BigQuery
+	Przechowywanie danych bazowych (31 301 projektów), wyliczanie KPI, $z$-score, winsoryzacja, wersjonowanie i utrzymywanie widoków matrycowych.
+	2. Wizualizacja & BI
+	Looker Studio
+	Interaktywny dashboard krajowy i regionalny, filtrowanie dynamiczne, prezentacja map i progów alarmowych.
+	3. Generatywne DSS
+	Gemini 1.5 Pro / Vertex AI
+	Analiza rekordów SQL, synteza jakościowa, generowanie uzasadnień rekomendacji w formacie JSON i Markdown.
+	4. Panel Ekspercki (HITL)
+	AppSheet / Google Sheets
+	Interfejs dla urzędników/ekspertów do zatwierdzania, modyfikacji lub odrzucania rekomendacji generowanych przez AI.
+	5. Dokumentacja & Profiling
+	NotebookLM / Google Docs
+	Automatyczne generowanie kart 16 województw oraz raportów syntetycznych.
+	3. MODUŁY SYSTEMU (SPÓJNY PODZIAŁ FUNKCJONALNY)
+MODUŁ 1: Centralny Sejf Danych i Silnik KPI (BigQuery)
+Objęte produkty źródłowe: 11.1, 11.2, 11.4, 14.1, 14.2
+
+
+   * Tabela Centralna (fact_projects): Scalone dane 31 301 projektów wraz z wynikami wskaźników: EIESI, EIRRI, CRI, TRL początkowy i końcowy, wartość dofinansowania, typ beneficjenta, kod NUTS-2.
+   * Warianty projektów wieloregionalnych: Obsługa 3 widoków w BigQuery:
+   1. Bezpośredni: projekty przypisane do 1 województwa.
+   2. Rozdzielony: projekty dzielone według wag populacyjnych/przedsiębiorstw.
+   3. Centralny: ogólnokrajowe projekty jako odrębna kategoria (bez sztucznego podziału).
+   * Silnik KPI: Widoki SQL wyliczające automatycznie m.in.:
+   * Finansowanie: alokacja per capita, koncentracja alokacji (udział Top 1% i Top 5% projektów).
+   * Wdrożenie i Jakość: średni przyrost TRL, wskaźnik CRI, luka wdrożeniowa.
+   * Regionalny Indeks Gotowości (6 Filarów): wyliczany jako odporny $z$-score dla wymiarów: Potencjał gospodarczy, Naukowo-innowacyjny, Zdolność absorpcyjna, Zdolność wdrożeniowa, Zdolność środowiskowa, Zdolność instytucjonalna.
+MODUŁ 2: Dashboard BI i Detekcja Anomalii (Looker Studio)
+Objęte produkty źródłowe: 11.3, 11.6, 11.7, 14.6
+
+
+   * 3 Główne Widoki Dashboardu:
+   1. System Krajowy & Programy: alokacja, efektywność programów, macierz 2x2 (Alokacja vs. EIRRI/CRI).
+   2. Profil Regionalny: absorpcja, 6 filarów gotowości, mapy specjalizacji i białych plam.
+   3. Centrum Alarmów: wizualny monitor oparty na trzystopniowej skali:
+   * Zielony: wynik w normie.
+   * Żółty: odchylenie ostrzegawcze, wymaga analizy.
+   * Czerwony: wynik krytyczny, wymagany obowiązkowy przegląd ekspercki.
+MODUŁ 3: Silnik Reguł i Generatywne DSS (BigQuery + Gemini + AppSheet)
+Objęte produkty źródłowe: 11.8, 11.9, 14.7, 14.8, 14.9
+
+
+Logika Działania DSS:
+   1. Wyzwolenie (Trigger): Zapytanie SQL identyfikuje jednostkę (program lub województwo) ze statusem alarmowym Żółty lub Czerwony bądź z flagą Low Base Effect.
+   2. Deterministyczna Ewaluacja Reguł (SQL):
+SQL
+-- Przykład flagowania w BigQuery
+SELECT 
+ region_id,
+ growth_rate,
+ CASE 
+   WHEN project_count < 3 OR max_project_share > 0.50 THEN TRUE
+   ELSE FALSE
+ END AS low_base_flag
+FROM regional_kpi_summary;
+
+   3. Generacja AI (Vertex AI / Gemini): Gemini pobiera rekord ustrukturyzowany (JSON) i generuje kartę rekomendacji.
+      * Jeśli low_base_flag = TRUE: Gemini ma bezwzględny zakaz sugerowania decyzji o skalowaniu finansowania. Automatycznie narzuca opcję: "Wynik obiecujący, lecz wymagający pilotażu i dalszej obserwacji".
+      4. Zatwierdzenie Eksperckie (AppSheet / Sheets): Rekomendacja trafia do tabeli z polem statusu:
+      * [ ] Rekomendacja automatyczna (Oczekująca)
+
+      * [ ] Zatwierdzona przez eksperta
+
+      * [ ] Zmodyfikowana przez eksperta
+
+      * [ ] Odrzucona
+
+MODUŁ 4: Automatyczny Profiling i Benchmarki (NotebookLM / Gemini)
+Objęte produkty źródłowe: 11.5, 14.3, 14.4, 14.5
+
+
+         * Profile 16 Województw: Dedykowany szablon Gemini generuje ustandaryzowane zbiory w formacie Markdown/PDF dla każdego województwa (zawierające dane bezwzględne, względne, pozycję w kraju, mocne/słabe strony oraz rekomendowane typy EKO_Lokacji).
+         * Model EKO_Lokacji: Przypisanie typu interwencji dla regionu na podstawie profilu stabilności:
+         * Region stabilny/lider: Hub transferu technologii / Centrum GOZ.
+         * Region o niestabilnym wyniku (low base): Model mobilny / pilotażowy / sieciowy.
+4. FORMAT WYJŚCIOWY REKOMENDACJI DSS (SCHEMAT JSON)
+Każdy obiekt generowany przez Gemini dla modułu decyzyjnego musi zwracać dane zgodne z poniższym schematem:
+
+
+
+
+
+
+JSON
+{
+ "recommendation_id": "REC_2026_REG_04_001",
+ "version": "1.0",
+ "timestamp": "2026-07-25T11:00:00Z",
+ "target_entity": "Województwo Kujawsko-Pomorskie",
+ "type": "REGIONAL_EKO_LOKACJA",
+ "input_metrics": {
+   "eirri_score": 0.62,
+   "project_count": 4,
+   "max_project_share": 0.58,
+   "low_base_flag": true
+ },
+ "diagnosis": "Wysoka dynamika wzrostu wskaźnika EIRRI (+42% y/y), jednak 58% dofinansowania skupione jest w 1 projekcie.",
+ "safety_fuse_applied": "LOW_BASE_LOCK_ENABLED",
+ "recommended_variants": [
+   {
+     "variant_id": 1,
+     "action": "Uruchomienie pilotażowego/mobilnego punktu EKO_Lokacji zamiast stacjonarnego centrum.",
+     "justification": "Ze względu na dominantę jednego projektu wzrost nie wykazał trwałości systemowej.",
+     "legal_constraints": "Brak przeszkód prawnych na poziomie programu regionalnego.",
+     "expected_kpi": "Zwiększenie liczby unikalnych beneficjentów MŚP o min. 15%."
+   }
+ ],
+ "lineage": "BigQuery.view_regional_kpi_v2 -> Rule_R14_08 -> Gemini_1.5_Pro",
+ "approval_status": "PENDING_EXPERT_REVIEW"
+}
+
+5. INSTRUKCJA WDROŻENIOWA DLA MODELU / DEWELOPERA
+Przystępując do realizacji systemu, należy wykonać kroki w następującej kolejności:
+         1. Krok 1 (BigQuery): Utwórz strukturę tabel w BigQuery, załaduj plik 31 301 projektów oraz zbuduj widok v_project_kpi_calculated przeliczający $z$-score i wskaźniki absorpcji.
+         2. Krok 2 (Bezpieczniki SQL): Zaimplementuj w BigQuery reguły wyliczające low_base_flag oraz statystyki dominant (Top 1 beneficiary share).
+         3. Krok 3 (Looker Studio): Podłącz BigQuery do Looker Studio, utwórz dashboard z filtryzacją po roku, funduszu i województwie.
+         4. Krok 4 (Vertex AI / Gemini Integration): Skonfiguruj prompt systemowy dla Gemini, przekazując ustrukturyzowany JSON z BigQuery i nakazując generowanie odpowiedzi ściśle według Schematu JSON z Sekcji 4.
+         5. Krok 5 (AppSheet HITL): Podłącz bazę docelową rekomendacji do AppSheet, udostępniając interfejs zatwierdzania dla ekspertów.

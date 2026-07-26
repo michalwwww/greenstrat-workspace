@@ -1,0 +1,730 @@
+﻿ZADANIE 4 - Identyfikacja bodźców ekonomicznych
+ETAP I - Projekty ogółem (WYŁĄCZNIE JAKO TŁO)
+Cel: pokazanie, jak duży jest sektor ekoinnowacji na tle całego systemu finansowania.
+Ta analiza ma charakter wyłącznie referencyjny.
+CHECK LISTA DANYCH
+Dane o wszystkich programach
+*         
+□ liczba         wszystkich programów
+*         
+□ całkowity         budżet wszystkich programów
+*         
+□ liczba         wszystkich projektów
+*         
+□ wartość         wszystkich projektów
+*         
+□ liczba         wszystkich beneficjentów
+*         
+□ liczba         wszystkich naborów
+*         
+□ liczba         wszystkich podpisanych umów
+*         
+□ liczba         wszystkich zakończonych projektów
+Rankingi
+   *         
+□ największe         programy finansowania
+   *         
+□ największa         liczba projektów
+   *         
+□ największa         liczba beneficjentów
+   *         
+□ największy         budżet
+   *         
+□ największa         średnia wartość projektu
+Wskaźniki
+      *         
+□ udział         projektów środowiskowych w całym systemie
+      *         
+□ udział         finansowania środowiskowego
+      *         
+□ udział         beneficjentów środowiskowych
+      *         
+□ udział         projektów ekoinnowacyjnych
+Analizy
+         *         
+□ struktura         finansowania
+         *         
+□ analiza         udziałów procentowych
+         *         
+□ analiza         zmian rok do roku
+ETAP II
+Wszystkie projekty z zakresu ochrony środowiska
+TO JEST GŁÓWNA POPULACJA BADANIA
+Tutaj wykonujemy około 80% analiz.
+CHECK LISTA DANYCH
+Dane o programach
+            *         
+□ nazwa         programu
+            *         
+□ instytucja         zarządzająca
+            *         
+□ instytucja         wdrażająca
+            *         
+□ perspektywa         finansowa
+            *         
+□ źródło         finansowania
+            *         
+□ budżet         programu
+            *         
+□ budżet         przeznaczony na środowisko
+            *         
+□ środki         zakontraktowane
+            *         
+□ środki         wypłacone
+            *         
+□ liczba         naborów
+            *         
+□ liczba         projektów
+            *         
+□ liczba         beneficjentów
+            *         
+□ liczba         zakończonych projektów
+            *         
+□ liczba         projektów wdrożonych
+            *         
+□ liczba         projektów komercjalizowanych
+Dane o projektach
+               *         
+□ wartość         projektu
+               *         
+□ poziom         dofinansowania
+               *         
+□ wkład         własny
+               *         
+□ data         rozpoczęcia
+               *         
+□ data         zakończenia
+               *         
+□ czas         realizacji
+               *         
+□ województwo
+               *         
+□ powiat
+               *         
+□ gmina
+               *         
+□ beneficjent
+               *         
+□ typ         beneficjenta
+               *         
+□ branża
+               *         
+□ etap         innowacji
+               *         
+□ TRL
+               *         
+□ rodzaj         technologii
+Dane o beneficjentach
+                  *         
+□ MŚP
+                  *         
+□ startupy
+                  *         
+□ uczelnie
+                  *         
+□ B+R
+                  *         
+□ JST
+                  *         
+□ duże         przedsiębiorstwa
+                  *         
+□ NGO
+dla każdej grupy
+                     *         
+□ liczba         projektów
+                     *         
+□ wartość         finansowania
+                     *         
+□ średnia         wartość projektu
+                     *         
+□ udział         procentowy
+RANKINGI:
+programów
+                        *         
+□ największy         budżet
+                        *         
+□ największa         liczba projektów
+                        *         
+□ największa         liczba beneficjentów
+                        *         
+□ największa         wartość pojedynczego projektu
+                        *         
+□ najwyższa         absorpcja
+                        *         
+□ najwyższa         skuteczność wdrożeń
+województw
+                           *         
+□ największa         wartość finansowania
+                           *         
+□ największa         liczba projektów
+                           *         
+□ największa         liczba beneficjentów
+                           *         
+□ największa         średnia wartość projektu
+                           *         
+□ największa         liczba projektów na 100 tys. mieszkańców
+                           *         
+□ największa         liczba projektów na 1000 przedsiębiorstw
+                           *         
+□ największa         liczba projektów na 1 mld PKB
+beneficjentów
+                              *         
+□ największy         udział MŚP
+                              *         
+□ największy         udział JST
+                              *         
+□ największy         udział startupów
+                              *         
+□ największy         udział uczelni
+WSKAŹNIKI:
+klasyczne
+                                 *         
+□ absorpcja         kontraktacyjna
+                                 *         
+□ absorpcja         płatnicza
+                                 *         
+□ średnia         wartość projektu
+                                 *         
+□ mediana
+                                 *         
+□ kwartyle
+                                 *         
+□ odchylenie         standardowe
+                                 *         
+□         współczynnik zmienności
+                                 *         
+□ średni         poziom dofinansowania
+                                 *         
+□ średni         wkład własny
+koncentracja
+                                    *         
+□ HHI
+                                    *         
+□         współczynnik Giniego
+                                    *         
+□ analiza         Pareto
+                                    *         
+□ udział         TOP10 beneficjentów
+                                    *         
+□ udział         TOP20 beneficjentów
+efektywność
+                                       *         
+□ liczba         projektów na 1 mln zł
+                                       *         
+□ liczba         beneficjentów na 100 mln zł
+                                       *         
+□ liczba         projektów zakończonych
+                                       *         
+□ liczba         wdrożeń
+                                       *         
+□ liczba         wdrożeń na 100 mln zł
+                                       *         
+□ koszt         jednego wdrożenia
+AUTORSKIE WSKAŹNIKI
+Green Funding Accessibility Index
+łączy
+                                          *         
+liczbę naborów
+                                          *         
+sukces         aplikacji
+                                          *         
+wkład własny
+                                          *         
+liczbę         dokumentów
+                                          *         
+czas         procedowania
+Green Funding Efficiency Index
+łączy
+                                             *         
+absorpcję
+                                             *         
+wdrożenia
+                                             *         
+liczbę         beneficjentów
+                                             *         
+koszt wdrożenia
+Regional Funding Equity Index
+Pokazuje czy środki są równomiernie rozdzielone pomiędzy województwa.
+Beneficiary Diversity Index
+Mierzy jak bardzo środki są skoncentrowane w jednej grupie beneficjentów.
+Funding Gap Index
+Mierzy które etapy innowacji są niedofinansowane.
+ANALIZY STATYSTYCZNE
+opisowe
+                                                *         
+□ średnie
+                                                *         
+□ mediany
+                                                *         
+□ kwartyle
+                                                *         
+□ SD
+                                                *         
+□ CV
+koncentracji
+                                                   *         
+□ HHI
+                                                   *         
+□ Giniego
+                                                   *         
+□ Lorenza
+                                                   *         
+□ Pareto
+porównawcze
+                                                      *         
+□ województwa
+                                                      *         
+□ programy
+                                                      *         
+□         beneficjenci
+                                                      *         
+□ typy         projektów
+skupień
+                                                         *         
+□ cluster         analysis programów
+                                                         *         
+□ cluster         analysis województw
+                                                         *         
+□ cluster         analysis beneficjentów
+wielowymiarowe
+                                                            *         
+□ PCA
+                                                            *         
+□ analiza         czynnikowa
+trendów
+                                                               *         
+□ dynamika         rok do roku
+                                                               *         
+□ CAGR
+                                                               *         
+□ indeksy         łańcuchowe
+                                                               *         
+□ indeksy         jednopodstawowe
+ETAP III
+WYŁĄCZNIE PROJEKTY EKOINNOWACYJNE
+To jest podzbiór ETAPU II, wyodrębniony po zastosowaniu operacyjnej definicji ekoinnowacji1.
+Nie należy analizować tu wszystkich inwestycji środowiskowych, lecz wyłącznie te, które spełniają kryteria ekoinnowacyjności.
+Tu należy powtórzyć wszystkie analizy z ETAPU II, ale dodatkowo stworzyć wskaźniki specyficzne dla ekoinnowacji:
+                                                                  *         
+□ udział         ekoinnowacji w całkowitym finansowaniu środowiskowym
+                                                                  *         
+□ udział         ekoinnowacji w liczbie projektów środowiskowych
+                                                                  *         
+□ udział         finansowania projektów o wysokim poziomie TRL
+                                                                  *         
+□ średnia         wartość projektu ekoinnowacyjnego
+                                                                  *         
+□ udział         projektów zakończonych wdrożeniem rynkowym
+                                                                  *         
+□ udział         projektów z komponentem B+R
+                                                                  *         
+□ udział         projektów z partnerstwem nauka–biznes
+                                                                  *         
+□ udział         projektów wykorzystujących technologie przełomowe (deep tech)
+Dodatkowe autorskie wskaźniki
+                                                                     *         
+□         Eco-Innovation Funding Intensity Index – intensywność         finansowania ekoinnowacji w relacji do całego finansowania         środowiskowego.
+                                                                     *         
+□ Innovation         Stage Balance Index – ocena, czy finansowanie jest         równomiernie rozłożone pomiędzy etapy: badania, prototyp,         demonstracja, wdrożenie i skalowanie.
+                                                                     *         
+□         Commercialisation Readiness Index – udział projektów,         które osiągnęły fazę wdrożenia lub komercjalizacji.
+                                                                     *         
+□         Eco-Innovation Regional Specialisation Index –         specjalizacja województw w finansowaniu ekoinnowacji względem         średniej krajowej.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ZADANIE 8. Ocena funkcjonowania istniejących programów wsparcia
+ETAP I
+Wszystkie programy posiadające komponent środowiskowy
+TO JEST GŁÓWNA POPULACJA BADANIA
+Analizie poddać należy wyłącznie programy:
+                                                                        *         
+FEnIKS
+                                                                        *         
+KPO
+                                                                        *         
+Fundusze         Europejskie dla Regionów
+                                                                        *         
+NFOŚiGW
+                                                                        *         
+PARP
+                                                                        *         
+NCBR
+                                                                        *         
+LIFE
+                                                                        *         
+Interreg
+                                                                        *         
+Horyzont Europa         (projekty środowiskowe)
+                                                                        *         
+programy         regionalne posiadające komponent środowiskowy
+CHECK LISTA DANYCH
+Dane identyfikacyjne programu
+                                                                           *         
+□ nazwa         programu
+                                                                           *         
+□ instytucja         zarządzająca
+                                                                           *         
+□ instytucja         wdrażająca
+                                                                           *         
+□ okres         realizacji
+                                                                           *         
+□ perspektywa         finansowa
+                                                                           *         
+□ budżet         programu
+                                                                           *         
+□ budżet         środowiskowy
+                                                                           *         
+□ liczba         naborów
+                                                                           *         
+□ liczba         konkursów
+Dane o naborach
+                                                                              *         
+□ liczba         złożonych wniosków
+                                                                              *         
+□ liczba         poprawnych formalnie
+                                                                              *         
+□ liczba         ocenionych merytorycznie
+                                                                              *         
+□ liczba         projektów rekomendowanych
+                                                                              *         
+□ liczba         podpisanych umów
+                                                                              *         
+□ liczba         odrzuconych projektów
+                                                                              *         
+□ liczba         protestów
+                                                                              *         
+□ liczba         odwołań
+Dane dotyczące procesu oceny
+                                                                                 *         
+□ średni         czas oceny formalnej
+                                                                                 *         
+□ średni         czas oceny merytorycznej
+                                                                                 *         
+□ średni         czas podpisania umowy
+                                                                                 *         
+□ średni         czas pierwszej płatności
+                                                                                 *         
+□ średni         czas zakończenia projektu
+                                                                                 *         
+□ średni         czas rozliczenia
+Dane o realizacji
+                                                                                    *         
+□ liczba         projektów zakończonych
+                                                                                    *         
+□ liczba         projektów przerwanych
+                                                                                    *         
+□ liczba         projektów zawieszonych
+                                                                                    *         
+□ liczba         projektów rozliczonych
+                                                                                    *         
+□ liczba         projektów wdrożonych
+                                                                                    *         
+□ liczba         projektów skomercjalizowanych
+Dane o beneficjentach
+                                                                                       *         
+□ liczba         beneficjentów
+                                                                                       *         
+□ liczba         nowych beneficjentów
+                                                                                       *         
+□ liczba         beneficjentów powracających
+                                                                                       *         
+□ liczba MŚP
+                                                                                       *         
+□ liczba JST
+                                                                                       *         
+□ liczba         uczelni
+                                                                                       *         
+□ liczba         jednostek B+R
+                                                                                       *         
+□ liczba         startupów
+RANKINGI
+Programów
+                                                                                          *         
+□ najwyższa         skuteczność naboru
+                                                                                          *         
+□ najwyższa         absorpcja
+                                                                                          *         
+□ największa         liczba beneficjentów
+                                                                                          *         
+□ najwyższy         poziom wdrożeń
+                                                                                          *         
+□ najwyższy         poziom komercjalizacji
+                                                                                          *         
+□ najkrótszy         czas procedowania
+                                                                                          *         
+□ najkrótszy         czas wypłaty środków
+                                                                                          *         
+□ najwyższy         poziom wykorzystania budżetu
+                                                                                          *         
+□ najwyższy         udział projektów zakończonych sukcesem
+Instytucji wdrażających
+                                                                                             *         
+□         najsprawniejsza instytucja
+                                                                                             *         
+□ najkrótszy         czas oceny
+                                                                                             *         
+□ najwyższa         skuteczność naborów
+                                                                                             *         
+□ największa         liczba obsłużonych projektów
+Beneficjentów
+                                                                                                *         
+□ najbardziej         aktywne MŚP
+                                                                                                *         
+□ najbardziej         aktywe JST
+                                                                                                *         
+□ najbardziej         aktywne uczelnie
+                                                                                                *         
+□ najbardziej         aktywne jednostki B+R
+WSKAŹNIKI KLASYCZNE (KPI)
+Nabory
+                                                                                                   *         
+□         współczynnik sukcesu naboru = liczba projektów zaakceptowanych /         liczba złożonych wniosków
+                                                                                                   *         
+□         współczynnik odrzuceń
+                                                                                                   *         
+□         współczynnik protestów
+                                                                                                   *         
+□         współczynnik odwołań
+Procedowanie
+                                                                                                      *         
+□ średni         czas oceny
+                                                                                                      *         
+□ mediana         czasu oceny
+                                                                                                      *         
+□ średni         czas podpisania umowy
+                                                                                                      *         
+□ średni         czas pierwszej płatności
+                                                                                                      *         
+□ średni         czas rozliczenia
+Realizacja
+                                                                                                         *         
+□ odsetek         projektów zakończonych
+                                                                                                         *         
+□ odsetek         projektów wdrożonych
+                                                                                                         *         
+□ odsetek         projektów komercjalizowanych
+                                                                                                         *         
+□ koszt         jednego wdrożenia
+                                                                                                         *         
+□ liczba         wdrożeń na 100 mln zł
+Finansowanie
+                                                                                                            *         
+□         wykorzystanie budżetu
+                                                                                                            *         
+□ absorpcja         kontraktacyjna
+                                                                                                            *         
+□ absorpcja         płatnicza
+                                                                                                            *         
+□ średni         poziom dofinansowania
+                                                                                                            *         
+□ średni         wkład własny
+AUTORSKIE WSKAŹNIKI
+Program Performance Index (PPI)
+Łączy:
+                                                                                                               *         
+skuteczność         naboru
+                                                                                                               *         
+absorpcję
+                                                                                                               *         
+czas         procedowania
+                                                                                                               *         
+poziom wdrożeń
+                                                                                                               *         
+poziom         komercjalizacji
+Ocena 0–100.
+Administrative Efficiency Index
+Łączy:
+                                                                                                                  *         
+czas oceny
+                                                                                                                  *         
+czas podpisania         umowy
+                                                                                                                  *         
+czas wypłaty
+                                                                                                                  *         
+czas         rozliczenia
+Pokazuje sprawność administracji.
+Beneficiary Accessibility Index
+Łączy:
+                                                                                                                     *         
+sukces         aplikacji
+                                                                                                                     *         
+poziom         formalizacji
+                                                                                                                     *         
+liczbę         wymaganych dokumentów
+                                                                                                                     *         
+średni czas         oceny
+                                                                                                                     *         
+poziom odrzuceń         formalnych
+Pokazuje, jak łatwo dostać wsparcie.
+Programme Stability Index
+Łączy:
+                                                                                                                        *         
+liczbę zmian         regulaminów
+                                                                                                                        *         
+liczbę zmian         kryteriów
+                                                                                                                        *         
+liczbę zmian         harmonogramów
+                                                                                                                        *         
+liczbę zmian         umów
+Ocena stabilności programu.
+Green Programme Effectiveness Index
+Łączy:
+                                                                                                                           *         
+liczbę wdrożeń
+                                                                                                                           *         
+komercjalizację
+                                                                                                                           *         
+wykorzystanie         środków
+                                                                                                                           *         
+efektywność         finansową
+Institutional Responsiveness Index
+Łączy:
+                                                                                                                              *         
+czas odpowiedzi
+                                                                                                                              *         
+liczbę         protestów
+                                                                                                                              *         
+liczbę odwołań
+                                                                                                                              *         
+liczbę korekt
+Ocena jakości pracy instytucji.
+ANALIZY STATYSTYCZNE
+Statystyki opisowe
+                                                                                                                                 *         
+□ średnia
+                                                                                                                                 *         
+□ mediana
+                                                                                                                                 *         
+□ kwartyle
+                                                                                                                                 *         
+□ odchylenie         standardowe
+                                                                                                                                 *         
+□         współczynnik zmienności
+Analizy porównawcze
+Porównanie:
+                                                                                                                                    *         
+□ programów         krajowych
+                                                                                                                                    *         
+□ programów         regionalnych
+                                                                                                                                    *         
+□ instytucji
+                                                                                                                                    *         
+□ grup         beneficjentów
+Benchmarking
+Benchmark:
+                                                                                                                                       *         
+□ najlepszy         program
+                                                                                                                                       *         
+□ średnia         programu
+                                                                                                                                       *         
+□ najgorszy         program
+Analiza skupień
+Cluster Analysis:
+                                                                                                                                          *         
+□ programów
+                                                                                                                                          *         
+□ instytucji
+                                                                                                                                          *         
+□         beneficjentów
+Pozwoli stworzyć typologię programów:
+                                                                                                                                             *         
+liderzy,
+                                                                                                                                             *         
+programy         efektywne,
+                                                                                                                                             *         
+programy         przeciętne,
+                                                                                                                                             *         
+programy         problemowe.
+Analiza czynnikowa / PCA
+Identyfikacja głównych wymiarów jakości programu:
+                                                                                                                                                *         
+efektywność,
+                                                                                                                                                *         
+dostępność,
+                                                                                                                                                *         
+sprawność         administracyjna,
+                                                                                                                                                *         
+skuteczność         wdrożeniowa.
+Analiza DEA (Data Envelopment Analysis)
+Ocena efektywności programów przy uwzględnieniu:
+Nakłady:
+                                                                                                                                                   *         
+budżet,
+                                                                                                                                                   *         
+liczba         pracowników (jeśli dane będą dostępne),
+                                                                                                                                                   *         
+liczba         ocenianych projektów.
+Rezultaty:
+                                                                                                                                                      *         
+liczba wdrożeń,
+                                                                                                                                                      *         
+liczba         beneficjentów,
+                                                                                                                                                      *         
+liczba         projektów zakończonych.
+Analiza TOPSIS
+Budowa wielokryterialnego rankingu programów uwzględniającego jednocześnie:
+                                                                                                                                                         *         
+czas         procedowania,
+                                                                                                                                                         *         
+absorpcję,
+                                                                                                                                                         *         
+wdrożenia,
+                                                                                                                                                         *         
+skuteczność,
+                                                                                                                                                         *         
+dostępność,
+                                                                                                                                                         *         
+efektywność         finansową.
+ETAP II
+WYŁĄCZNIE PROGRAMY WSPIERAJĄCE EKOINNOWACJE
+To jest podzbiór ETAPU I. Obejmuje wyłącznie te działania, które finansują projekty spełniające operacyjną definicję ekoinnowacji.
+Dodatkowe dane
+                                                                                                                                                            *         
+□ liczba         projektów ekoinnowacyjnych
+                                                                                                                                                            *         
+□ liczba         projektów z komponentem B+R
+                                                                                                                                                            *         
+□ liczba         projektów zakończonych wdrożeniem technologicznym
+                                                                                                                                                            *         
+□ liczba         projektów z partnerstwami nauka–biznes
+                                                                                                                                                            *         
+□ liczba         projektów na etapach TRL 6–9
+Dodatkowe rankingi
+                                                                                                                                                               *         
+□ program         najbardziej wspierający ekoinnowacje
+                                                                                                                                                               *         
+□ program o         najwyższej skuteczności wdrożeń ekoinnowacji
+                                                                                                                                                               *         
+□ program         najlepiej wspierający komercjalizację
+                                                                                                                                                               *         
+□ program         najlepiej wspierający startupy green-tech
+                                                                                                                                                               *         
+□ program         najlepiej wspierający współpracę nauki z biznesem
+Dodatkowe autorskie wskaźniki
+                                                                                                                                                                  *         
+Eco-Innovation         Programme Index (EIPI) – syntetyczna ocena programu pod         względem skuteczności wspierania ekoinnowacji.
+                                                                                                                                                                  *         
+Technology         Transfer Effectiveness Index – efektywność przechodzenia od         badań do wdrożeń.
+                                                                                                                                                                  *         
+Green         Innovation Commercialisation Index – udział projektów         kończących się komercjalizacją.
+                                                                                                                                                                  *         
+TRL         Progression Index – zdolność programu do wspierania         projektów przechodzących z niskich do wysokich poziomów gotowości         technologicznej.
+                                                                                                                                                                  *         
+Eco-Innovation         Support Efficiency Index (EISEI) .
+
+
+
+1         EKOINNOWACJA – zdolne do wdrożenia         rozwiązanie technologiczne, organizacyjne, społeczne,         instytucjonalne lub biznesowe, którego funkcją jest trwała,         mierzalna i weryfikowalna redukcja presji środowiskowej w całym         cyklu życia poprzez zwiększenie efektywności wykorzystania         zasobów, ograniczenie negatywnych efektów zewnętrznych oraz         wspieranie transformacji systemów społeczno-gospodarczych w         kierunku zrównoważonego rozwoju.

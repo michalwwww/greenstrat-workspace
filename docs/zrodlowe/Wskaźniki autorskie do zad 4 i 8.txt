@@ -1,0 +1,463 @@
+﻿Do zad. 4
+Tutaj również proponuję, żeby wskaźniki były publikowalne naukowo, czyli:
+*         
+oparte         wyłącznie na danych, które realnie można pozyskać,
+*         
+przeliczane         do skali 0–100 (lub jako klasyczne wskaźniki procentowe tam,         gdzie jest to bardziej naturalne).
+Moim zdaniem dwa z nich warto zostawić jako proste wskaźniki procentowe, a dwa zrobić jako syntetyczne indeksy.
+1. Eco-Innovation Funding Intensity Index (EIFII)
+Cel
+Pokazuje, jak duża część finansowania środowiskowego rzeczywiście trafia na ekoinnowacje.
+To jest właściwie wskaźnik intensywności finansowania.
+Potrzebne dane
+   *         
+wartość         wszystkich projektów środowiskowych
+   *         
+wartość         projektów spełniających definicję ekoinnowacji
+Wzór
+[
+EIFII=
+\frac{Finansowanie\ ekoinnowacji}
+{Finansowanie\ wszystkich\ projektów\ środowiskowych}
+\times100
+]
+Przykład
+Środki środowiskowe
+4,2 mld zł
+Ekoinnowacje
+1,1 mld zł
+[
+EIFII=
+\frac{1,1}{4,2}\times100
+26,2
+]
+Interpretacja
+26,2%
+Oznacza to, że około jedna czwarta finansowania środowiskowego wspiera projekty mające charakter ekoinnowacyjny.
+Można liczyć dla:
+✔ programu
+✔ województwa
+✔ beneficjenta
+✔ całej Polski
+2. Innovation Stage Balance Index (ISBI)
+Ten wskaźnik proponuję zrobić inaczej niż zwykły udział procentowy.
+Bo nie chodzi o to,
+ile jest projektów,
+ale
+czy finansowanie jest równomiernie rozłożone między etapy rozwoju technologii.
+Potrzebne dane
+Budżet przeznaczony na:
+      *         
+badania
+      *         
+prototyp
+      *         
+demonstrację
+      *         
+wdrożenie
+      *         
+skalowanie
+Idealny rozkład
+Jeżeli wszystkie etapy mają podobny udział
+otrzymujemy wysoki wynik.
+Najlepiej policzyć
+Najpierw udział każdego etapu
+np.
+Badania
+18%
+Prototyp
+22%
+Demonstracja
+20%
+Wdrożenie
+19%
+Skalowanie
+21%
+Następnie liczymy
+odchylenie standardowe udziałów.
+Im mniejsze,
+tym lepiej.
+Na końcu
+[
+ISBI=
+100-
+\left(
+\frac{SD}{SD_{max}}
+\times100
+\right)
+]
+Interpretacja
+100
+idealnie zbilansowane
+80
+bardzo dobrze
+60
+umiarkowanie
+40
+silna koncentracja
+20
+praktycznie cały budżet na jednym etapie
+To jest znacznie lepsze niż zwykły udział procentowy.
+3. Commercialisation Readiness Index (CRI)
+To jeden z najprostszych.
+Potrzebne dane
+         *         
+liczba         projektów ekoinnowacyjnych
+         *         
+liczba         projektów
+które zakończyły się
+wdrożeniem
+lub
+komercjalizacją
+Wzór
+[
+CRI=
+\frac{
+wdrożone+
+skomercjalizowane
+}
+{
+projekty\ ekoinnowacyjne
+}
+\times100
+]
+Przykład
+300 projektów
+180 wdrożeń
+45 komercjalizacji
+[
+CRI=
+\frac{225}{300}
+75
+]
+Interpretacja
+75%
+Projekt ma wysoką gotowość wdrożeniową.
+Można również zrobić wersję ważoną.
+np.
+wdrożenie
+waga 1
+komercjalizacja
+waga 2
+Wtedy
+[
+CRI=
+\frac{
+wdrożenia+
+2\times komercjalizacja
+}
+{
+3\times liczba\ projektów
+}
+\times100
+]
+To lepiej premiuje projekty kończące się rzeczywistym wejściem na rynek.
+4. Eco-Innovation Regional Specialisation Index (EIRSI)
+To moim zdaniem najciekawszy wskaźnik.
+Można wykorzystać klasyczny
+Location Quotient (LQ),
+stosowany w ekonomii regionalnej.
+Potrzebne dane
+dla województwa
+wartość finansowania ekoinnowacji
+dla całej Polski
+wartość finansowania ekoinnowacji
+oraz
+wartość całego finansowania środowiskowego.
+Wzór
+[
+EIRSI=
+\frac{
+\left(
+\frac{
+Ekoinnowacje_{woj}
+}
+{
+Środowisko_{woj}
+}
+\right)
+}
+{
+\left(
+\frac{
+Ekoinnowacje_{PL}
+}
+{
+Środowisko_{PL}
+}
+\right)
+}
+]
+Interpretacja
+=1
+województwo dokładnie takie jak średnia kraju
+1
+województwo specjalizuje się w ekoinnowacjach
+<1
+województwo finansuje głównie klasyczne projekty środowiskowe
+Przykład
+Wielkopolska
+40%
+projektów środowiskowych
+to ekoinnowacje
+średnia Polski
+25%
+[
+EIRSI=
+\frac{0,40}{0,25}
+1,60
+]
+Interpretacja
+Wielkopolska jest o 60% bardziej wyspecjalizowana w finansowaniu ekoinnowacji niż przeciętne województwo.
+Które z tych wskaźników warto zachować?
+Moim zdaniem wszystkie cztery mają sens, ale podzieliłbym je na dwie grupy:
+Wskaźnik
+                        
+	Typ
+                        
+	Rekomendacja
+                        
+	Eco-Innovation                                 Funding Intensity Index (EIFII)
+                        
+	prosty                                 wskaźnik procentowy
+                        
+	✔                                 zdecydowanie zachować
+                        
+	Innovation                                 Stage Balance Index (ISBI)
+                        
+	syntetyczny                                 indeks równowagi
+                        
+	✔ zachować                                 (oryginalny i wartościowy)
+                        
+	Commercialisation                                 Readiness Index (CRI)
+                        
+	prosty                                 wskaźnik procentowy
+                        
+	✔                                 zachować, najlepiej w wersji ważonej premiującej                                 komercjalizację
+                        
+	Eco-Innovation                                 Regional Specialisation Index (EIRSI)
+                        
+	wskaźnik                                 lokalizacji (Location Quotient)
+                        
+	✔                                 zdecydowanie zachować – jest dobrze ugruntowany                                 metodologicznie i bardzo przydatny do porównań regionalnych
+                        
+	Szczególnie EIRSI ma dużą wartość naukową, ponieważ wykorzystuje uznaną metodę Location Quotient, często stosowaną w badaniach nad specjalizacjami regionalnymi. Dzięki temu będzie łatwy do obrony metodologicznie w publikacjach i raportach projektu.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Do zad. 8.
+normalizacja Min-Max → ważona suma wskaźników → indeks 0–100
+czyli
+[
+x'=\frac{x-x_{min}}{x_{max}-x_{min}}
+]
+następnie
+[
+Indeks=\sum w_i x_i
+]
+gdzie suma wag = 1.
+1. Eco-Innovation Programme Index (EIPI)
+Cel
+Jak dobrze program wspiera ekoinnowacje.
+Składowe
+A. Udział projektów ekoinnowacyjnych
+[
+\frac{\text{projekty ekoinnowacyjne}}
+{\text{wszystkie projekty środowiskowe}}
+]
+waga 25%
+B. Wartość finansowania ekoinnowacji
+[
+\frac{\text{środki na ekoinnowacje}}
+{\text{całe finansowanie środowiskowe}}
+]
+waga 20%
+C. Wdrożenia
+[
+\frac{\text{projekty wdrożone}}
+{\text{projekty ekoinnowacyjne}}
+]
+waga 25%
+D. Komercjalizacja
+[
+\frac{\text{projekty skomercjalizowane}}
+{\text{projekty ekoinnowacyjne}}
+]
+waga 20%
+E. Projekty wysokiego TRL
+[
+\frac{\text{projekty TRL 7-9}}
+{\text{projekty ekoinnowacyjne}}
+]
+waga 10%
+Ostateczny wzór
+[
+EIPI=
+0.25A+
+0.20B+
+0.25C+
+0.20D+
+0.10E
+]
+wynik
+0–100
+Interpretacja
+90–100
+program wzorcowy
+70–89
+bardzo dobry
+50–69
+średni
+30–49
+słaby
+<30
+nieefektywny
+2. Technology Transfer Effectiveness Index
+Najbardziej podoba mi się ten wskaźnik.
+Pokazuje
+czy program potrafi przeprowadzić projekt od badań do wdrożenia.
+Składowe
+projekty przechodzące do demonstracji
+[
+\frac{TRL6}
+{TRL1-5}
+]
+projekty przechodzące do wdrożenia
+[
+\frac{TRL7-9}
+{TRL6}
+]
+projekty komercjalizowane
+[
+\frac{komercjalizacja}
+{TRL7-9}
+]
+partnerstwa nauka-biznes
+[
+\frac{projekty\ nauka-biznes}
+{wszystkie\ projekty}
+]
+Wagi
+30%
+30%
+25%
+15%
+[
+TTEI=
+0.30A+
+0.30B+
+0.25C+
+0.15D
+]
+Interpretacja
+im wyżej
+tym lepiej program przeprowadza technologie przez cały proces.
+3. Green Innovation Commercialisation Index
+Najłatwiejszy.
+Wersja prosta
+[
+GICI=
+\frac{projekty\ skomercjalizowane}
+{projekty\ ekoinnowacyjne}
+\times100
+]
+Lepsza wersja
+uwzględnia
+            *         
+liczbę         patentów
+            *         
+liczbę         licencji
+            *         
+liczbę         spin-off
+            *         
+sprzedaż         technologii
+Można zrobić
+[
+GICI=
+0.50A+
+0.20B+
+0.15C+
+0.15D
+]
+gdzie
+A
+komercjalizacja
+B
+patenty
+C
+licencje
+D
+spin-off
+4. TRL Progression Index
+Moim zdaniem najciekawszy wskaźnik.
+Pokazuje
+czy program pomaga projektom przechodzić przez kolejne poziomy TRL.
+Najpierw dla każdego projektu liczysz
+[
+\Delta TRL
+TRL_{koniec}
+TRL_{start}
+]
+np.
+start
+TRL3
+koniec
+TRL7
+wynik
+4
+Potem
+dla programu
+[
+średni\ przyrost
+\frac{\sum\Delta TRL}
+{liczba\ projektów}
+]
+Jeszcze lepiej
+uwzględnić
+odsetek projektów
+które osiągnęły
+TRL8-9
+Wtedy
+[
+TRLI=
+0.60
+\left(
+\frac{\sum\Delta TRL}
+{liczba\ projektów}
+\right)
++
+0.40
+\left(
+\frac{TRL8-9}
+{wszystkie\ projekty}
+\right)
+]
+Eco-Innovation Support Efficiency Index (EISEI)
+To byłby główny wskaźnik całego projektu GREENSTRAT.
+Łączyłby:
+               *         
+efektywność         finansowania (20%)
+               *         
+wdrożenia         (20%)
+               *         
+komercjalizację         (20%)
+               *         
+przyrost TRL         (20%)
+               *         
+absorpcję         środków (10%)
+               *         
+udział         beneficjentów MŚP (10%)
+Dzięki temu każdy program otrzymywałby jedną syntetyczną ocenę 0–100, co pozwoliłoby stworzyć jednoznaczny ranking programów wspierających ekoinnowacje. Taki indeks jest znacznie bardziej użyteczny dla administracji niż zestaw kilkunastu odrębnych wskaźników i dobrze wpisuje się w planowany produkt projektu dotyczący dashboardu i modelu oceny.
