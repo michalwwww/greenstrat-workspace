@@ -150,9 +150,10 @@ function run() {
     const r = task8Research[i];
     const d = task8Demo[i];
 
+    console.log(`    [PROGRAM ${r.program}] EIPI: badawczy=${r.eipi.toFixed(2)}, demo=${d.eipi.toFixed(2)} | TTEI: badawczy=${r.ttei.toFixed(2)}, demo=${d.ttei.toFixed(2)} | TRLI: badawczy=${r.trli.toFixed(2)}, demo=${d.trli.toFixed(2)} | EISEI: badawczy=${r.eisei.toFixed(2)}, demo=${d.eisei.toFixed(2)}`);
+
     if (r.eipi !== d.eipi || r.ttei !== d.ttei || r.trli !== d.trli || r.eisei !== d.eisei) {
       task8IndicesIdentical = false;
-      break;
     }
   }
 

@@ -352,6 +352,12 @@
     </div>
 
     <div class="flex items-center gap-4">
+      <!-- Permanent Mode Status Badge (Z-3) -->
+      <div id="modeStatusBadge" class="flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
+        <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+        TRYB BADAWCZY (ZAKAZ SYMULACJI)
+      </div>
+
       <!-- Status Badge -->
       <div id="connectionStatus" class="flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold bg-red-500/10 text-red-500 border border-red-500/20">
         <span class="w-2 h-2 rounded-full bg-red-500 animate-ping"></span>
@@ -4947,21 +4953,33 @@ var calculateTask8Local = calculateTask8;
       document.getElementById('cagr-badge').textContent = `CAGR: +${data.task11.cagr.toFixed(2)}%`;
       
       const trendsOptions = {
-        series: [
-          { name: 'Środki całkowite (mln PLN)', data: totalFunds },
-          { name: 'Środki ekoinnowacji (mln PLN)', data: ecoFunds }
-        ],
-        chart: { type: 'line', height: 260, toolbar: { show: false }, background: 'transparent' },
-        colors: ['#6b7280', themeColor1],
-        theme: { mode: isDark ? 'dark' : 'light' },
-        grid: { borderColor: gridColor },
-        stroke: { width: 3, curve: 'smooth' },
-        xaxis: { categories: years, labels: { style: { colors: labelColor } } },
-        yaxis: { labels: { style: { colors: labelColor } } }
-      };
-      const trendsChart = new ApexCharts(document.querySelector("#chartTrends"), trendsOptions);
-      trendsChart.render();
-      activeCharts.push(trendsChart);
+      // 13. Trends
+      const trendsDiv = document.querySelector("#chartTrends");
+      const hasYearData = data.task11 && data.task11.trends && data.task11.trends.some(t => t.funding > 0 || t.projects > 0);
+      if (!hasYearData) {
+        trendsDiv.innerHTML = '<div class="p-8 text-center text-xs font-bold text-amber-400/90 border border-amber-500/30 rounded-xl bg-amber-500/10">⚠️ BRAK DANYCH CZASOWYCH<br><span class="text-[10px] text-theme-secondary font-normal mt-1 block">Wskaźniki trendów czasowych wymagają wprowadzenia kolumny ROK w danych wejściowych.</span></div>';
+      } else {
+        const years = data.task11.trends.map(t => t.year);
+        const totalFunds = data.task11.trends.map(t => (t.funding / 1000000).toFixed(2));
+        const ecoFunds = data.task11.trends.map(t => (t.ecoFunding / 1000000).toFixed(2));
+        
+        const trendsOptions = {
+          series: [
+            { name: 'Środki całkowite (mln PLN)', data: totalFunds },
+            { name: 'Środki ekoinnowacji (mln PLN)', data: ecoFunds }
+          ],
+          chart: { type: 'line', height: 260, toolbar: { show: false }, background: 'transparent' },
+          colors: ['#6b7280', themeColor1],
+          theme: { mode: isDark ? 'dark' : 'light' },
+          grid: { borderColor: gridColor },
+          stroke: { width: 3, curve: 'smooth' },
+          xaxis: { categories: years, labels: { style: { colors: labelColor } } },
+          yaxis: { labels: { style: { colors: labelColor } } }
+        };
+        const trendsChart = new ApexCharts(trendsDiv, trendsOptions);
+        trendsChart.render();
+        activeCharts.push(trendsChart);
+      }
 
       // 14. Treemap
       const cls = data.task11.classification;
@@ -4983,24 +5001,29 @@ var calculateTask8Local = calculateTask8;
       activeCharts.push(treemapChart);
 
       // 15. Benchmark
+      const benchmarkDiv = document.querySelector("#chartBenchmark");
       const benchmark = data.task11.benchmark;
-      const benchmarkOptions = {
-        series: [{
-          name: 'EISPI Score',
-          data: [benchmark.polska, benchmark.eu27, benchmark.v4, benchmark.oecd]
-        }],
-        chart: { type: 'bar', height: 220, toolbar: { show: false }, background: 'transparent' },
-        plotOptions: { bar: { horizontal: false, columnWidth: '45%', borderRadius: 4, distributed: true } },
-        colors: [themeColor1, '#3b82f6', '#8b5cf6', '#10b981'],
-        theme: { mode: isDark ? 'dark' : 'light' },
-        grid: { borderColor: gridColor },
-        xaxis: { categories: ['Polska', 'UE-27 (Średnia)', 'Grupa V4', 'Kraje OECD'], labels: { style: { colors: labelColor } } },
-        yaxis: { max: 100, labels: { style: { colors: labelColor } } },
-        legend: { show: false }
-      };
-      const benchmarkChart = new ApexCharts(document.querySelector("#chartBenchmark"), benchmarkOptions);
-      benchmarkChart.render();
-      activeCharts.push(benchmarkChart);
+      if (!benchmark || benchmark.eu27 === null || benchmark.eu27 === undefined) {
+        benchmarkDiv.innerHTML = '<div class="p-8 text-center text-xs font-bold text-blue-400/90 border border-blue-500/30 rounded-xl bg-blue-500/10">ℹ️ BRAK DANYCH BENCHMARKOWYCH (TRYB BADAWCZY)<br><span class="text-[10px] text-theme-secondary font-normal mt-1 block">Wskaźniki EU-27/V4/OECD są wyłączone w trybie badawczym celem uniknięcia zanieczyszczenia wyników naukowych.</span></div>';
+      } else {
+        const benchmarkOptions = {
+          series: [{
+            name: 'EISPI Score',
+            data: [benchmark.polska, parseFloat(benchmark.eu27) || 0, parseFloat(benchmark.v4) || 0, parseFloat(benchmark.oecd) || 0]
+          }],
+          chart: { type: 'bar', height: 220, toolbar: { show: false }, background: 'transparent' },
+          plotOptions: { bar: { horizontal: false, columnWidth: '45%', borderRadius: 4, distributed: true } },
+          colors: [themeColor1, '#3b82f6', '#8b5cf6', '#10b981'],
+          theme: { mode: isDark ? 'dark' : 'light' },
+          grid: { borderColor: gridColor },
+          xaxis: { categories: ['Polska', 'UE-27 (Średnia)', 'Grupa V4', 'Kraje OECD'], labels: { style: { colors: labelColor } } },
+          yaxis: { max: 100, labels: { style: { colors: labelColor } } },
+          legend: { show: false }
+        };
+        const benchmarkChart = new ApexCharts(benchmarkDiv, benchmarkOptions);
+        benchmarkChart.render();
+        activeCharts.push(benchmarkChart);
+      }
 
       // Update new DSS inspectors and map layers on data load
       populateInspectTable('task4');
