@@ -431,9 +431,10 @@ function getAllProjectsFromSheet() {
 /**
  * GREENSTRAT Core Engine — Single Source of Truth for Scientific Indicators
  * Module: engine/greenstrat_engine.js
- * Version: 0.4.0 (Z-4: Bramka walidacyjna 2.0 - Luka 11.1.e)
+ * Version: 0.5.0 (Z-5: Stemplowanie wyników - Zasada Z.6)
  */
 
+var ENGINE_VERSION = "0.5.0";
 var demoMode = false; // Domyślnie TRYB BADAWCZY (produkcyjny), zero fikcyjnych danych
 
 function setDemoMode(val) {
@@ -478,8 +479,41 @@ var validRegionsDict = {
 };
 
 /**
+ * Z-5: Deterministyczny algorytm FNV-1a z jawnym sortowaniem kluczy pól (Zasada Z.6)
+ */
+function calculateDatasetHash(projects) {
+  if (!projects || !Array.isArray(projects) || projects.length === 0) {
+    return "00000000";
+  }
+
+  var hval = 0x811c9dc5;
+  
+  for (var i = 0; i < projects.length; i++) {
+    var p = projects[i];
+    if (!p) continue;
+    
+    // Jawne sortowanie kluczy pól celem uniezależnienia od silnika V8 / Apps Script
+    var keys = Object.keys(p).sort();
+    var canonicalStr = "";
+    for (var k = 0; k < keys.length; k++) {
+      var key = keys[k];
+      var val = p[key];
+      if (val !== undefined && val !== null) {
+        canonicalStr += key + ":" + val.toString() + "|";
+      }
+    }
+    
+    for (var j = 0; j < canonicalStr.length; j++) {
+      hval ^= canonicalStr.charCodeAt(j);
+      hval += (hval << 1) + (hval << 4) + (hval << 7) + (hval << 8) + (hval << 24);
+    }
+  }
+
+  return (hval >>> 0).toString(16).padStart(8, '0');
+}
+
+/**
  * Helper to check if a rating value is a valid numeric rating
- * Invalid: undefined, null, empty string "", -99, NaN
  */
 function isValidRating(val) {
   if (val === undefined || val === null || val === '' || val === -99 || val === '-99') {
@@ -502,8 +536,6 @@ function isProjectComplete(p) {
 
 /**
  * Helper to check if a project qualifies as a real eco-innovation.
- * Z-2 Rule (L.16): Only complete records with all 4 ratings > 0 qualify as eco-innovations.
- * Incomplete records (missing any rating) are NEVER eco-innovations.
  */
 function isProjectEco(p) {
   if (!isProjectComplete(p)) {
@@ -519,7 +551,6 @@ function isProjectEco(p) {
 
 /**
  * Z-4: Bramka Walidacyjna 2.0 (Luka 11.1.e)
- * Precedencja walidacji: E1 -> E2 -> E3 -> E4 -> E5 -> E6
  */
 function validateProjects(projects, opts) {
   var options = opts || {};
@@ -538,7 +569,6 @@ function validateProjects(projects, opts) {
     };
   }
 
-  // Pre-pass: count occurrences of each ID_PROJ in file to detect all duplicate instances (E3)
   var idCountsInFile = {};
   for (var k = 0; k < projects.length; k++) {
     var idStr = projects[k].ID_PROJ ? projects[k].ID_PROJ.toString().trim() : '';
@@ -565,32 +595,26 @@ function validateProjects(projects, opts) {
     var rejectedCode = null;
     var rejectedReason = null;
     
-    // E1: CZY_EKOINNOWACJA=1, ale jedna z czterech ocen = 0 lub brakująca
     if (czyEcoDecl === 1 && (!hasComplete || innVal === 0 || trwVal === 0 || efVal === 0 || trsfVal === 0)) {
       rejectedCode = 'E1';
       rejectedReason = 'CZY_EKOINNOWACJA=1, ale nie spełniono kompletu 4 ocen operacyjnych > 0';
     }
-    // E2: CZY_EKOINNOWACJA=0, ale oceny operacyjne > 0
     else if (czyEcoDecl === 0 && isOperationalEco) {
       rejectedCode = 'E2';
       rejectedReason = 'CZY_EKOINNOWACJA=0, ale komplet 4 ocen operacyjnych > 0';
     }
-    // E3: Zduplikowany ID_PROJ (wielokrotne wystąpienie w pliku lub w existingIds)
     else if (projId && (idCountsInFile[projId] > 1 || existingIds[projId])) {
       rejectedCode = 'E3';
       rejectedReason = 'Zduplikowany ID_PROJ: ' + projId;
     }
-    // E4: Pusta lub nieprawidłowa/nienumeryczna wartość WART_PROJ_PLN
     else if (p.WART_PROJ_PLN === undefined || p.WART_PROJ_PLN === null || p.WART_PROJ_PLN === '' || isNaN(Number(p.WART_PROJ_PLN)) || Number(p.WART_PROJ_PLN) <= 0) {
       rejectedCode = 'E4';
       rejectedReason = 'Pusta lub nieprawidłowa wartość WART_PROJ_PLN';
     }
-    // E5: Regresja TRL (TRL_KONIEC < TRL_START)
     else if (p.TRL_START !== undefined && p.TRL_KONIEC !== undefined && Number(p.TRL_KONIEC) < Number(p.TRL_START)) {
       rejectedCode = 'E5';
       rejectedReason = 'TRL_KONIEC (' + p.TRL_KONIEC + ') < TRL_START (' + p.TRL_START + ')';
     }
-    // E6: Nazwa regionu WOJEWODZTWO spoza słownika 18 regionów
     else {
       var wojNorm = (p.WOJEWODZTWO || '').toString().toLowerCase().trim();
       if (!wojNorm || !validRegionsDict[wojNorm]) {
@@ -625,7 +649,7 @@ function validateProjects(projects, opts) {
 }
 
 /**
- * Calculate Task 4 Indices (Eco-Innovation regional & technology stage metrics)
+ * Calculate Task 4 Indices with Z-5 Metadata Stamping
  */
 function calculateTask4(projects, options) {
   var eifii = 0;
@@ -642,7 +666,14 @@ function calculateTask4(projects, options) {
       cri: 0,
       eirsi: {},
       rekordy_niekompletne: 0,
-      rekordy_niekompletne_woj: {}
+      rekordy_niekompletne_woj: {},
+      metadata: {
+        engineVersion: ENGINE_VERSION,
+        timestamp: new Date().toISOString(),
+        recordCount: 0,
+        incompleteCount: 0,
+        datasetHash: "00000000"
+      }
     };
   }
   
@@ -750,21 +781,41 @@ function calculateTask4(projects, options) {
     }
   }
   
+  var metadata = {
+    engineVersion: ENGINE_VERSION,
+    timestamp: new Date().toISOString(),
+    recordCount: projects.length,
+    incompleteCount: totalIncomplete,
+    datasetHash: calculateDatasetHash(projects)
+  };
+
   return {
     eifii: eifii,
     isbi: isbi,
     cri: cri,
     eirsi: eirsiList,
     rekordy_niekompletne: totalIncomplete,
-    rekordy_niekompletne_woj: incompleteByWoj
+    rekordy_niekompletne_woj: incompleteByWoj,
+    metadata: metadata
   };
 }
 
 /**
- * Calculate Task 8 Indices (Program performance 0-100 scale metrics)
+ * Calculate Task 8 Indices with Z-5 Metadata Stamping
  */
 function calculateTask8(projects, options) {
-  if (!projects || projects.length === 0) return [];
+  if (!projects || projects.length === 0) {
+    var emptyRes = [];
+    emptyRes.metadata = {
+      engineVersion: ENGINE_VERSION,
+      timestamp: new Date().toISOString(),
+      recordCount: 0,
+      incompleteCount: 0,
+      datasetHash: "00000000"
+    };
+    return emptyRes;
+  }
+
   var isDemo = (options && options.demoMode !== undefined) ? options.demoMode : demoMode;
   
   var programGroups = {};
@@ -951,6 +1002,19 @@ function calculateTask8(projects, options) {
     ps.adm_protests = spec.protests;
   });
   
+  var totalIncomplete = 0;
+  for (var m = 0; m < projects.length; m++) {
+    if (!isProjectComplete(projects[m])) totalIncomplete++;
+  }
+
+  programStats.metadata = {
+    engineVersion: ENGINE_VERSION,
+    timestamp: new Date().toISOString(),
+    recordCount: projects.length,
+    incompleteCount: totalIncomplete,
+    datasetHash: calculateDatasetHash(projects)
+  };
+
   return programStats;
 }
 
@@ -992,10 +1056,12 @@ function exportScientificDataset(projects, options) {
 
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = {
+    ENGINE_VERSION: ENGINE_VERSION,
     demoMode: demoMode,
     setDemoMode: setDemoMode,
     getDemoMode: getDemoMode,
     baseProgramSpecs: baseProgramSpecs,
+    calculateDatasetHash: calculateDatasetHash,
     isProjectComplete: isProjectComplete,
     isProjectEco: isProjectEco,
     validateProjects: validateProjects,
