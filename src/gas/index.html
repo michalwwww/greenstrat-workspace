@@ -3310,16 +3310,6 @@
           });
         }
 
-        // Critical: TRL_KONIEC >= TRL_START
-        if (row.TRL_KONIEC < row.TRL_START) {
-          errors.push({
-            row: excelRowNumber,
-            id: projId,
-            column: 'TRL_KONIEC',
-            desc: `TRL_KONIEC (${row.TRL_KONIEC}) jest mniejszy niż TRL_START (${row.TRL_START}).`
-          });
-        }
-
         // Critical: STATUS must be 0 or 1
         if (row.STATUS_WDROZ !== 0 && row.STATUS_WDROZ !== 1) {
           errors.push({
@@ -3335,17 +3325,6 @@
             id: projId,
             column: 'STATUS_KOMERC',
             desc: `Status komercjalizacji musi wynosić 0 lub 1 (wykryto: '${row.STATUS_KOMERC}')`
-          });
-        }
-
-        // Eco-innovation consistency
-        const ecoVal = Number(row.CZY_EKOINNOWACJA);
-        if (ecoVal === 1 && row.INNOWACYJNOSC === 0 && row.TRWALOSC_LCA === 0 && row.EFEKTYWNOSC_ZASOBOWA === 0 && row.TRANSFORMACYJNOSC === 0) {
-          errors.push({
-            row: excelRowNumber,
-            id: projId,
-            column: 'CZY_EKOINNOWACJA',
-            desc: `Niezgodność: Projekt ekoinnowacyjny (1), ale wszystkie składowe ekologiczne = 0.`
           });
         }
       });
