@@ -21,7 +21,40 @@ function run() {
 
   let hasError = false;
 
-  console.log("--- TESTY JEDNOSTKOWE SILNIKA (8 REKORDÓW SYNTETYCZNYCH Z-2) ---");
+  console.log("--- WALIDACJA SKŁADNI JAVASCRIPT KLIENTA (src/gas/index.html) ---");
+  const indexHtmlPath = path.join(rootDir, 'src', 'gas', 'index.html');
+  if (!fs.existsSync(indexHtmlPath)) {
+    console.error(`[FAIL] Brak pliku index.html pod ścieżką: ${indexHtmlPath}`);
+    hasError = true;
+  } else {
+    const htmlContent = fs.readFileSync(indexHtmlPath, 'utf8');
+    const scriptRegex = /<script\b[^>]*>([\s\S]*?)<\/script>/gi;
+    let match;
+    let blockIndex = 0;
+    let htmlSyntaxOk = true;
+
+    while ((match = scriptRegex.exec(htmlContent)) !== null) {
+      blockIndex++;
+      const fullTag = match[0];
+      const code = match[1];
+
+      if (fullTag.includes('src=')) continue;
+
+      try {
+        new Function(code);
+      } catch (err) {
+        console.error(`  [FAIL] Błąd składni w index.html (Blok <script> #${blockIndex}): ${err.message}`);
+        htmlSyntaxOk = false;
+        hasError = true;
+      }
+    }
+
+    if (htmlSyntaxOk) {
+      console.log(`  [OK] Parsowanie JavaScript w index.html (${blockIndex} bloków <script>): SKŁADNIA POPRAWNA [PASS]`);
+    }
+  }
+
+  console.log("\n--- TESTY JEDNOSTKOWE SILNIKA (8 REKORDÓW SYNTETYCZNYCH Z-2) ---");
   const syntheticRecords = [
     {
       id: 1,
