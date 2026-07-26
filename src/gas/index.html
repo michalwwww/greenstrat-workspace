@@ -3488,21 +3488,29 @@
           document.getElementById('gatekeeperErrorBanner').classList.remove('hidden');
           alert("Krytyczny błąd danych: Obliczenia przerwane ze względu na niekompletność pliku.");
         } else {
-          // STEP 3: Validation passed — proceed to cloud or local processing
+          // STEP 3: Gatekeeper 2.0 Validation (Z-4)
+          const valRes = validateProjects(cleanProjects);
+          const validProjects = valRes.validProjects;
+          const valReport = valRes.report;
+
+          if (valReport.rejectedCount > 0) {
+            console.warn("Bramka Z-4: Odrzucono " + valReport.rejectedCount + " wierszy.", valReport.byCode);
+          }
+
           if (!endpoint || cleanProjects.length > 500) {
-            // Local processing fallback if URL is empty or dataset is too large for Google Script 30s timeout
-            runLocalProcessing(cleanProjects);
+            // Local processing fallback using valid projects only
+            runLocalProcessing(validProjects);
             if (cleanProjects.length > 500 && endpoint) {
-              alert("Wykryto duży zbiór danych (" + cleanProjects.length + " wierszy). Ze względu na limit czasu chmury Google (30 sekund), analizy zostały zrealizowane lokalnie w Twojej przeglądarce (Tryb Offline).");
+              alert("Wykryto duży zbiór danych (" + cleanProjects.length + " wierszy). Analizy zrealizowano lokalnie. Przyjęto: " + validProjects.length + ", Odrzucono: " + valReport.rejectedCount);
             } else {
-              alert("Przetworzono dane lokalnie (Tryb Offline). Wskaźniki i dashboardy zostały zaktualizowane w przeglądarce.");
+              alert("Przetworzono dane lokalnie (Tryb Offline). Przyjęto: " + validProjects.length + ", Odrzucono: " + valReport.rejectedCount);
             }
             document.getElementById('processingLoader').classList.add('hidden');
             return;
           }
 
           const controller = new AbortController();
-          const timeoutId = setTimeout(() => controller.abort(), 15000); // 15 seconds network timeout
+          const timeoutId = setTimeout(() => controller.abort(), 15000);
 
           fetch(endpoint, {
             method: "POST",
@@ -3525,9 +3533,12 @@
             
             if (data.status === 'success') {
               backendCalculatedData = data;
-              // Synchronize local sheet data to match
-              rawSheetData = cleanProjects;
+              rawSheetData = validProjects;
               renderResultsDashboard(data);
+              
+              if (data.validationReport && data.validationReport.rejectedCount > 0) {
+                alert("Import zakonczony. Przyjęto wierszy: " + data.validationReport.validCount + ", Odrzucono wierszy: " + data.validationReport.rejectedCount);
+              }
               updateWeightsAndRecalculate();
               alert("Import zakończony sukcesem! Pomyślnie zsynchronizowano z chmurą i zaktualizowano wskaźniki.");
             } else {
@@ -3579,7 +3590,7 @@
 /**
  * GREENSTRAT Core Engine — Single Source of Truth for Scientific Indicators
  * Module: engine/greenstrat_engine.js
- * Version: 0.3.1 (Z-3: Separacja trybu DEMO od trybu badawczego - D.12)
+ * Version: 0.4.0 (Z-4: Bramka walidacyjna 2.0 - Luka 11.1.e)
  */
 
 var demoMode = false; // Domyślnie TRYB BADAWCZY (produkcyjny), zero fikcyjnych danych
@@ -3601,6 +3612,28 @@ var baseProgramSpecs = {
   'LIFE': { inst: 'KE', acc: 60, adm: 50, fin: 70, imp: 92, inn: 80, reg: 65, days: 240, docs: 15, criteria: 20, protests: 15 },
   'INTERREG': { inst: 'MFiPR', acc: 72, adm: 68, fin: 74, imp: 82, inn: 70, reg: 88, days: 140, docs: 7, criteria: 11, protests: 6 },
   'HORYZONT': { inst: 'KE', acc: 55, adm: 55, fin: 68, imp: 88, inn: 95, reg: 60, days: 220, docs: 18, criteria: 22, protests: 18 }
+};
+
+// Słownik 18 dopuszczalnych regionów (16 województw + 2 podregiony mazowieckie)
+var validRegionsDict = {
+  'dolnośląskie': true, 'dolnoslaskie': true, 'dolnośląska': true,
+  'kujawsko-pomorskie': true, 'kujawsko-pomorska': true,
+  'lubelskie': true, 'lubelska': true,
+  'lubuskie': true, 'lubuska': true,
+  'łódzkie': true, 'lodzkie': true, 'łódzka': true,
+  'małopolskie': true, 'malopolskie': true, 'małopolska': true,
+  'mazowieckie': true, 'mazowiecka': true,
+  'opolskie': true, 'opolska': true,
+  'podkarpackie': true, 'podkarpacka': true,
+  'podlaskie': true, 'podlaska': true,
+  'pomorskie': true, 'pomorska': true,
+  'śląskie': true, 'slaskie': true, 'śląska': true,
+  'świętokrzyskie': true, 'swietokrzyskie': true, 'świętokrzyska': true,
+  'warmińsko-mazurskie': true, 'warminsko-mazurskie': true, 'warmińsko-mazurska': true,
+  'wielkopolskie': true, 'wielkopolska': true,
+  'zachodniopomorskie': true, 'zachodniopomorska': true,
+  'warszawski stołeczny': true, 'warszawski stoleczny': true,
+  'mazowiecki regionalny': true
 };
 
 /**
@@ -3641,6 +3674,113 @@ function isProjectEco(p) {
   var trsf = Number(p.TRANSFORMACYJNOSC);
   
   return (inn > 0 && trw > 0 && ef > 0 && trsf > 0);
+}
+
+/**
+ * Z-4: Bramka Walidacyjna 2.0 (Luka 11.1.e)
+ * Precedencja walidacji: E1 -> E2 -> E3 -> E4 -> E5 -> E6
+ */
+function validateProjects(projects, opts) {
+  var options = opts || {};
+  var existingIds = options.existingIds || {};
+  
+  var validProjects = [];
+  var rejectedProjects = [];
+  
+  var byCode = { E1: 0, E2: 0, E3: 0, E4: 0, E5: 0, E6: 0 };
+  
+  if (!projects || !Array.isArray(projects)) {
+    return {
+      validProjects: [],
+      rejectedProjects: [],
+      report: { total: 0, validCount: 0, rejectedCount: 0, byCode: byCode }
+    };
+  }
+
+  // Pre-pass: count occurrences of each ID_PROJ in file to detect all duplicate instances (E3)
+  var idCountsInFile = {};
+  for (var k = 0; k < projects.length; k++) {
+    var idStr = projects[k].ID_PROJ ? projects[k].ID_PROJ.toString().trim() : '';
+    if (idStr) {
+      idCountsInFile[idStr] = (idCountsInFile[idStr] || 0) + 1;
+    }
+  }
+  
+  for (var i = 0; i < projects.length; i++) {
+    var p = projects[i];
+    var rowIndex = i + 1;
+    var projId = p.ID_PROJ ? p.ID_PROJ.toString().trim() : '';
+    
+    var czyEcoDecl = parseInt(p.CZY_EKOINNOWACJA);
+    var hasComplete = isProjectComplete(p);
+    
+    var innVal = hasComplete ? Number(p.INNOWACYJNOSC) : null;
+    var trwVal = hasComplete ? Number(p.TRWALOSC_LCA) : null;
+    var efVal = hasComplete ? Number(p.EFEKTYWNOSC_ZASOBOWA) : null;
+    var trsfVal = hasComplete ? Number(p.TRANSFORMACYJNOSC) : null;
+    
+    var isOperationalEco = hasComplete && (innVal > 0 && trwVal > 0 && efVal > 0 && trsfVal > 0);
+    
+    var rejectedCode = null;
+    var rejectedReason = null;
+    
+    // E1: CZY_EKOINNOWACJA=1, ale jedna z czterech ocen = 0 lub brakująca
+    if (czyEcoDecl === 1 && (!hasComplete || innVal === 0 || trwVal === 0 || efVal === 0 || trsfVal === 0)) {
+      rejectedCode = 'E1';
+      rejectedReason = 'CZY_EKOINNOWACJA=1, ale nie spełniono kompletu 4 ocen operacyjnych > 0';
+    }
+    // E2: CZY_EKOINNOWACJA=0, ale oceny operacyjne > 0
+    else if (czyEcoDecl === 0 && isOperationalEco) {
+      rejectedCode = 'E2';
+      rejectedReason = 'CZY_EKOINNOWACJA=0, ale komplet 4 ocen operacyjnych > 0';
+    }
+    // E3: Zduplikowany ID_PROJ (wielokrotne wystąpienie w pliku lub w existingIds)
+    else if (projId && (idCountsInFile[projId] > 1 || existingIds[projId])) {
+      rejectedCode = 'E3';
+      rejectedReason = 'Zduplikowany ID_PROJ: ' + projId;
+    }
+    // E4: Pusta lub nieprawidłowa/nienumeryczna wartość WART_PROJ_PLN
+    else if (p.WART_PROJ_PLN === undefined || p.WART_PROJ_PLN === null || p.WART_PROJ_PLN === '' || isNaN(Number(p.WART_PROJ_PLN)) || Number(p.WART_PROJ_PLN) <= 0) {
+      rejectedCode = 'E4';
+      rejectedReason = 'Pusta lub nieprawidłowa wartość WART_PROJ_PLN';
+    }
+    // E5: Regresja TRL (TRL_KONIEC < TRL_START)
+    else if (p.TRL_START !== undefined && p.TRL_KONIEC !== undefined && Number(p.TRL_KONIEC) < Number(p.TRL_START)) {
+      rejectedCode = 'E5';
+      rejectedReason = 'TRL_KONIEC (' + p.TRL_KONIEC + ') < TRL_START (' + p.TRL_START + ')';
+    }
+    // E6: Nazwa regionu WOJEWODZTWO spoza słownika 18 regionów
+    else {
+      var wojNorm = (p.WOJEWODZTWO || '').toString().toLowerCase().trim();
+      if (!wojNorm || !validRegionsDict[wojNorm]) {
+        rejectedCode = 'E6';
+        rejectedReason = 'Nazwa regionu spoza słownika 18 regionów: ' + (p.WOJEWODZTWO || 'brak');
+      }
+    }
+    
+    if (rejectedCode) {
+      byCode[rejectedCode]++;
+      rejectedProjects.push({
+        wiersz: rowIndex,
+        ID_PROJ: projId || null,
+        kod: rejectedCode,
+        powod: rejectedReason
+      });
+    } else {
+      validProjects.push(p);
+    }
+  }
+  
+  return {
+    validProjects: validProjects,
+    rejectedProjects: rejectedProjects,
+    report: {
+      total: projects.length,
+      validCount: validProjects.length,
+      rejectedCount: rejectedProjects.length,
+      byCode: byCode
+    }
+  };
 }
 
 /**
@@ -3975,9 +4115,6 @@ function calculateTask8(projects, options) {
 
 /**
  * Format scientific dataset export.
- * Structural assertions (Z-3):
- * - In RESEARCH mode (demoMode = false): benchmarks = null, patents = 0, years = input subset or null
- * - In DEMO mode (demoMode = true): benchmarks labeled with "[DEMO / SYMULACJA]"
  */
 function exportScientificDataset(projects, options) {
   var isDemo = (options && options.demoMode !== undefined) ? options.demoMode : demoMode;
@@ -4020,6 +4157,7 @@ if (typeof module !== 'undefined' && module.exports) {
     baseProgramSpecs: baseProgramSpecs,
     isProjectComplete: isProjectComplete,
     isProjectEco: isProjectEco,
+    validateProjects: validateProjects,
     calculateTask4: calculateTask4,
     calculateTask8: calculateTask8,
     exportScientificDataset: exportScientificDataset

@@ -5,7 +5,7 @@ const engine = require('../engine/greenstrat_engine.js');
 
 function run() {
   console.log("==================================================");
-  console.log("  GREENSTRAT Test Harness — Weryfikacja Z-3 (Pełna)");
+  console.log("  GREENSTRAT Test Harness — Weryfikacja Z-4 (Bramka 2.0)");
   console.log("==================================================\n");
 
   const rootDir = path.resolve(__dirname, '..');
@@ -128,7 +128,55 @@ function run() {
     }
   }
 
-  console.log("\n--- TEST NIEZMIENNICZOŚCI TRYBU (KOREKTA #1 Z-3) ---");
+  console.log("\n--- TESTY BRAMKI WALIDACYJNEJ 2.0 (Z-4) ---");
+  const negRows = loadedRowsMap['GREENSTRAT_test_walidacja_negatywna_1000.xlsx'];
+  const negRes = engine.validateProjects(negRows);
+  const rep = negRes.report;
+
+  const expOracle = fixtures.manifest_negatywny.oczekiwane_po_Z4;
+  const expBledy = fixtures.manifest_negatywny.bledy;
+
+  console.log(`  > Wynik walidacji negatywnej (1000 wierszy): przyjęte=${rep.validCount}, odrzucone=${rep.rejectedCount}`);
+
+  const expectedRejected = 120;
+  const expectedValid = 880;
+
+  if (rep.rejectedCount === expectedRejected && rep.validCount === expectedValid) {
+    console.log(`  [OK] Asercja sumaryczna: odrzucone = ${rep.rejectedCount} (oczekiwano: ${expectedRejected}), przyjęte = ${rep.validCount} (oczekiwano: ${expectedValid})`);
+  } else {
+    console.error(`  [FAIL] Asercja sumaryczna: odrzucone = ${rep.rejectedCount} (oczekiwano: ${expectedRejected}), przyjęte = ${rep.validCount} (oczekiwano: ${expectedValid})`);
+    hasError = true;
+  }
+
+  let codesOk = true;
+  for (const code of ['E1', 'E2', 'E3', 'E4', 'E5', 'E6']) {
+    const act = rep.byCode[code];
+    const exp = expBledy[code].wierszy;
+    if (act === exp) {
+      console.log(`  [OK] Kod ${code} (${expBledy[code].opis}): ${act} odrzuceń (oczekiwano: ${exp})`);
+    } else {
+      console.error(`  [FAIL] Kod ${code} (${expBledy[code].opis}): ${act} odrzuceń (oczekiwano: ${exp})`);
+      codesOk = false;
+      hasError = true;
+    }
+  }
+
+  // Weryfikacja czystych plików (0 odrzuceń)
+  for (const name of ['proba_1000', 'proba_5000', 'czesc_1', 'pelna']) {
+    const fn = fixtures.zestawy[datasetsToTest.find(d => d.name === name).file] ? datasetsToTest.find(d => d.name === name).file : '';
+    const cleanRows = loadedRowsMap[fn];
+    if (cleanRows) {
+      const cRes = engine.validateProjects(cleanRows);
+      if (cRes.report.rejectedCount === 0) {
+        console.log(`  [OK] Plik czysty ${name}: 0 odrzuceń (100% przyjętych: ${cRes.report.validCount})`);
+      } else {
+        console.error(`  [FAIL] Plik czysty ${name}: odrzucono ${cRes.report.rejectedCount} wierszy!`);
+        hasError = true;
+      }
+    }
+  }
+
+  console.log("\n--- TEST NIEZMIENNICZOŚCI TRYBU (Z-3) ---");
   const sampleProjects = loadedRowsMap['GREENSTRAT_test_proba_1000.xlsx'];
   
   const task4Research = engine.calculateTask4(sampleProjects, { demoMode: false });
@@ -164,7 +212,7 @@ function run() {
     hasError = true;
   }
 
-  console.log("\n--- STRUKTURALNE TESTY EKSPORTU (KOREKTA #2 Z-3) ---");
+  console.log("\n--- STRUKTURALNE TESTY EKSPORTU (Z-3) ---");
   const researchExport = engine.exportScientificDataset(sampleProjects, { demoMode: false });
   const demoExport = engine.exportScientificDataset(sampleProjects, { demoMode: true });
 
@@ -295,11 +343,11 @@ function run() {
 
   console.log("\n==================================================");
   if (hasError) {
-    console.error("  WYNIK: TESTY Z-3 ZAKOŃCZONE BŁĘDEM [FAIL]");
+    console.error("  WYNIK: TESTY Z-4 ZAKOŃCZONE BŁĘDEM [FAIL]");
     console.log("==================================================");
     process.exit(1);
   } else {
-    console.log("  WYNIK: TESTY Z-3 ZAKOŃCZONE SUKCESEM [PASS]");
+    console.log("  WYNIK: TESTY Z-4 ZAKOŃCZONE SUKCESEM [PASS]");
     console.log("==================================================");
     process.exit(0);
   }
