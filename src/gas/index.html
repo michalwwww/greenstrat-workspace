@@ -5149,15 +5149,10 @@ var calculateTask8Local = calculateTask8;
 
       // ==================== ZADANIE 11 EXPANSIONS ====================
       // 13. Trends Chart
-      const trends = data.task11.trends || [];
-      const years = trends.map(t => t.year);
-      const totalFunds = trends.map(t => parseFloat((t.funding / 1000000).toFixed(1)));
-      const ecoFunds = trends.map(t => parseFloat((t.ecoFunding / 1000000).toFixed(1)));
+      if (document.getElementById('cagr-badge') && data.task11 && data.task11.cagr !== undefined) {
+        document.getElementById('cagr-badge').textContent = `CAGR: +${data.task11.cagr.toFixed(2)}%`;
+      }
       
-      document.getElementById('cagr-badge').textContent = `CAGR: +${data.task11.cagr.toFixed(2)}%`;
-      
-      const trendsOptions = {
-      // 13. Trends
       const trendsDiv = document.querySelector("#chartTrends");
       const hasYearData = data.task11 && data.task11.trends && data.task11.trends.some(t => t.funding > 0 || t.projects > 0);
       if (!hasYearData) {
