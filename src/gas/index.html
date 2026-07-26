@@ -3381,14 +3381,11 @@
             // Extract numeric values from TRL strings (e.g. "TRL 3" -> 3)
             let rawTrlStart = row.TRL_START || row.TRL_Start || row.Trl_Start || '1';
             let trlStart = parseInt(rawTrlStart.toString().replace(/[^0-9]/g, '')) || 1;
-            if (trlStart < 1 || trlStart > 9) trlStart = 1;
 
             let rawTrlKoniec = row.TRL_KONIEC || row.TRL_Koniec || row.Trl_Koniec || '1';
             let trlKoniec = parseInt(rawTrlKoniec.toString().replace(/[^0-9]/g, '')) || 1;
-            if (trlKoniec < 1 || trlKoniec > 9) trlKoniec = trlStart;
-            if (trlKoniec < trlStart) trlKoniec = trlStart;
 
-            const deltaTrl = Math.max(0, trlKoniec - trlStart);
+            const deltaTrl = trlKoniec - trlStart;
 
             // Clean eco-innovation flag (e.g. "Tak" -> 1, "Nie" -> 0)
             let rawEco = row.CZY_EKOINNOWACJA !== undefined ? row.CZY_EKOINNOWACJA : '';
@@ -3409,22 +3406,6 @@
             let trw = parseRating(row.TRWALOSC_LCA !== undefined ? row.TRWALOSC_LCA : row.Trwalosc_LCA);
             let ef = parseRating(row.EFEKTYWNOSC_ZASOBOWA !== undefined ? row.EFEKTYWNOSC_ZASOBOWA : row.Efektywnosc_Zasobowa);
             let trsf = parseRating(row.TRANSFORMACYJNOSC !== undefined ? row.TRANSFORMACYJNOSC : row.Transformacyjnosc);
-
-            // Check if collinear
-            const isCollinear = (inn === trw && trw === ef && ef === trsf && (inn === isEco || isEco === 1));
-
-            if (isCollinear && isEco === 1) {
-              inn = Math.min(3, 1 + Math.floor(deltaTrl / 2));
-              trw = 1 + (rIdx % 3);
-              const logBudget = fundingVal > 0 ? Math.log10(fundingVal) : 5;
-              ef = Math.max(1, Math.min(3, Math.round(logBudget - 4.5)));
-              trsf = 1 + ((rIdx + 1) % 3);
-            } else if (isEco === 0) {
-              inn = 0;
-              trw = 0;
-              ef = 0;
-              trsf = 0;
-            }
 
             const rawProg = row.PROGRAM_KOD || row.Program_Kod || row.Program || row['Program/ Programme'] || row.PROGRAM || '';
             const rawWoj = row.WOJEWODZTWO || row.Wojewodztwo || row.Województwo || row.REGION || '';
