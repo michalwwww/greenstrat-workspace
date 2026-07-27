@@ -3482,18 +3482,18 @@
             console.warn("Bramka Z-4: Odrzucono " + valReport.rejectedCount + " wierszy.", valReport.byCode);
           }
 
-          if (!endpoint || cleanProjects.length > 2000) {
+          if (!endpoint || cleanProjects.length > 11000) {
             // Local processing fallback using valid projects only
             const startTime = Date.now();
             runLocalProcessing(validProjects);
             const duration = Date.now() - startTime;
 
-            const logAction = cleanProjects.length > 2000 ? 'LOCAL_INGEST_LARGE' : 'LOCAL_INGEST_OFFLINE';
+            const logAction = cleanProjects.length > 11000 ? 'LOCAL_INGEST_LARGE' : 'LOCAL_INGEST_OFFLINE';
             const secStr = (duration / 1000).toFixed(2);
             const logMsg = `Przetworzono lokalnie: ${cleanProjects.length} wierszy (Przyjęto: ${validProjects.length}, Odrzucono: ${valReport.rejectedCount}) [Plik: ${currentLoadedFileName}] (Czas: ${duration}ms / ${secStr}s).`;
             sendCloudLog(logAction, 'SUCCESS', logMsg, duration);
 
-            if (cleanProjects.length > 2000 && endpoint) {
+            if (cleanProjects.length > 11000 && endpoint) {
               alert("Wykryto duży zbiór danych (" + cleanProjects.length + " wierszy). Analizy zrealizowano lokalnie. Przyjęto: " + validProjects.length + ", Odrzucono: " + valReport.rejectedCount);
             } else {
               alert("Przetworzono dane lokalnie (Tryb Offline). Przyjęto: " + validProjects.length + ", Odrzucono: " + valReport.rejectedCount);
