@@ -85,6 +85,20 @@ function doPost(e) {
       return ContentService.createTextOutput(JSON.stringify(response))
         .setMimeType(ContentService.MimeType.JSON);
     }
+
+    if (action === 'logEvent') {
+      var logAction = payload.logAction || 'LOCAL_PROCESSING';
+      var statusVal = payload.status || 'SUCCESS';
+      var msgVal = payload.message || '';
+      var durVal = payload.duration || (new Date().getTime() - startTime);
+      logToSheet(logAction, payload.rowIndex || null, statusVal, msgVal, durVal);
+      var logResObj = {
+        status: 'success',
+        message: 'Zapisano log zdarzenia lokalnego w chmurze.'
+      };
+      return ContentService.createTextOutput(JSON.stringify(logResObj))
+        .setMimeType(ContentService.MimeType.JSON);
+    }
     
     if (action === 'createStatisticalSpreadsheet') {
       var allProjects = payload.projects || getAllProjectsFromSheet();

@@ -2953,6 +2953,25 @@
       });
     }
 
+    // Send background log event to cloud
+    function sendCloudLog(logAction, status, message, duration) {
+      const url = document.getElementById('endpointUrl') ? document.getElementById('endpointUrl').value.trim() : '';
+      if (!url) return;
+      
+      fetch(url, {
+        method: "POST",
+        mode: "cors",
+        headers: { "Content-Type": "text/plain" },
+        body: JSON.stringify({
+          action: "logEvent",
+          logAction: logAction,
+          status: status || "SUCCESS",
+          message: message || "",
+          duration: duration || 0
+        })
+      }).catch(err => console.warn("Przesłanie logu zdarzenia do chmury pominięte:", err));
+    }
+
     // Fetch cloud logs
     function fetchCloudLogs() {
       const url = document.getElementById('endpointUrl').value.trim();
@@ -3459,7 +3478,14 @@
 
           if (!endpoint || cleanProjects.length > 500) {
             // Local processing fallback using valid projects only
+            const startTime = Date.now();
             runLocalProcessing(validProjects);
+            const duration = Date.now() - startTime;
+
+            const logAction = cleanProjects.length > 500 ? 'LOCAL_INGEST_LARGE' : 'LOCAL_INGEST_OFFLINE';
+            const logMsg = `Przetworzono lokalnie: ${cleanProjects.length} wierszy (Przyjęto: ${validProjects.length}, Odrzucono: ${valReport.rejectedCount}).`;
+            sendCloudLog(logAction, 'SUCCESS', logMsg, duration);
+
             if (cleanProjects.length > 500 && endpoint) {
               alert("Wykryto duży zbiór danych (" + cleanProjects.length + " wierszy). Analizy zrealizowano lokalnie. Przyjęto: " + validProjects.length + ", Odrzucono: " + valReport.rejectedCount);
             } else {
