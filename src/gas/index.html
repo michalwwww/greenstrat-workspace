@@ -3386,7 +3386,11 @@
                 NAUKA_BIZNES: (Math.abs(hash) % 5 === 0) ? 1 : 0,
                 ABSORPCJA: 0.7 + (Math.abs(hash) % 30) / 100, 
                 CZY_EKOINNOWACJA: isEco,
-                ETAP_INNOWACJI: mapTRLToStage(trlStart)
+                ETAP_INNOWACJI: mapTRLToStage(trlStart),
+                INNOWACYJNOSC: isEco === 1 ? ((Math.abs(hash) % 3) + 1) : 0,
+                TRWALOSC_LCA: isEco === 1 ? ((Math.abs(hash * 3) % 3) + 1) : 0,
+                EFEKTYWNOSC_ZASOBOWA: isEco === 1 ? ((Math.abs(hash * 7) % 3) + 1) : 0,
+                TRANSFORMACYJNOSC: isEco === 1 ? ((Math.abs(hash * 11) % 3) + 1) : 0
               };
             });
           } else {
