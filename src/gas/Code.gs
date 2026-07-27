@@ -1271,6 +1271,70 @@ function calculateTask11(projects, options) {
     });
   });
 
+  // PRODUKT 11.4: Benchmark Krajowy w 5 klasach statystycznych z bezpiecznikiem efektu niskiej bazy
+  var nationalBenchmark = {
+    fiveClasses: {
+      'liderzy systemowi': [],
+      'ponadprzeciętni': [],
+      'poziom referencyjny': [],
+      'wymagający poprawy': [],
+      'krytyczni': []
+    },
+    entityMatrix: [],
+    percentileThresholds: {
+      p90: Math.round(p90 * 1000) / 1000,
+      p75: Math.round(p75 * 1000) / 1000,
+      p25: Math.round(p25 * 1000) / 1000,
+      p10: Math.round(p10 * 1000) / 1000
+    }
+  };
+
+  Object.keys(eirsi).forEach(function(reg) {
+    var val = eirsi[reg];
+    var regFunding = regionFundingMap[reg.toLowerCase()] || 0;
+    var maxProjFunding = regionMaxProjectMap[reg.toLowerCase()] || 0;
+    var dominantShare = regFunding > 0 ? Math.round((maxProjFunding / regFunding) * 1000) / 10 : 0;
+    var isBaseEffect = dominantShare > 30.0;
+
+    var initialClass = 'poziom referencyjny';
+    if (val >= p90) {
+      initialClass = 'liderzy systemowi';
+    } else if (val >= p75) {
+      initialClass = 'ponadprzeciętni';
+    } else if (val >= p25) {
+      initialClass = 'poziom referencyjny';
+    } else if (val >= p10) {
+      initialClass = 'wymagający poprawy';
+    } else {
+      initialClass = 'krytyczni';
+    }
+
+    var finalClass = initialClass;
+    var classRationale = "Zgodny z percentylami rozkładu (EIRSI: " + (Math.round(val * 1000) / 1000) + ")";
+
+    // Bezpiecznik efektu niskiej bazy (Produkt 11.4)
+    if (initialClass === 'liderzy systemowi' && isBaseEffect) {
+      finalClass = 'ponadprzeciętni';
+      classRationale = "Skorygowano z Lidera do Ponadprzeciętnych z powodu wrażliwości na dominującą obserwację (" + dominantShare + "% alokacji w 1 projekcie).";
+    }
+
+    var record = {
+      entity: "województwo: " + reg,
+      score: Math.round(val * 1000) / 1000,
+      benchmarkClass: finalClass,
+      initialClass: initialClass,
+      classRationale: classRationale,
+      baseEffectFlag: isBaseEffect,
+      confidenceLevel: "WYSOKA",
+      stability: isBaseEffect ? "ZMIENNY" : "STABILNY"
+    };
+
+    nationalBenchmark.entityMatrix.push(record);
+    if (nationalBenchmark.fiveClasses[finalClass]) {
+      nationalBenchmark.fiveClasses[finalClass].push(reg);
+    }
+  });
+
   return {
     eispi: eispi,
     trends: trends,
@@ -1278,7 +1342,8 @@ function calculateTask11(projects, options) {
     classification: classification,
     benchmark: benchmark,
     alarms: alarms,
-    statsDistribution: statsDistribution
+    statsDistribution: statsDistribution,
+    nationalBenchmark: nationalBenchmark
   };
 }
 

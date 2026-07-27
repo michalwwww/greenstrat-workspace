@@ -340,6 +340,30 @@ function run() {
     hasError = true;
   }
 
+  console.log("\n--- TESTY Z-9: PRODUKT 11.4 BENCHMARK KRAJOWY W 5 KLASACH STATYSTYCZNYCH ---");
+  const natBench = task11Research.nationalBenchmark;
+
+  if (natBench && natBench.fiveClasses && 
+      natBench.fiveClasses['liderzy systemowi'] !== undefined &&
+      natBench.fiveClasses['ponadprzeciętni'] !== undefined &&
+      natBench.fiveClasses['poziom referencyjny'] !== undefined &&
+      natBench.fiveClasses['wymagający poprawy'] !== undefined &&
+      natBench.fiveClasses['krytyczni'] !== undefined &&
+      Array.isArray(natBench.entityMatrix)) {
+    const counts = {
+      liderzy: natBench.fiveClasses['liderzy systemowi'].length,
+      ponad: natBench.fiveClasses['ponadprzeciętni'].length,
+      ref: natBench.fiveClasses['poziom referencyjny'].length,
+      poprawa: natBench.fiveClasses['wymagający poprawy'].length,
+      kryt: natBench.fiveClasses['krytyczni'].length
+    };
+    console.log(`  [OK] Z-9 Benchmark krajowy w 5 klasach: Liderzy=${counts.liderzy}, Ponadprzeciętni=${counts.ponad}, Referencyjny=${counts.ref}, WymagającyPoprawy=${counts.poprawa}, Krytyczni=${counts.kryt}.`);
+    console.log(`  [OK] Z-9 Progi percentylowe: P90=${natBench.percentileThresholds.p90}, P75=${natBench.percentileThresholds.p75}, P25=${natBench.percentileThresholds.p25}, P10=${natBench.percentileThresholds.p10}.`);
+  } else {
+    console.error("  [FAIL] Brak prawidłowej struktury Benchmarku Krajowego w 5 klasach!");
+    hasError = true;
+  }
+
   console.log("\n==================================================");
   console.log("  ZBIORCZA TABELA REGRESJI FAZY A (Z-1 DO Z-5)");
   console.log("==================================================");
