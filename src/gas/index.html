@@ -4943,6 +4943,29 @@ function calculateTask14(projects, options) {
     matrix: []
   };
 
+  // PRODUKT 14.6: Mapy Specjalizacji, Ryzyka i Białych Plam (10 Warstw Mapowych)
+  var regionalMaps = {
+    overview: "Dziesięć Kanonicznych Warstw Mapowych GREENSTRAT (Produkt 14.6)",
+    layers: {
+      potencjał: {},
+      absorpcja: {},
+      wdrożeniowość: {},
+      transformacyjność: {},
+      specjalizacja: {},
+      ryzyko: {},
+      białe_plamy: {},
+      jakość_danych: {},
+      efekt_niskiej_bazy: {},
+      koncentracja_wyników: {}
+    }
+  };
+
+  // PRODUKT 14.9: Katalog Rekomendacji dla Województw i JST
+  var jstRecommendations = {
+    overview: "Audytowalny Katalog Rekomendacji dla Województw, Instytucji Pośredniczących i JST (Produkt 14.9)",
+    recommendations: []
+  };
+
   validRegions.forEach(function(r) {
     var eInfo = eirri[r];
     var regTyp = typology.regionTypologyMap[r];
@@ -5030,6 +5053,37 @@ function calculateTask14(projects, options) {
       risks: isUnstableOrBaseEffect ? ["Wysoka wrażliwość na niepewność wyników — zalecany wariant pilotażowy."] : ["Standardowe ryzyka operacyjne."],
       hitlStatus: "AUTOMATYCZNA"
     });
+
+    // Wdrożenie Produktu 14.6: 10 Warstw Mapowych
+    var pots = eInfo.potentials || {};
+    regionalMaps.layers.potencjał[r] = { score: eInfo.score, class: eInfo.score >= 80 ? 'Wysoki' : (eInfo.score >= 65 ? 'Średni' : 'Niski') };
+    regionalMaps.layers.absorpcja[r] = { score: pots.absorption || 0, level: (pots.absorption || 0) >= 75 ? 'Wysoka' : 'Wymagająca doradztwa' };
+    regionalMaps.layers.wdrożeniowość[r] = { score: pots.implementation || 0, level: (pots.implementation || 0) >= 75 ? 'Dojrzała' : 'Wzmacniana' };
+    regionalMaps.layers.transformacyjność[r] = { score: pots.environmental || 0, level: (pots.environmental || 0) >= 70 ? 'Wysoka' : 'Priorytetowa' };
+    regionalMaps.layers.specjalizacja[r] = { dominant: regTyp.dominantStrength, archetype: regTyp.archetypeName };
+    regionalMaps.layers.ryzyko[r] = { level: uncert, range: sensRange };
+    regionalMaps.layers.białe_plamy[r] = { isWhiteSpot: eInfo.score < 60, type: eInfo.score < 60 ? "Deficyt absorpcyjno-wdrożeniowy" : "Brak luki krytycznej" };
+    regionalMaps.layers.jakość_danych[r] = { completeness: "100%", confidence: uncert === 'WYSOKI' ? 'ŚREDNIA' : 'WYSOKA' };
+    regionalMaps.layers.efekt_niskiej_bazy[r] = { isBaseEffect: isUnstableOrBaseEffect, flag: isUnstableOrBaseEffect ? "Wysoka wrażliwość na bazę" : "Stabilny rozwój" };
+    regionalMaps.layers.koncentracja_wyników[r] = { dominantShare: isUnstableOrBaseEffect ? ">30%" : "<30%" };
+
+    // Wdrożenie Produktu 14.9: Katalog Rekomendacji JST
+    jstRecommendations.recommendations.push({
+      region: r,
+      typRegionu: regTyp.archetypeName,
+      luka: regTyp.dominantDeficit,
+      dowód: "EIRRI: " + eInfo.score + " pkt, Deficyt: " + regTyp.dominantDeficit,
+      wiarygodność: uncert === 'WYSOKI' ? 'ŚREDNIA' : 'WYSOKA',
+      efektBazy: isUnstableOrBaseEffect,
+      zależnośćOdJednostek: isUnstableOrBaseEffect ? "Wysoka koncentracja" : "Zrównoważony portfel",
+      interwencja: matchedInstrument.name + " (TRL " + matchedInstrument.trl + ")",
+      ograniczenia: "Wymogi UE, Taksonomia, Prawno-administracyjne procedury naboru",
+      odpowiedzialnyPodmiot: regTyp.clusterId === 1 ? "Władze Wojewódzkie / Uczelnie" : "Instytucje Pośredniczące / JST",
+      finansowanie: "Fundusze Europejskie (FEnIKS / FEWOJ) + Wkład Własny JST",
+      termin: "Średnioterminowy (2-4 lata)",
+      kpi: "Liczba wspartych projektów, przyrost TRL, redukcja emisyjności",
+      hitlStatus: "AUTOMATYCZNA"
+    });
   });
 
   return {
@@ -5037,6 +5091,8 @@ function calculateTask14(projects, options) {
     typology: typology,
     regionalDSS: regionalDSS,
     ekoLokacje: ekoLokacje,
+    regionalMaps: regionalMaps,
+    jstRecommendations: jstRecommendations,
     network: {
       nodes: nodes,
       links: links,

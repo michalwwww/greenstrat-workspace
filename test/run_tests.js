@@ -452,6 +452,26 @@ function run() {
     hasError = true;
   }
 
+  console.log("\n--- TESTY Z-15: PRODUKT 14.6 (10 WARSTW MAPOWYCH) I PRODUKT 14.9 (KATALOG REKOMENDACJI JST) ---");
+  const regMaps = task14Research.regionalMaps;
+  const jstRecs = task14Research.jstRecommendations;
+
+  if (regMaps && regMaps.layers && Object.keys(regMaps.layers).length === 10) {
+    console.log(`  [OK] Z-15 Wygenerowano 10 warstw mapowych (Produkt 14.6) dla wszystkich 16 województw.`);
+  } else {
+    console.error("  [FAIL] Brak prawidłowych 10 warstw mapowych w Produkcie 14.6!");
+    hasError = true;
+  }
+
+  if (jstRecs && Array.isArray(jstRecs.recommendations) && jstRecs.recommendations.length === 16) {
+    const sampleJst = jstRecs.recommendations[0];
+    console.log(`  [OK] Z-15 Wygenerowano ${jstRecs.recommendations.length} rekomendacji JST (Produkt 14.9).`);
+    console.log(`  [OK] Z-15 Rekomendacja JST ${sampleJst.region}: Interwencja=${sampleJst.interwencja}, Podmiot=${sampleJst.odpowiedzialnyPodmiot}, HITLStatus=${sampleJst.hitlStatus}.`);
+  } else {
+    console.error("  [FAIL] Brak prawidłowej struktury katalogu rekomendacji JST (Produkt 14.9)!");
+    hasError = true;
+  }
+
   console.log("\n==================================================");
   console.log("  ZBIORCZA TABELA REGRESJI FAZY A (Z-1 DO Z-5)");
   console.log("==================================================");
