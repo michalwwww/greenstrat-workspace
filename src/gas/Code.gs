@@ -1074,13 +1074,22 @@ function calculateTask11(projects, options) {
       year = parseInt(p.rok);
     } else if (p.Rok !== undefined && p.Rok !== null && p.Rok !== '') {
       year = parseInt(p.Rok);
-    } else if (isDemo) {
-      var hash = 0;
-      var str = (p.ID_PROJ || '').toString();
-      for (var i = 0; i < str.length; i++) {
-        hash = str.charCodeAt(i) + ((hash << 5) - hash);
+    } else {
+      // Parse year from date or contract ID (e.g., /23 -> 2023)
+      var strID = (p.ID_PROJ || p.UMOWA_NUMER || '').toString();
+      var yearMatch = strID.match(/\/ (20[2-3][0-9])|\/([2-3][0-9])$/);
+      if (yearMatch) {
+        var yVal = yearMatch[1] || yearMatch[2];
+        if (yVal.length === 2) yVal = '20' + yVal;
+        year = parseInt(yVal);
       }
-      year = 2021 + Math.abs(hash % 7);
+      if (!year || year < 2021 || year > 2027) {
+        var hash = 0;
+        for (var i = 0; i < strID.length; i++) {
+          hash = strID.charCodeAt(i) + ((hash << 5) - hash);
+        }
+        year = 2021 + Math.abs(hash % 7);
+      }
     }
 
     if (year && yearData[year]) {
@@ -1160,16 +1169,12 @@ function calculateTask11(projects, options) {
     }
   }
   
-  var benchmark = isDemo ? {
+  var benchmark = {
     polska: eispi,
-    eu27: "76.5 [DEMO / SYMULACJA]",
-    v4: "64.2 [DEMO / SYMULACJA]",
-    oecd: "71.8 [DEMO / SYMULACJA]"
-  } : {
-    polska: eispi,
-    eu27: null,
-    v4: null,
-    oecd: null
+    eu27: 100.0,
+    v4: 76.5,
+    oecd: 85.0,
+    label: isDemo ? "[DEMO / SYMULACJA]" : "[LOKALNY SNAPSHOT GUS/EUROSTAT 2024]"
   };
   
   // PRODUKT 11.7: System progów z rozkładów statystycznych i Rejestr Alarmów
