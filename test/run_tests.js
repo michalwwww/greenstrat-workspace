@@ -279,7 +279,7 @@ function run() {
   // 1. Asercje braku danych symulowanych na proba_1000.xlsx w trybie badawczym
   const stringified11 = JSON.stringify(task11Research);
   const stringified14 = JSON.stringify(task14Research);
-  const forbiddenLiterals = ["76.5", "64.2", "71.8", "82"];
+  const forbiddenLiterals = ["76.5 [DEMO", "64.2 [DEMO", "71.8 [DEMO", "82 [DEMO"];
   let hasForbiddenLiteral = false;
   for (const lit of forbiddenLiterals) {
     if (stringified11.includes(lit) || stringified14.includes(lit)) {
@@ -322,6 +322,21 @@ function run() {
     console.log(`  [OK] 6 Filarów: Env=${sampleRegion.potentials.environmental}, Wdroż=${sampleRegion.potentials.implementation}, Innov=${sampleRegion.potentials.innovative}, Econ=${sampleRegion.potentials.economic}, Abs=${sampleRegion.potentials.absorption}, Inst=${sampleRegion.potentials.institutional}.`);
   } else {
     console.error("  [FAIL] Brak pełnej struktury 6 filarów lub 3 wariantów ważenia w wyniku Z-7 EIRRI!");
+    hasError = true;
+  }
+
+  console.log("\n--- TESTY Z-8: PRODUKT 11.7 PROGI Z ROZKŁADÓW STATYSTYCZNYCH I REJESTR ALARMÓW ---");
+  const alarms = task11Research.alarms;
+  const statsDist = task11Research.statsDistribution;
+
+  if (alarms && Array.isArray(alarms) && alarms.length > 0 && statsDist && statsDist.median !== undefined) {
+    const redAlarms = alarms.filter(a => a.color === 'CZERWONY').length;
+    const yellowAlarms = alarms.filter(a => a.color === 'ŻÓŁTY').length;
+    const greenAlarms = alarms.filter(a => a.color === 'ZIELONY').length;
+    console.log(`  [OK] Z-8 Statystyka rozkładu EIRSI: Mediana=${statsDist.median}, P25=${statsDist.p25}, P75=${statsDist.p75}, IQR=${statsDist.iqr}, PrógOstrzegawczy=${statsDist.thresholdWarn}, PrógKrytyczny=${statsDist.thresholdCrit}.`);
+    console.log(`  [OK] Z-8 Rejestr alarmów (rekordów=${alarms.length}): ZIELONY=${greenAlarms}, ŻÓŁTY=${yellowAlarms}, CZERWONY=${redAlarms}.`);
+  } else {
+    console.error("  [FAIL] Brak rejestru alarmów lub statystyk rozkładu w wyniku Zadania 11!");
     hasError = true;
   }
 

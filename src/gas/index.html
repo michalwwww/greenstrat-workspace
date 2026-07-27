@@ -4311,12 +4311,113 @@ function calculateTask11(projects, options) {
     oecd: null
   };
   
+  // PRODUKT 11.7: System progów z rozkładów statystycznych i Rejestr Alarmów
+  var eirsiValues = Object.keys(eirsi).map(function(k) { return eirsi[k]; }).sort(function(a, b) { return a - b; });
+  
+  function getPercentile(arr, p) {
+    if (!arr || arr.length === 0) return 0;
+    var index = (p / 100) * (arr.length - 1);
+    var lower = Math.floor(index);
+    var upper = Math.ceil(index);
+    var weight = index - lower;
+    if (upper >= arr.length) return arr[arr.length - 1];
+    return arr[lower] * (1 - weight) + arr[upper] * weight;
+  }
+
+  var p10 = getPercentile(eirsiValues, 10);
+  var p25 = getPercentile(eirsiValues, 25);
+  var p50 = getPercentile(eirsiValues, 50);
+  var p75 = getPercentile(eirsiValues, 75);
+  var p90 = getPercentile(eirsiValues, 90);
+  var iqr = p75 - p25;
+
+  var threshWarn = Math.round(p25 * 1000) / 1000;
+  var threshCrit = Math.round(Math.max(p10, p25 - 1.5 * iqr) * 1000) / 1000;
+
+  var statsDistribution = {
+    indicator: 'EIRSI',
+    count: eirsiValues.length,
+    p10: Math.round(p10 * 1000) / 1000,
+    p25: Math.round(p25 * 1000) / 1000,
+    median: Math.round(p50 * 1000) / 1000,
+    p75: Math.round(p75 * 1000) / 1000,
+    p90: Math.round(p90 * 1000) / 1000,
+    iqr: Math.round(iqr * 1000) / 1000,
+    thresholdWarn: threshWarn,
+    thresholdCrit: threshCrit
+  };
+
+  // Rejestr Alarmów (Produkt 11.7)
+  var alarms = [];
+  var regionFundingMap = {};
+  var regionMaxProjectMap = {};
+
+  projects.forEach(function(p) {
+    var woj = (p.WOJEWODZTWO || '').toString().trim().toLowerCase();
+    var funding = parseFloat(p.WART_PROJ_PLN) || 0;
+    if (woj) {
+      if (!regionFundingMap[woj]) {
+        regionFundingMap[woj] = 0;
+        regionMaxProjectMap[woj] = 0;
+      }
+      regionFundingMap[woj] += funding;
+      if (funding > regionMaxProjectMap[woj]) {
+        regionMaxProjectMap[woj] = funding;
+      }
+    }
+  });
+
+  Object.keys(eirsi).forEach(function(reg) {
+    var val = eirsi[reg];
+    var regFunding = regionFundingMap[reg.toLowerCase()] || 0;
+    var maxProjFunding = regionMaxProjectMap[reg.toLowerCase()] || 0;
+    
+    var dominantShare = regFunding > 0 ? Math.round((maxProjFunding / regFunding) * 1000) / 10 : 0;
+    var isBaseEffect = dominantShare > 30.0;
+    var valExcludingDominant = isBaseEffect ? Math.round((val * (1 - (dominantShare / 100))) * 1000) / 1000 : val;
+
+    var color = "ZIELONY";
+    var action = "Wynik w normie statystycznej — brak potrzeby interwencji.";
+
+    if (val < threshCrit) {
+      color = "CZERWONY";
+      action = "Wynik krytyczny — obowiązkowa audytowa weryfikacja ekspercka i uruchomienie DSS.";
+    } else if (val < threshWarn) {
+      color = "ŻÓŁTY";
+      action = "Wynik ostrzegawczy — zalecana analiza przyczynowa i ciągły monitoring.";
+    }
+
+    var totalIncomplete = 0;
+    projects.forEach(function(p) {
+      if (!isProjectComplete(p)) totalIncomplete++;
+    });
+    var completenessRatio = projects.length > 0 ? ((projects.length - totalIncomplete) / projects.length) : 1;
+    var confidence = completenessRatio >= 0.95 ? "WYSOKA" : (completenessRatio >= 0.80 ? "ŚREDNIA" : "NISKA");
+
+    alarms.push({
+      unit: "województwo: " + reg,
+      kpi: "EIRSI",
+      val: Math.round(val * 1000) / 1000,
+      thresholdWarn: threshWarn,
+      thresholdCrit: threshCrit,
+      color: color,
+      durability: val < threshCrit ? "TRWAŁE" : "JEDNORAZOWE",
+      confidence: confidence,
+      baseEffect: isBaseEffect,
+      dominantObsShare: dominantShare,
+      valExcludingDominant: valExcludingDominant,
+      recommendedAction: action
+    });
+  });
+
   return {
     eispi: eispi,
     trends: trends,
     cagr: cagr,
     classification: classification,
-    benchmark: benchmark
+    benchmark: benchmark,
+    alarms: alarms,
+    statsDistribution: statsDistribution
   };
 }
 
