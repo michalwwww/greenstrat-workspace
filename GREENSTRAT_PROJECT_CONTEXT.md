@@ -78,7 +78,7 @@
 * **Luka L.19:** Usunięto reguły blokowania całego pliku z `runGatekeeperValidation()`, przekazując walidację wierszową w 100% do Bramki Z-4.
 * **Test D.11:** Zbadano i zweryfikowano próg przełączania na przetwarzanie lokalne. Próg ustalony na kanonicznym poziomie 500 wierszy.
 
-### Faza B (W trakcie):
+### Faza B (ZAKOŃCZONA W 100%):
 * **Z-6 (Faza B):** Domknięcie L.20 (Jedno źródło prawdy dla Task 11 / Task 14). Przeniesiono `calculateTask11` i `calculateTask14` do bloku `ENGINE` w `greenstrat_engine.js`. Usunięto nie-bramkowane funkcje lokalne oraz zduplikowaną logikę `isEcoProj`. W trybie badawczym roczniki pobierane są wyłącznie z kolumny `ROK` (`null` przy braku), a benchmarki UE i `ris3Alignment` zwracają `null`.
 * **Z-7 (Faza B):** Produkt 14.2 (Realny Indeks Gotowości EIRRI w 6 filarach). Zaimplementowano 6-filarowy model empiryczny EIRRI (gospodarczy, naukowo-innowacyjny, absorpcyjny, wdrożeniowy, środowiskowo-transformacyjny, instytucjonalny). Zaimplementowano wagi PCA (Decyzja D.2), 3 warianty ważenia (equal, pca, expert), zakres wrażliwości oraz poziom niepewności w silniku.
 * **Z-8 (Faza B):** Produkt 11.7 (System progów z rozkładów i Rejestr Alarmów). Zaimplementowano dynamiczne progi ostrzegawcze ($P25$/$Q1$) i krytyczne ($P10$/$IQR$) z rozkładów statystycznych, rejestr alarmów z 3 kolorami (`ZIELONY`, `ŻÓŁTY`, `CZERWONY`), wskaźnikami trwałości, poziomami wiarygodności, flagą `baseEffect` oraz wyliczaniem wartości bez obserwacji dominującej.
@@ -89,6 +89,8 @@
 * **Z-13 (Faza B):** Moduł Wieloformatowego Eksportu Danych (Produkt 11.1 / BigQuery, Parquet, DuckDB, JSON-Stat v2.0, CSV). Wdrożono `tools/export_formats.js` umożliwiający bezstratny eksport zbiorów do schematu Google BigQuery GoogleSQL DDL, ładunków NDJSON dla Looker Studio, plików Parquet, baz DuckDB, standardu JSON-Stat v2.0 oraz CSV (z UTF-8 BOM).
 * **Z-14 (Faza B):** Produkt 14.8 (Model EKO_Lokacji i Katalog 17 Bazowych Instrumentów Wsparcia). Wdrożono w `calculateTask14` wyliczanie macierzy EKO_Lokacji per województwo oraz słownik 17 bazowych typów interwencji z pliku `docs/Odpowiedzi na pytania.docx.txt`, z bezpiecznikiem niestabilności wymuszającym Model Sieciowy / Mobilny (Pilotażowy) przy niepewnej bazie.
 * **Z-15 (Faza B):** Produkty 14.6 & 14.9 (Mapy Specjalizacji, Ryzyka i Białych Plam oraz Katalog Rekomendacji JST/Województw). Wdrożono w `calculateTask14` wyliczanie 10 kanonicznych warstw mapowych (`regionalMaps`) oraz ustandaryzowanego katalogu rekomendacji dla JST (`jstRecommendations`).
+* **Z-16 (Faza B):** Produkty 11.5 & 14.5 (Importer ETL Danych Zewnętrznych & Benchmark Międzynarodowy Eurostat / EIS / Eco-Innovation Index / GUS BDL). Wdrożono importer ETL `tools/import_external_datasets.js`, snapshot `data/external_benchmarks_snapshot.json` oraz zasilenie benchmarków międzynarodowych Polski i regionów NUTS 2.
+
 
 
 

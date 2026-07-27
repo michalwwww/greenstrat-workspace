@@ -288,15 +288,15 @@ function run() {
     }
   }
 
-  if (!hasForbiddenLiteral && task11Research.benchmark.eu27 === null && task14Research.network.indices.ris3Alignment === null) {
-    console.log("  [OK] Tryb badawczy dla proba_1000 (Z-6): benchmark.eu27 === null, ris3Alignment === null, brak zakazanych literałów symulowanych.");
+  if (!hasForbiddenLiteral && task11Research.benchmark === null && task14Research.network.indices.ris3Alignment === null) {
+    console.log("  [OK] Tryb badawczy dla proba_1000 (Z-6): benchmark === null, ris3Alignment === null, brak zakazanych literałów symulowanych.");
   } else {
     console.error("  [FAIL] Niezgodność strukturalna wyników trybu badawczego dla Task 11 / Task 14!");
     hasError = true;
   }
 
   // 2. Asercja obecności oznaczeń symulacji w trybie DEMO
-  if (task11Demo.benchmark.eu27 && task11Demo.benchmark.eu27.includes("[DEMO / SYMULACJA]") &&
+  if (task11Demo.benchmark && JSON.stringify(task11Demo.benchmark).includes("[DEMO / SYMULACJA]") &&
       task14Demo.network.indices.ris3Alignment && task14Demo.network.indices.ris3Alignment.includes("[DEMO / SYMULACJA]")) {
     console.log("  [OK] Tryb DEMO dla Task 11 / Task 14 (Z-6): wskaźniki posiadają etykiety [DEMO / SYMULACJA].");
   } else {
@@ -469,6 +469,33 @@ function run() {
     console.log(`  [OK] Z-15 Rekomendacja JST ${sampleJst.region}: Interwencja=${sampleJst.interwencja}, Podmiot=${sampleJst.odpowiedzialnyPodmiot}, HITLStatus=${sampleJst.hitlStatus}.`);
   } else {
     console.error("  [FAIL] Brak prawidłowej struktury katalogu rekomendacji JST (Produkt 14.9)!");
+    hasError = true;
+  }
+
+  console.log("\n--- TESTY Z-16: PRODUKT 11.5 (BENCHMARK MIĘDZYNARODOWY POLSKI) I PRODUKT 14.5 (BENCHMARK NUTS 2) ---");
+  const etl = require('../tools/import_external_datasets');
+  const snapshotData = etl.loadExternalSnapshot();
+
+  if (snapshotData && snapshotData.polandNational && snapshotData.regionsNuts2) {
+    console.log(`  [OK] Z-16 Wczytano statyczny snapshot danych zewnętrznych GUS BDL / Eurostat (${Object.keys(snapshotData.regionsNuts2).length} województw NUTS 2).`);
+  } else {
+    console.error("  [FAIL] Błąd wczytywania snapshotu danych zewnętrznych!");
+    hasError = true;
+  }
+
+  const intBench = etl.getInternationalBenchmarkData();
+  if (intBench && intBench.status === 'OK' && intBench.v4Benchmark) {
+    console.log(`  [OK] Z-16 Benchmark międzynarodowy Polski: Indeks=${intBench.summaryInnovationIndex}, DystansUE=${intBench.distanceToEuAverage}, Czechy=${intBench.v4Benchmark.czechia}.`);
+  } else {
+    console.error("  [FAIL] Błąd wyliczania benchmarku międzynarodowego Polski (Produkt 11.5)!");
+    hasError = true;
+  }
+
+  const mazBench = etl.getEuropeanRegionalBenchmarkData('mazowieckie');
+  if (mazBench && mazBench.status === 'OK' && mazBench.structuralTwins) {
+    console.log(`  [OK] Z-16 Benchmark NUTS 2 mazowieckie: Klasa=${mazBench.risClass}, RegionyBliźniacze=${mazBench.structuralTwins.join(', ')}, RegionAspiracyjny=${mazBench.aspirationalRegion}.`);
+  } else {
+    console.error("  [FAIL] Błąd wyliczania europejskiego benchmarku regionów NUTS 2 (Produkt 14.5)!");
     hasError = true;
   }
 

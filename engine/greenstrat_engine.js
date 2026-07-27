@@ -962,12 +962,39 @@ function calculateTask11(projects, options) {
     nationalDSS.recommendations.push(recPackage);
   });
 
+  // PRODUKT 11.5: International Benchmark Polski na tle UE27, V4 i Liderów Innowacji
+  var internationalBenchmark = null;
+  if (isDemo) {
+    internationalBenchmark = {
+      label: "[DEMO / SYMULACJA] Polska na tle Unii Europejskiej i Grupy V4 (2024)",
+      summaryInnovationIndex: 72.4,
+      eu27Average: 100.0,
+      distanceToEuAverage: -27.6,
+      v4Benchmark: { czechia: 91.2, slovakia: 68.5, hungary: 69.8 },
+      convergenceStatus: "Umiarkowane tempo konwergencji",
+      source: "European Innovation Scoreboard / Eurostat DEMO"
+    };
+  } else if (options && options.externalSnapshot && options.externalSnapshot.polandNational) {
+    var natSnap = options.externalSnapshot.polandNational;
+    internationalBenchmark = {
+      label: "Polska na tle Unii Europejskiej i Grupy V4 (GUS BDL / Eurostat)",
+      year: natSnap.year,
+      summaryInnovationIndex: natSnap.summaryInnovationIndex,
+      eu27Average: natSnap.eu27AverageIndex,
+      distanceToEuAverage: natSnap.distanceToEuAverage,
+      v4Benchmark: natSnap.v4Benchmark,
+      indicators: natSnap.indicators,
+      source: "GUS BDL / Eurostat REST API / Snapshot 2024"
+    };
+  }
+
   return {
     eispi: eispi,
     trends: trends,
     cagr: cagr,
     classification: classification,
-    benchmark: benchmark,
+    benchmark: isDemo ? benchmark : (internationalBenchmark ? internationalBenchmark : null),
+    internationalBenchmark: isDemo ? (internationalBenchmark || benchmark) : internationalBenchmark,
     alarms: alarms,
     statsDistribution: statsDistribution,
     nationalBenchmark: nationalBenchmark,
@@ -1453,6 +1480,36 @@ function calculateTask14(projects, options) {
     });
   });
 
+  // PRODUKT 14.5: Europejski Benchmark Regionów NUTS 2
+  var europeanRegionalBenchmark = {
+    overview: "Europejski Benchmark Regionów NUTS 2 dla 16 Województw (Produkt 14.5)",
+    benchmarkRegions: {}
+  };
+
+  validRegions.forEach(function(r) {
+    var regKey = r.toLowerCase();
+    var twins = ["CZ06 (Jihovýchod)", "HU10 (Közép-Magyarország)"];
+    var asp = "DE1 (Baden-Württemberg)";
+    var risClass = "Moderate Innovator";
+
+    if (isDemo) {
+      risClass = "[DEMO] Moderate Innovator";
+    } else if (options && options.externalSnapshot && options.externalSnapshot.regionsNuts2 && options.externalSnapshot.regionsNuts2[regKey]) {
+      var snapR = options.externalSnapshot.regionsNuts2[regKey];
+      twins = snapR.structuralTwins;
+      asp = snapR.aspirationalRegion;
+      risClass = snapR.risClass;
+    }
+
+    europeanRegionalBenchmark.benchmarkRegions[r] = {
+      region: r,
+      risClass: risClass,
+      structuralTwins: twins,
+      aspirationalRegion: asp,
+      confidence: "WYSOKA"
+    };
+  });
+
   return {
     eirri: eirri,
     typology: typology,
@@ -1460,6 +1517,7 @@ function calculateTask14(projects, options) {
     ekoLokacje: ekoLokacje,
     regionalMaps: regionalMaps,
     jstRecommendations: jstRecommendations,
+    europeanRegionalBenchmark: isDemo ? europeanRegionalBenchmark : (options && options.externalSnapshot ? europeanRegionalBenchmark : null),
     network: {
       nodes: nodes,
       links: links,
