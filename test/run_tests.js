@@ -413,6 +413,28 @@ function run() {
     hasError = true;
   }
 
+  console.log("\n--- TESTY Z-13: MODUŁ WIELOFORMATOWEGO EKSPORTU DANYCH (BIGQUERY, DUCKDB, JSON-STAT, CSV) ---");
+  const sampleMatrix = task11Research.nationalBenchmark.entityMatrix;
+  const exporter = require('../tools/export_formats');
+
+  const csvOut = exporter.exportToCSV(sampleMatrix);
+  const ndjsonOut = exporter.exportToNDJSON(sampleMatrix);
+  const bqSqlOut = exporter.exportToBigQuerySQL(sampleMatrix, 'monitoring_test');
+  const jsonStatOut = exporter.exportToJSONStat(sampleMatrix, 'GREENSTRAT Test Cube');
+  const duckDbOut = exporter.exportToDuckDB(sampleMatrix, 'monitoring_duckdb');
+
+  if (csvOut.startsWith('\uFEFF') && ndjsonOut.includes('\n') && bqSqlOut.includes('CREATE OR REPLACE TABLE') &&
+      jsonStatOut.version === '2.0' && duckDbOut.includes('CREATE TABLE')) {
+    console.log(`  [OK] Z-13 Eksport CSV: ${csvOut.length} bajtów (UTF-8 BOM).`);
+    console.log(`  [OK] Z-13 Eksport Google BigQuery NDJSON: ${ndjsonOut.split('\n').length} wierszy.`);
+    console.log(`  [OK] Z-13 Schemat Google BigQuery GoogleSQL DDL wygenerowany poprawnie.`);
+    console.log(`  [OK] Z-13 Eksport JSON-Stat v2.0: ${jsonStatOut.value.length} wartości w sześcianie statystycznym.`);
+    console.log(`  [OK] Z-13 Skrypt DuckDB DDL wygenerowany poprawnie.`);
+  } else {
+    console.error("  [FAIL] Błąd generowania plików wieloformatowego eksportu!");
+    hasError = true;
+  }
+
   console.log("\n==================================================");
   console.log("  ZBIORCZA TABELA REGRESJI FAZY A (Z-1 DO Z-5)");
   console.log("==================================================");

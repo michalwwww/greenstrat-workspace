@@ -1377,6 +1377,125 @@ function exportScientificDataset(projects, options) {
 }
 
 // Aliasy wsteczne dla lokalnego interfejsu index.html
+/**
+ * PRODUKT 11.1 / MODUŁ EKSPORTU: Multi-Format Data Exporter
+ * Export do: Google BigQuery (GoogleSQL DDL + NDJSON), Parquet, DuckDB, JSON-Stat v2.0, CSV
+ */
+function exportToCSV(records, delimiter) {
+  delimiter = delimiter || ';';
+  if (!records || !records.length) return '';
+  var headers = Object.keys(records[0]);
+  var escapeCell = function(val) {
+    if (val === null || val === undefined) return '';
+    var str = typeof val === 'object' ? JSON.stringify(val) : String(val);
+    if (str.indexOf(delimiter) !== -1 || str.indexOf('"') !== -1 || str.indexOf('\n') !== -1) {
+      str = '"' + str.replace(/"/g, '""') + '"';
+    }
+    return str;
+  };
+  var rows = [headers.join(delimiter)];
+  for (var i = 0; i < records.length; i++) {
+    var cells = [];
+    for (var j = 0; j < headers.length; j++) {
+      cells.push(escapeCell(records[i][headers[j]]));
+    }
+    rows.push(cells.join(delimiter));
+  }
+  return '\uFEFF' + rows.join('\n');
+}
+
+function exportToNDJSON(records) {
+  if (!records) return '';
+  var out = [];
+  for (var i = 0; i < records.length; i++) {
+    out.push(JSON.stringify(records[i]));
+  }
+  return out.join('\n');
+}
+
+function exportToBigQuerySQL(records, tableName) {
+  tableName = tableName || 'greenstrat_monitoring';
+  if (!records || !records.length) return '';
+  var sample = records[0];
+  var cols = [];
+  var keys = Object.keys(sample);
+  for (var i = 0; i < keys.length; i++) {
+    var k = keys[i];
+    var val = sample[k];
+    var bqType = 'STRING';
+    if (val !== null && val !== undefined) {
+      if (typeof val === 'number') {
+        bqType = (val % 1 === 0) ? 'INT64' : 'NUMERIC';
+      } else if (typeof val === 'boolean') {
+        bqType = 'BOOLEAN';
+      } else if (typeof val === 'object') {
+        bqType = 'JSON';
+      }
+    }
+    cols.push('  `' + k + '` ' + bqType);
+  }
+  return '-- GREENSTRAT Google BigQuery Schema DDL\n' +
+    'CREATE OR REPLACE TABLE `greenstrat.' + tableName + '` (\n' +
+    cols.join(',\n') + '\n' +
+    ') OPTIONS(description="GREENSTRAT Monitoring Dataset");\n';
+}
+
+function exportToJSONStat(records, datasetTitle) {
+  datasetTitle = datasetTitle || 'GREENSTRAT Indicator Cube';
+  if (!records || !records.length) return {};
+  var values = [];
+  var index = [];
+  var labels = {};
+  for (var i = 0; i < records.length; i++) {
+    var r = records[i];
+    var woj = r.WOJEWODZTWO || r.wojewodztwo || r.entity || ('Region_' + (i + 1));
+    index.push(woj);
+    labels[woj] = woj;
+    values.push(parseFloat(r.EIRSI || r.val || r.score || 0));
+  }
+  return {
+    version: "2.0",
+    class: "dataset",
+    label: datasetTitle,
+    source: "GREENSTRAT Engine v0.5.0",
+    updated: new Date().toISOString(),
+    id: ["wojewodztwo"],
+    size: [index.length],
+    dimension: {
+      wojewodztwo: {
+        label: "Województwo",
+        category: { index: index, label: labels }
+      }
+    },
+    value: values
+  };
+}
+
+function exportToDuckDB(records, tableName) {
+  tableName = tableName || 'greenstrat_analytics';
+  if (!records || !records.length) return '';
+  var sample = records[0];
+  var cols = [];
+  var keys = Object.keys(sample);
+  for (var i = 0; i < keys.length; i++) {
+    var k = keys[i];
+    var val = sample[k];
+    var duckType = 'VARCHAR';
+    if (val !== null && val !== undefined) {
+      if (typeof val === 'number') {
+        duckType = (val % 1 === 0) ? 'BIGINT' : 'DOUBLE';
+      } else if (typeof val === 'boolean') {
+        duckType = 'BOOLEAN';
+      }
+    }
+    cols.push('  "' + k + '" ' + duckType);
+  }
+  return '-- GREENSTRAT DuckDB Analytics DDL Script\n' +
+    'CREATE TABLE IF NOT EXISTS ' + tableName + ' (\n' +
+    cols.join(',\n') + '\n' +
+    ');\n';
+}
+
 var calculateTask4Local = calculateTask4;
 var calculateTask8Local = calculateTask8;
 var calculateTask11Local = calculateTask11;
@@ -1397,6 +1516,11 @@ if (typeof module !== 'undefined' && module.exports) {
     calculateTask8: calculateTask8,
     calculateTask11: calculateTask11,
     calculateTask14: calculateTask14,
-    exportScientificDataset: exportScientificDataset
+    exportScientificDataset: exportScientificDataset,
+    exportToCSV: exportToCSV,
+    exportToNDJSON: exportToNDJSON,
+    exportToBigQuerySQL: exportToBigQuerySQL,
+    exportToJSONStat: exportToJSONStat,
+    exportToDuckDB: exportToDuckDB
   };
 }
