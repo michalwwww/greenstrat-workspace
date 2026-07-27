@@ -20,5 +20,7 @@ Wszystkie znaczące zmiany w tym projekcie będą dokumentowane w tym pliku.
 - INCYDENT — SyntaxError w index.html:5161 wykryty manualnie w przeglądarce po zamknięciu Fazy A; przyczyna: wisząca deklaracja `const trendsOptions = {` z niedokładnej edycji Z-3; naprawiono; dodano stały test walidacji składni klienta do siatki regresyjnej.
 - Z-6 — Usunięcie mutacji i fabrykacji ocen w parserze (Luka L.18): usunięto automatyczną korektę regresji TRL (`if (trlKoniec < trlStart) trlKoniec = trlStart`) oraz logikę `isCollinear` i wymuszanie `inn=trw=ef=trsf=0` dla `isEco=0` w parserze `uploadFile()` w `index.html`. Surowe dane przekazywane są bez zniekształceń bezpośrednio do bramki `validateProjects`, co przywraca 100% wykrywalności błędów E2 (30) oraz E5 (10) w walidacji przeglądarkowej. Z-6 zakończony sukcesem [PASS].
 - LUKA L.19 — Usunięcie blokowania całego importu w runGatekeeperValidation(): usunięto sprawdzenie biznesowe `TRL_KONIEC < TRL_START` oraz niespójności ekoinnowacyjnej ze starej funkcji `runGatekeeperValidation()`, które uniemożliwiały dotarcie pliku do bramki walidacyjnej Z-4 (`validateProjects`). Logika odrzucania poszczególnych wierszy (kod E5) leży wyłącznie w Gestorze Z-4, pozwalając na przyjęcie 880 poprawnych rekordów i zareportowanie 120 błędów w teście T7.
+- TEST D.11 — Próg przetwarzania lokalnego: Test D.11: próg lokalny testowany na 1000 (sukces chmury, 3,3s) i 5000 (timeout 15s, fallback lokalny) — potwierdzona granica przepustowości serwera między tymi wartościami. Próg przywrócony do kanonicznej wartości 500 wierszy.
+
 
 
