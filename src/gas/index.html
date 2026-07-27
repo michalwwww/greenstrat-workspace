@@ -2953,6 +2953,8 @@
       });
     }
 
+    let currentLoadedFileName = 'Brak_nazwy_pliku.xlsx';
+
     // Send background log event to cloud
     function sendCloudLog(logAction, status, message, duration) {
       const url = document.getElementById('endpointUrl') ? document.getElementById('endpointUrl').value.trim() : '';
@@ -2965,6 +2967,7 @@
         body: JSON.stringify({
           action: "logEvent",
           logAction: logAction,
+          fileName: currentLoadedFileName,
           status: status || "SUCCESS",
           message: message || "",
           duration: duration || 0
@@ -3003,7 +3006,9 @@
             const time = new Date(log.timestamp).toLocaleString('pl-PL');
             const colorClass = log.status === 'ERROR' ? 'text-red-500' : 'text-green-500';
             const actionText = log.action.padEnd(20, ' ');
-            const durationText = `${log.duration}ms`.padStart(6, ' ');
+            const durMs = log.duration || 0;
+            const durSec = (durMs / 1000).toFixed(2);
+            const durationText = `${durMs}ms (${durSec}s)`.padStart(16, ' ');
             
             terminal.innerHTML += `
               <span>
@@ -3121,6 +3126,7 @@
     }
 
     function handleFile(file) {
+      currentLoadedFileName = file.name || 'nieznany_plik.xlsx';
       document.getElementById('fileName').textContent = file.name;
       document.getElementById('fileSize').textContent = `${(file.size / 1024).toFixed(1)} KB`;
       document.getElementById('fileDetails').classList.remove('hidden');
@@ -3507,6 +3513,7 @@
             signal: controller.signal,
             body: JSON.stringify({
               action: "upload",
+              fileName: currentLoadedFileName,
               projects: cleanProjects
             })
           })

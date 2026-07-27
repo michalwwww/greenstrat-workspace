@@ -118,11 +118,17 @@ function doPost(e) {
     
     // Default action: upload and process
     var incomingProjects = payload.projects || [];
+    var fileName = payload.fileName || 'nieznany_plik.xlsx';
     if (incomingProjects.length === 0) {
       throw new Error("Brak danych projektów do przetworzenia.");
     }
     
-    logToSheet('DATA_INGEST_START', null, 'SUCCESS', 'Rozpoczęto import ' + incomingProjects.length + ' wierszy.', new Date().getTime() - startTime);
+    var formatDur = function() {
+      var ms = new Date().getTime() - startTime;
+      return ms + 'ms (' + (ms / 1000).toFixed(2) + 's)';
+    };
+
+    logToSheet('DATA_INGEST_START', null, 'SUCCESS', 'Rozpoczęto import ' + incomingProjects.length + ' wierszy [Plik: ' + fileName + '].', new Date().getTime() - startTime);
     
     // 1. Semantic AI Categorization using Gemini with local rule fallback
     var processedCount = 0;
@@ -135,7 +141,7 @@ function doPost(e) {
       processedCount++;
     }
     
-    logToSheet('AI_CLASSIFICATION', null, 'SUCCESS', 'Sklasyfikowano semantycznie ' + processedCount + ' projektów.', new Date().getTime() - startTime);
+    logToSheet('AI_CLASSIFICATION', null, 'SUCCESS', 'Sklasyfikowano semantycznie ' + processedCount + ' projektów [Plik: ' + fileName + '] (Łączny czas: ' + formatDur() + ').', new Date().getTime() - startTime);
     
     // 2. Bramka Walidacyjna Z-4 (Luka 11.1.e) - DOWÓD WPIĘCIA SERWERA
     var existingProjects = getAllProjectsFromSheet();
@@ -149,7 +155,7 @@ function doPost(e) {
     
     // Storage in Master Ledger (WYŁĄCZNIE przyjęte rekordy)
     writeProjectsToSheet(validProjects);
-    logToSheet('DATA_STORAGE', null, 'SUCCESS', 'Zapisano ' + validProjects.length + ' przyjętych rekordów w arkuszu Projects (odrzucono: ' + validationResult.report.rejectedCount + ').', new Date().getTime() - startTime);
+    logToSheet('DATA_STORAGE', null, 'SUCCESS', 'Zapisano ' + validProjects.length + ' przyjętych rekordów w arkuszu Projects (odrzucono: ' + validationResult.report.rejectedCount + ') [Plik: ' + fileName + '] (Łączny czas: ' + formatDur() + ').', new Date().getTime() - startTime);
     
     // Raport odrzuceń i lista odrzuceń w odpowiedzi JSON
     response.validationReport = validationResult.report;
@@ -164,7 +170,7 @@ function doPost(e) {
     response.task14 = calculateTask14(allProjects);
     response.message = 'Dane pomyślnie zaimportowane i przeliczone.';
     
-    logToSheet('CALCULATE_INDICES', null, 'SUCCESS', 'Wyliczono wskaźniki dla łącznie ' + allProjects.length + ' projektów.', new Date().getTime() - startTime);
+    logToSheet('CALCULATE_INDICES', null, 'SUCCESS', 'Wyliczono wskaźniki dla łącznie ' + allProjects.length + ' projektów [Plik: ' + fileName + '] (Łączny czas: ' + formatDur() + ').', new Date().getTime() - startTime);
     
   } catch (err) {
     var duration = new Date().getTime() - startTime;
