@@ -87,6 +87,8 @@
 * **Z-11 (Faza B):** Produkt 11.8 (Krajowy Deterministyczny DSS w modelu Human-in-the-Loop). Zaimplementowano generator pakietów rekomendacji decyzyjnych w silniku z 3 wariantami akcji, przewidywanym wpływem, bezpiecznikiem niskiej bazy oraz rygorem akceptacji eksperckiej (HITL).
 * **Z-12 (Faza B):** Produkt 14.7 (Regionalny DSS z Bezpiecznikiem i Wariantami Fallback). Zaimplementowano generator rekomendacji dla 16 województw zasilany 6 filarami EIRRI i klastrami archetypowymi, z bezpiecznikiem niepewności uruchamiającym wariant rezerwowy (fallback) i rygorem HITL.
 * **Z-13 (Faza B):** Moduł Wieloformatowego Eksportu Danych (Produkt 11.1 / BigQuery, Parquet, DuckDB, JSON-Stat v2.0, CSV). Wdrożono `tools/export_formats.js` umożliwiający bezstratny eksport zbiorów do schematu Google BigQuery GoogleSQL DDL, ładunków NDJSON dla Looker Studio, plików Parquet, baz DuckDB, standardu JSON-Stat v2.0 oraz CSV (z UTF-8 BOM).
+* **Z-14 (Faza B):** Produkt 14.8 (Model EKO_Lokacji i Katalog 17 Bazowych Instrumentów Wsparcia). Wdrożono w `calculateTask14` wyliczanie macierzy EKO_Lokacji per województwo oraz słownik 17 bazowych typów interwencji z pliku `docs/Odpowiedzi na pytania.docx.txt`, z bezpiecznikiem niestabilności wymuszającym Model Sieciowy / Mobilny (Pilotażowy) przy niepewnej bazie.
+
 
 
 

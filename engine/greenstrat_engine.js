@@ -1277,9 +1277,37 @@ function calculateTask14(projects, options) {
   });
 
   // PRODUKT 14.7: Regionalny DSS z Bezpiecznikiem Niepewności i Wariantami Fallback
+  // Słownik bazowy 17 instrumentów wsparcia GREENSTRAT (Odpowiedzi na pytania / Pytanie 2)
+  var baseInstrumentCatalog = [
+    { id: 1, name: "Dotacje na B+R / Proof of Concept", trl: "1-6", target: "MŚP, startupy, konsorcja naukowo-przemysłowe", barrier: "Wysokie ryzyko technologiczne" },
+    { id: 2, name: "Bony na innowacje i usługi B+R", trl: "3-7", target: "Mikro i MŚP", barrier: "Brak zaplecza badawczego" },
+    { id: 3, name: "Audyty technologiczne, energetyczne i GOZ", trl: "Ścieżka wdrożenia", target: "MŚP, duże firmy", barrier: "Brak wiedzy o potencjale optymalizacyjnym" },
+    { id: 4, name: "Doradztwo regulacyjne, certyfikacyjne i IP", trl: "6-9", target: "MŚP, startupy", barrier: "Skomplikowane otoczenie prawne (ESG, Taksonomia UE)" },
+    { id: 5, name: "Preferencyjne pożyczki na ekoinnowacje", trl: "8-9", target: "MŚP, duże firmy, spółki komunalne", barrier: "Wysoki koszt kapitału" },
+    { id: 6, name: "Gwarancje i poręczenia finansowania", trl: "7-9", target: "MŚP, startupy", barrier: "Brak zabezpieczeń majątkowych" },
+    { id: 7, name: "Instrumenty kapitałowe (VC / Equity)", trl: "4-9", target: "Startupy, spin-offy", barrier: "Brak kapitału wysokiego ryzyka" },
+    { id: 8, name: "Finansowanie pilotaży i demonstratorów", trl: "6-8", target: "MŚP, duże firmy, konsorcja", barrier: "Dolina śmierci komercjalizacji" },
+    { id: 9, name: "Wsparcie transferu technologii, komercjalizacji i współpracy nauka-biznes", trl: "3-7", target: "Uczelnie, CTT, spin-offy", barrier: "Luka komercjalizacyjna" },
+    { id: 10, name: "Living Labs (Żywe Laboratoria)", trl: "5-8", target: "Przedsiębiorstwa, JST, IOB", barrier: "Brak testowania z końcowymi użytkownikami" },
+    { id: 11, name: "Regulatory Sandboxes (Piaskownice Regulacyjne)", trl: "6-8", target: "Startupy, konsorcja", barrier: "Bariery administracyjne" },
+    { id: 12, name: "Zielone Zamówienia Publiczne (GPP)", trl: "8-9", target: "MŚP, dostawcy zielonych technologii", barrier: "Brak rynku referencyjnego" },
+    { id: 13, name: "Zamówienia przedkomercyjne i innowacyjne (PCP / PPI)", trl: "3-9", target: "Konsorcja B+R", barrier: "Brak gotowych rozwiązań dla wyzwań publicznych" },
+    { id: 14, name: "Rozbudowa infrastruktury B+R, testowej i centrów kompetencji", trl: "1-9", target: "Uczelnie, IOB, parki technologiczne", barrier: "Brak aparatury badawczej" },
+    { id: 15, name: "Regionalne punkty obsługi ekoinnowacji (One-Stop-Shop)", trl: "Koordynacja", target: "MŚP, lokalni innowatorzy", barrier: "Rozproszenie informacji" },
+    { id: 16, name: "Wsparcie skalowania, internacjonalizacji i ekspansji rynkowej", trl: "9", target: "Dojrzałe MŚP", barrier: "Mała skala rynku lokalnego" },
+    { id: 17, name: "Programy podnoszenia kompetencji i szkoleń (Kapitał Ludzki)", trl: "Szkolenia", target: "Pracownicy MŚP, kadra IOB", barrier: "Brak kadr technicznych" }
+  ];
+
   var regionalDSS = {
     overview: "Regionalny Deterministyczny System Wspomagania Decyzji (Regionalny DSS) — Model Human-in-the-Loop",
+    baseInstrumentCatalog: baseInstrumentCatalog,
     recommendations: []
+  };
+
+  // PRODUKT 14.8: Model EKO_Lokacji (Hub, GOZ, Komercjalizacja, Model Sieciowy / Mobilny)
+  var ekoLokacje = {
+    overview: "Model Funkcjonalno-Organizacyjny EKO_Lokacji per Województwo",
+    matrix: []
   };
 
   validRegions.forEach(function(r) {
@@ -1289,12 +1317,25 @@ function calculateTask14(projects, options) {
     var sensRange = eInfo.sensitivityRange;
     var def = regTyp.dominantDeficit;
 
+    var matchedInstrument = baseInstrumentCatalog[0];
     var primaryAction = "Rozwój zrównoważonego ekosystemu innowacji.";
-    if (def === 'innovative') primaryAction = "Stymulowanie transferu technologii i budowanie konsorcjów Nauka-Biznes.";
-    else if (def === 'environmental') primaryAction = "Priorytetyzacja projektów o wyższym cyklu życia LCA i efekcie ekologicznym.";
-    else if (def === 'absorption') primaryAction = "Rozbudowa regionalnego doradztwa dla MŚP oraz uproszczenie procedur naboru.";
-    else if (def === 'implementation') primaryAction = "Wsparcie wdrożeń B+R na poziomach TRL 6-9 i komercjalizacja wyników.";
-    else if (def === 'institutional') primaryAction = "Wzmocnienie potencjału instytucjonalnego oraz animowanie klastrów regionalnych.";
+
+    if (def === 'innovative') {
+      matchedInstrument = baseInstrumentCatalog[8]; // TT i nauka-biznes
+      primaryAction = "Stymulowanie transferu technologii i budowanie konsorcjów Nauka-Biznes.";
+    } else if (def === 'environmental') {
+      matchedInstrument = baseInstrumentCatalog[2]; // Audyty GOZ
+      primaryAction = "Priorytetyzacja projektów o wyższym cyklu życia LCA i efekcie ekologicznym.";
+    } else if (def === 'absorption') {
+      matchedInstrument = baseInstrumentCatalog[14]; // One-Stop-Shop
+      primaryAction = "Rozbudowa regionalnego doradztwa dla MŚP oraz uproszczenie procedur naboru.";
+    } else if (def === 'implementation') {
+      matchedInstrument = baseInstrumentCatalog[7]; // Pilotaże i demonstratory
+      primaryAction = "Wsparcie wdrożeń B+R na poziomach TRL 6-9 i komercjalizacja wyników.";
+    } else if (def === 'institutional') {
+      matchedInstrument = baseInstrumentCatalog[13]; // Rozbudowa infrastruktury IOB
+      primaryAction = "Wzmocnienie potencjału instytucjonalnego oraz animowanie klastrów regionalnych.";
+    }
 
     var fallbackOption = "Wariant standardowy: bieżący monitoring wskaźników z możliwością elastycznego przesunięcia alokacji o max 10%.";
     var requiresPilot = false;
@@ -1314,10 +1355,47 @@ function calculateTask14(projects, options) {
       sensitivityRange: sensRange,
       dominantStrength: regTyp.dominantStrength,
       dominantDeficit: regTyp.dominantDeficit,
+      recommendedInstrument: matchedInstrument.name + " (TRL: " + matchedInstrument.trl + ")",
       primaryIntervention: primaryAction,
       fallbackOption: fallbackOption,
       requiresPilot: requiresPilot,
-      hitlStatus: "AUTOMATYCZNA" // Domyślna propozycja systemowa do weryfikacji eksperckiej
+      hitlStatus: "AUTOMATYCZNA"
+    });
+
+    // Wdrożenie Produktu 14.8: Model EKO_Lokacji z bezpiecznikiem stabilności
+    var ekoModel = "Centrum Doradztwa MŚP i Wspierania JST";
+    var ekoLocation = "Węzeł regionalny w stolicy województwa";
+    var ekoServices = "Doradztwo projektowe, audyty GOZ, One-Stop-Shop dla MŚP.";
+    var isUnstableOrBaseEffect = uncert === 'WYSOKI' || sensRange > 12;
+
+    if (isUnstableOrBaseEffect) {
+      // Bezpiecznik Produktu 14.8: Niestabilny wynik -> Model Sieciowy / Mobilny (Pilotażowy)
+      ekoModel = "Model Sieciowy / Mobilny (Pilotażowy)";
+      ekoLocation = "Współdzielona infrastruktura IOB / Punkty mobilne w regionie";
+      ekoServices = "Pilotażowe doradztwo mobilne, sieciowanie podmiotów, ewaluacja potencjału.";
+    } else if (regTyp.clusterId === 1) {
+      ekoModel = "Hub Transferu Technologii i Komercjalizacji B+R";
+      ekoLocation = "Park Naukowo-Technologiczny / Kampus Akademicki";
+      ekoServices = "Komercjalizacja B+R, akceleracja startupów, ochrona IP, Living Labs.";
+    } else if (regTyp.clusterId === 2) {
+      ekoModel = "Centrum GOZ i Efektywności Zasobowej";
+      ekoLocation = "Przemysłowy park technologiczny / Węzeł subregionalny";
+      ekoServices = "Audyty energetyczne, dekarbonizacja przemysłu, symbioza przemysłowa.";
+    }
+
+    ekoLokacje.matrix.push({
+      region: r,
+      clusterId: regTyp.clusterId,
+      archetype: regTyp.archetypeName,
+      recommendedModel: ekoModel,
+      locationVariant: ekoLocation,
+      targetAudience: matchedInstrument.target,
+      keyServices: ekoServices,
+      appliedInstruments: [matchedInstrument.name, "Bony na innowacje B+R", "Audyty GOZ"],
+      keyKPIs: ["Liczba wspartych MŚP", "Przyrost TRL", "Liczba komercjalizacji"],
+      predictedImpact: "Wzrost zdolności absorpcyjnej i wdrożeniowej ekoinnowacji w regionie.",
+      risks: isUnstableOrBaseEffect ? ["Wysoka wrażliwość na niepewność wyników — zalecany wariant pilotażowy."] : ["Standardowe ryzyka operacyjne."],
+      hitlStatus: "AUTOMATYCZNA"
     });
   });
 
@@ -1325,6 +1403,7 @@ function calculateTask14(projects, options) {
     eirri: eirri,
     typology: typology,
     regionalDSS: regionalDSS,
+    ekoLokacje: ekoLokacje,
     network: {
       nodes: nodes,
       links: links,

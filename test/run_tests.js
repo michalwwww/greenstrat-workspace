@@ -435,6 +435,23 @@ function run() {
     hasError = true;
   }
 
+  console.log("\n--- TESTY Z-14: PRODUKT 14.8 MODEL EKO_LOKACJI I KATALOG 17 INSTRUMENTÓW ---");
+  const ekoLok = task14Research.ekoLokacje;
+
+  if (ekoLok && Array.isArray(ekoLok.matrix) && ekoLok.matrix.length === 16) {
+    const sampleEko = ekoLok.matrix[0];
+    console.log(`  [OK] Z-14 Model EKO_Lokacji wyznaczony dla ${ekoLok.matrix.length} województw.`);
+    if (sampleEko && sampleEko.recommendedModel && sampleEko.locationVariant && sampleEko.hitlStatus === "AUTOMATYCZNA") {
+      console.log(`  [OK] Z-14 EKO_Lokacja ${sampleEko.region}: Model=${sampleEko.recommendedModel}, Lokalizacja=${sampleEko.locationVariant}, Odbiorcy=${sampleEko.targetAudience}.`);
+    } else {
+      console.error("  [FAIL] Brak modelu lub wariantu lokalizacji w wyniku EKO_Lokacji!");
+      hasError = true;
+    }
+  } else {
+    console.error("  [FAIL] Brak prawidłowej struktury EKO_Lokacji (Produkt 14.8)!");
+    hasError = true;
+  }
+
   console.log("\n==================================================");
   console.log("  ZBIORCZA TABELA REGRESJI FAZY A (Z-1 DO Z-5)");
   console.log("==================================================");
