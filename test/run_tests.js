@@ -396,6 +396,23 @@ function run() {
     hasError = true;
   }
 
+  console.log("\n--- TESTY Z-12: PRODUKT 14.7 REGIONALNY DSS Z BEZPIECZNIKIEM I FALLBACK ---");
+  const regDSS = task14Research.regionalDSS;
+
+  if (regDSS && Array.isArray(regDSS.recommendations) && regDSS.recommendations.length > 0) {
+    const mazRec = regDSS.recommendations.find(r => r.region === 'mazowieckie') || regDSS.recommendations[0];
+    console.log(`  [OK] Z-12 Regionalny DSS wygenerował rekomendacje dla ${regDSS.recommendations.length} regionów.`);
+    if (mazRec && mazRec.primaryIntervention && mazRec.fallbackOption && mazRec.hitlStatus === "AUTOMATYCZNA") {
+      console.log(`  [OK] Z-12 Rekomendacja regionalna ${mazRec.region}: Archetyp=${mazRec.archetype}, EIRRIScore=${mazRec.eirriScore}, Niepewność=${mazRec.uncertaintyLevel}, HITLStatus=${mazRec.hitlStatus}.`);
+    } else {
+      console.error("  [FAIL] Brak wariantu głównego lub fallback w rekomendacji Regionalnego DSS!");
+      hasError = true;
+    }
+  } else {
+    console.error("  [FAIL] Brak prawidłowej struktury Regionalnego DSS (Produkt 14.7)!");
+    hasError = true;
+  }
+
   console.log("\n==================================================");
   console.log("  ZBIORCZA TABELA REGRESJI FAZY A (Z-1 DO Z-5)");
   console.log("==================================================");

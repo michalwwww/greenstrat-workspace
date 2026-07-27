@@ -1276,9 +1276,55 @@ function calculateTask14(projects, options) {
     typology.clusters[bestArchetype.id.toString()].regions.push(r);
   });
 
+  // PRODUKT 14.7: Regionalny DSS z Bezpiecznikiem Niepewności i Wariantami Fallback
+  var regionalDSS = {
+    overview: "Regionalny Deterministyczny System Wspomagania Decyzji (Regionalny DSS) — Model Human-in-the-Loop",
+    recommendations: []
+  };
+
+  validRegions.forEach(function(r) {
+    var eInfo = eirri[r];
+    var regTyp = typology.regionTypologyMap[r];
+    var uncert = eInfo.uncertaintyLevel;
+    var sensRange = eInfo.sensitivityRange;
+    var def = regTyp.dominantDeficit;
+
+    var primaryAction = "Rozwój zrównoważonego ekosystemu innowacji.";
+    if (def === 'innovative') primaryAction = "Stymulowanie transferu technologii i budowanie konsorcjów Nauka-Biznes.";
+    else if (def === 'environmental') primaryAction = "Priorytetyzacja projektów o wyższym cyklu życia LCA i efekcie ekologicznym.";
+    else if (def === 'absorption') primaryAction = "Rozbudowa regionalnego doradztwa dla MŚP oraz uproszczenie procedur naboru.";
+    else if (def === 'implementation') primaryAction = "Wsparcie wdrożeń B+R na poziomach TRL 6-9 i komercjalizacja wyników.";
+    else if (def === 'institutional') primaryAction = "Wzmocnienie potencjału instytucjonalnego oraz animowanie klastrów regionalnych.";
+
+    var fallbackOption = "Wariant standardowy: bieżący monitoring wskaźników z możliwością elastycznego przesunięcia alokacji o max 10%.";
+    var requiresPilot = false;
+
+    // Bezpiecznik niepewności (Produkt 14.7)
+    if (uncert === 'WYSOKI') {
+      primaryAction = "Wstrzymanie radykalnej redystrybucji alokacji ze względu na wysoki poziom niepewności wariantu ważenia (Zakres: " + sensRange + ").";
+      fallbackOption = "Wdrożenie wariantu bezpiecznego (fallback): rozszerzony przegląd metodologiczny, pilotażowe testowanie priorytetów oraz dodatkowa ewaluacja ekspercka.";
+      requiresPilot = true;
+    }
+
+    regionalDSS.recommendations.push({
+      region: r,
+      archetype: regTyp.archetypeName,
+      eirriScore: eInfo.score,
+      uncertaintyLevel: uncert,
+      sensitivityRange: sensRange,
+      dominantStrength: regTyp.dominantStrength,
+      dominantDeficit: regTyp.dominantDeficit,
+      primaryIntervention: primaryAction,
+      fallbackOption: fallbackOption,
+      requiresPilot: requiresPilot,
+      hitlStatus: "AUTOMATYCZNA" // Domyślna propozycja systemowa do weryfikacji eksperckiej
+    });
+  });
+
   return {
     eirri: eirri,
     typology: typology,
+    regionalDSS: regionalDSS,
     network: {
       nodes: nodes,
       links: links,

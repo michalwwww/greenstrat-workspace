@@ -85,6 +85,8 @@
 * **Z-9 (Faza B):** Produkt 11.4 (Benchmark Krajowy w 5 klasach statystycznych). Zaimplementowano klasyfikację podmiotów i regionów do 5 klas benchmarkowych (*Liderzy systemowi*, *Ponadprzeciętni*, *Poziom referencyjny*, *Wymagający poprawy*, *Krytyczni*) z percentile distribution ($P10$, $P25$, $P75$, $P90$) oraz z bezpiecznikiem blokującym sztucznego Lidera przy braku dywersyfikacji.
 * **Z-10 (Faza B):** Produkt 14.3 (Typologia Regionalna i Klasteryzacja na 6 filarach EIRRI). Zaimplementowano klasteryzację 16 województw do 4 archetypów rozwoju ekoinnowacyjnego na wektorach 6D, z wyliczaną odległością od centroidu, głównym atutem, deficytem i typem rekomendowanej interwencji publicznej.
 * **Z-11 (Faza B):** Produkt 11.8 (Krajowy Deterministyczny DSS w modelu Human-in-the-Loop). Zaimplementowano generator pakietów rekomendacji decyzyjnych w silniku z 3 wariantami akcji, przewidywanym wpływem, bezpiecznikiem niskiej bazy oraz rygorem akceptacji eksperckiej (HITL).
+* **Z-12 (Faza B):** Produkt 14.7 (Regionalny DSS z Bezpiecznikiem i Wariantami Fallback). Zaimplementowano generator rekomendacji dla 16 województw zasilany 6 filarami EIRRI i klastrami archetypowymi, z bezpiecznikiem niepewności uruchamiającym wariant rezerwowy (fallback) i rygorem HITL.
+
 
 
 
