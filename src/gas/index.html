@@ -3031,7 +3031,7 @@
 
     // Ingest demo data
     function importDemoData() {
-      
+      currentLoadedFileName = 'GREENSTRAT_proba_demo_100.xlsx';
       // Set raw data to clean demo projects
       rawSheetData = getCleanSampleData();
       document.getElementById('filteringPanel').classList.add('hidden'); // Hide filter panel for demo data
@@ -3489,7 +3489,8 @@
             const duration = Date.now() - startTime;
 
             const logAction = cleanProjects.length > 500 ? 'LOCAL_INGEST_LARGE' : 'LOCAL_INGEST_OFFLINE';
-            const logMsg = `Przetworzono lokalnie: ${cleanProjects.length} wierszy (Przyjęto: ${validProjects.length}, Odrzucono: ${valReport.rejectedCount}).`;
+            const secStr = (duration / 1000).toFixed(2);
+            const logMsg = `Przetworzono lokalnie: ${cleanProjects.length} wierszy (Przyjęto: ${validProjects.length}, Odrzucono: ${valReport.rejectedCount}) [Plik: ${currentLoadedFileName}] (Czas: ${duration}ms / ${secStr}s).`;
             sendCloudLog(logAction, 'SUCCESS', logMsg, duration);
 
             if (cleanProjects.length > 500 && endpoint) {
@@ -3542,8 +3543,14 @@
             clearTimeout(timeoutId);
             console.error(err);
             document.getElementById('processingLoader').classList.add('hidden');
-            // Local processing fallback if network fails or times out
+            
+            const startTime = Date.now();
             runLocalProcessing(cleanProjects);
+            const duration = Date.now() - startTime;
+            const secStr = (duration / 1000).toFixed(2);
+            const logMsg = `Przetworzono lokalnie (Fallback Offline): ${cleanProjects.length} wierszy [Plik: ${currentLoadedFileName}] (Czas: ${duration}ms / ${secStr}s). Błąd: ${err.message}`;
+            sendCloudLog('LOCAL_INGEST_OFFLINE', 'WARNING', logMsg, duration);
+
             alert("Błąd połączenia z chmurą lub przekroczenie limitu czasu: " + err.message + "\n\nSystem automatycznie przełączył się w tryb LOKALNY OFFLINE. Analizy zostały zrealizowane bezpośrednio w Twojej przeglądarce.");
           });
         }
