@@ -83,6 +83,8 @@
 * **Z-7 (Faza B):** Produkt 14.2 (Realny Indeks Gotowości EIRRI w 6 filarach). Zaimplementowano 6-filarowy model empiryczny EIRRI (gospodarczy, naukowo-innowacyjny, absorpcyjny, wdrożeniowy, środowiskowo-transformacyjny, instytucjonalny). Zaimplementowano wagi PCA (Decyzja D.2), 3 warianty ważenia (equal, pca, expert), zakres wrażliwości oraz poziom niepewności w silniku.
 * **Z-8 (Faza B):** Produkt 11.7 (System progów z rozkładów i Rejestr Alarmów). Zaimplementowano dynamiczne progi ostrzegawcze ($P25$/$Q1$) i krytyczne ($P10$/$IQR$) z rozkładów statystycznych, rejestr alarmów z 3 kolorami (`ZIELONY`, `ŻÓŁTY`, `CZERWONY`), wskaźnikami trwałości, poziomami wiarygodności, flagą `baseEffect` oraz wyliczaniem wartości bez obserwacji dominującej.
 * **Z-9 (Faza B):** Produkt 11.4 (Benchmark Krajowy w 5 klasach statystycznych). Zaimplementowano klasyfikację podmiotów i regionów do 5 klas benchmarkowych (*Liderzy systemowi*, *Ponadprzeciętni*, *Poziom referencyjny*, *Wymagający poprawy*, *Krytyczni*) z percentile distribution ($P10$, $P25$, $P75$, $P90$) oraz z bezpiecznikiem blokującym sztucznego Lidera przy braku dywersyfikacji.
+* **Z-10 (Faza B):** Produkt 14.3 (Typologia Regionalna i Klasteryzacja na 6 filarach EIRRI). Zaimplementowano klasteryzację 16 województw do 4 archetypów rozwoju ekoinnowacyjnego na wektorach 6D, z wyliczaną odległością od centroidu, głównym atutem, deficytem i typem rekomendowanej interwencji publicznej.
+
 
 
 

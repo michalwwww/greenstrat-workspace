@@ -4699,8 +4699,97 @@ function calculateTask14(projects, options) {
     ? Math.round((collaborationIndex + networkStrength + knowledgeTransfer + connectivityIndex + 82) / 5)
     : Math.round((collaborationIndex + networkStrength + knowledgeTransfer + connectivityIndex) / 4);
   
+  // PRODUKT 14.3: Typologia Regionalna i Klasteryzacja na 6 Filarach EIRRI
+  var archetypes = [
+    {
+      id: 1,
+      name: 'Liderzy Transformacji Ekoinnowacyjnej',
+      centroid: { environmental: 85, implementation: 85, innovative: 85, economic: 75, absorption: 80, institutional: 85 },
+      action: 'Skalowanie komercjalizacji B+R oraz eksport technologii zielonych.'
+    },
+    {
+      id: 2,
+      name: 'Przemysłowe Regiony Absorpcyjne',
+      centroid: { environmental: 60, implementation: 70, innovative: 60, economic: 85, absorption: 85, institutional: 70 },
+      action: 'Zwiększanie udziału partnerstw Nauka-Biznes i dekarbonizacja przemysłu.'
+    },
+    {
+      id: 3,
+      name: 'Regiony Umiarkowanego Potencjału Rynkowego',
+      centroid: { environmental: 60, implementation: 60, innovative: 60, economic: 60, absorption: 60, institutional: 60 },
+      action: 'Wsparcie budowy konsorcjów oraz stymulowanie popytu na ekoinnowacje.'
+    },
+    {
+      id: 4,
+      name: 'Regiony Wymagające Wsparcia Strukturalnego',
+      centroid: { environmental: 40, implementation: 40, innovative: 40, economic: 40, absorption: 40, institutional: 40 },
+      action: 'Dedykowane wsparcie zdolności absorpcyjnej i doradztwo projektowe.'
+    }
+  ];
+
+  var typology = {
+    clusters: {
+      '1': { archetypeName: archetypes[0].name, regions: [] },
+      '2': { archetypeName: archetypes[1].name, regions: [] },
+      '3': { archetypeName: archetypes[2].name, regions: [] },
+      '4': { archetypeName: archetypes[3].name, regions: [] }
+    },
+    regionTypologyMap: {}
+  };
+
+  validRegions.forEach(function(r) {
+    var pots = eirri[r].potentials;
+    var vec = {
+      environmental: pots.environmental,
+      implementation: pots.implementation,
+      innovative: pots.innovative,
+      economic: pots.economic,
+      absorption: pots.absorption,
+      institutional: pots.institutional
+    };
+
+    var minDistance = Infinity;
+    var bestArchetype = archetypes[2]; // default
+
+    archetypes.forEach(function(arch) {
+      var distSq = 0;
+      Object.keys(arch.centroid).forEach(function(k) {
+        var diff = vec[k] - arch.centroid[k];
+        distSq += diff * diff;
+      });
+      var dist = Math.sqrt(distSq);
+      if (dist < minDistance) {
+        minDistance = dist;
+        bestArchetype = arch;
+      }
+    });
+
+    var pillarKeys = Object.keys(vec);
+    var maxKey = pillarKeys[0], maxVal = vec[pillarKeys[0]];
+    var minKey = pillarKeys[0], minVal = vec[pillarKeys[0]];
+
+    pillarKeys.forEach(function(k) {
+      if (vec[k] > maxVal) { maxVal = vec[k]; maxKey = k; }
+      if (vec[k] < minVal) { minVal = vec[k]; minKey = k; }
+    });
+
+    var regInfo = {
+      voivodeship: r,
+      clusterId: bestArchetype.id,
+      archetypeName: bestArchetype.name,
+      distanceToCenter: Math.round(minDistance * 10) / 10,
+      dominantStrength: maxKey,
+      dominantDeficit: minKey,
+      recommendedInterventionType: bestArchetype.action
+    };
+
+    typology.regionTypologyMap[r] = regInfo;
+    typology.clusters[bestArchetype.id.toString()].regions.push(r);
+  });
+
   return {
     eirri: eirri,
+    typology: typology,
     network: {
       nodes: nodes,
       links: links,

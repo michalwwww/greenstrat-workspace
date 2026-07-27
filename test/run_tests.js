@@ -364,6 +364,21 @@ function run() {
     hasError = true;
   }
 
+  console.log("\n--- TESTY Z-10: PRODUKT 14.3 TYPOLOGIA REGIONALNA I KLASTERYZACJA Z 6 FILARAMI ---");
+  const typology = task14Research.typology;
+
+  if (typology && typology.clusters && typology.regionTypologyMap &&
+      typology.clusters['1'] && typology.clusters['2'] && typology.clusters['3'] && typology.clusters['4']) {
+    const regMaz = typology.regionTypologyMap['mazowieckie'];
+    console.log(`  [OK] Z-10 Typologia klastrowa 16 województw: K1=${typology.clusters['1'].regions.length}, K2=${typology.clusters['2'].regions.length}, K3=${typology.clusters['3'].regions.length}, K4=${typology.clusters['4'].regions.length}.`);
+    if (regMaz) {
+      console.log(`  [OK] Z-10 Mazowieckie: Archetyp=${regMaz.archetypeName} (K${regMaz.clusterId}), OdległośćCentroid=${regMaz.distanceToCenter}, Atut=${regMaz.dominantStrength}, Deficyt=${regMaz.dominantDeficit}.`);
+    }
+  } else {
+    console.error("  [FAIL] Brak prawidłowej struktury Typologii Regionalnej (Produkt 14.3)!");
+    hasError = true;
+  }
+
   console.log("\n==================================================");
   console.log("  ZBIORCZA TABELA REGRESJI FAZY A (Z-1 DO Z-5)");
   console.log("==================================================");
