@@ -62,20 +62,6 @@
 
 ---
 
-## 5. PODSUMOWANIE DOKONANYCH PRAC I ZAMKNIĘTYCH ZADAŃ
-
-### Faza A (Zamknięta w 100% PASS):
-* **Z-0:** Inicjalizacja workspace `greenstrat-workspace`, utworzenie `package.json`, podpięcie testów.
-* **Z-1:** Utworzenie kanonicznego silnika `engine/greenstrat_engine.js` i mechanizmu `npm run sync`.
-* **Z-2:** Neutralizacja niekompletnych rekordów. Wprowadzenie `isProjectComplete` (wymóg kompletu 4 ocen operacyjnych: innowacyjność, trwałość LCA, efektywność zasobowa, transformacyjność). Rekordy niekompletne nie są ekoinnowacjami.
-* **Z-3:** Separacja trybu DEMO od trybu badawczego (Decyzja D.12).
-* **Z-4:** Bramka Walidacyjna 2.0 (`validateProjects`) ze słownikiem 18 regionów i ścisłą precedencją błędów E1→E2→E3→E4→E5→E6.
-* **Z-5:** Stemplowanie wyników (`ENGINE_VERSION = "0.5.0"`), deterministyczny hash FNV-1a 32-bit z sortowaniem kluczy `Object.keys(p).sort()`.
-
-### Rozwiązane Incydenty i Korekty Audytowe:
-* **SyntaxError w index.html:5161:** Usunięto wiszącą deklarację `const trendsOptions`. Dodano stały test automatycznej walidacji składni klienckiej (`new Function(code)`) w `test/run_tests.js`.
-* **Luka L.18 (Z-6 Fazy A):** Usunięto automatyczną mutację ocen (`isCollinear`) oraz auto-korektę regresji TRL z parsera w `index.html`.
-* **Luka L.19:** Usunięto reguły blokowania całego pliku z `runGatekeeperValidation()`, przekazując walidację wierszową w 100% do Bramki Z-4.
 * **Test D.11:** Zbadano i zweryfikowano próg przełączania na przetwarzanie lokalne. Próg ustalony na kanonicznym poziomie 500 wierszy.
 
 ### Faza B (ZAKOŃCZONA W 100%):
