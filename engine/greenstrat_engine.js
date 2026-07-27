@@ -656,7 +656,10 @@ function calculateTask11(projects, options) {
       }
     }
     
-    if (woj && wojStats[woj]) {
+    if (woj) {
+      if (!wojStats[woj]) {
+        wojStats[woj] = { funding: 0, ecoFunding: 0, projects: 0, ecoProjects: 0 };
+      }
       wojStats[woj].projects++;
       wojStats[woj].funding += funding;
       if (isEco) {

@@ -383,10 +383,15 @@ function callGemini(description) {
     if (responseCode === 200) {
       var responseText = response.getContentText();
       var json = JSON.parse(responseText);
-      var textResult = json.candidates[0].content.parts[0].text.trim();
-      var match = textResult.match(/[1-3]/);
-      if (match) {
-        return parseInt(match[0]);
+      if (json && json.candidates && json.candidates.length > 0 && 
+          json.candidates[0].content && json.candidates[0].content.parts && 
+          json.candidates[0].content.parts.length > 0 && 
+          json.candidates[0].content.parts[0].text) {
+        var textResult = json.candidates[0].content.parts[0].text.trim();
+        var match = textResult.match(/[1-3]/);
+        if (match) {
+          return parseInt(match[0]);
+        }
       }
     } else {
       Logger.log("Gemini API error code: " + responseCode + " - " + response.getContentText());
@@ -1106,7 +1111,10 @@ function calculateTask11(projects, options) {
       }
     }
     
-    if (woj && wojStats[woj]) {
+    if (woj) {
+      if (!wojStats[woj]) {
+        wojStats[woj] = { funding: 0, ecoFunding: 0, projects: 0, ecoProjects: 0 };
+      }
       wojStats[woj].projects++;
       wojStats[woj].funding += funding;
       if (isEco) {
