@@ -1335,6 +1335,83 @@ function calculateTask11(projects, options) {
     }
   });
 
+  // PRODUKT 11.8: Krajowy Deterministyczny DSS w modelu Human-in-the-Loop
+  var programMap = {};
+  projects.forEach(function(p) {
+    var pCode = (p.PROGRAM_KOD || 'INNY').toString().trim().toUpperCase();
+    var funding = parseFloat(p.WART_PROJ_PLN) || 0;
+    var isEco = isProjectEco(p);
+    if (!programMap[pCode]) {
+      programMap[pCode] = { projects: 0, ecoProjects: 0, funding: 0, maxProjectFunding: 0 };
+    }
+    programMap[pCode].projects++;
+    programMap[pCode].funding += funding;
+    if (funding > programMap[pCode].maxProjectFunding) {
+      programMap[pCode].maxProjectFunding = funding;
+    }
+    if (isEco) programMap[pCode].ecoProjects++;
+  });
+
+  var nationalDSS = {
+    systemOverview: "Deterministyczny System Wspomagania Decyzji (DSS) — Model Human-in-the-Loop",
+    recommendations: []
+  };
+
+  Object.keys(programMap).forEach(function(pCode) {
+    var pData = programMap[pCode];
+    var ecoRatio = pData.projects > 0 ? (pData.ecoProjects / pData.projects) * 100 : 0;
+    var dominantShare = pData.funding > 0 ? Math.round((pData.maxProjectFunding / pData.funding) * 1000) / 10 : 0;
+    var isBaseEffect = dominantShare > 30.0 || pData.projects < 5;
+
+    var efficiencyClass = ecoRatio >= 40 ? 'liderzy systemowi' : (ecoRatio >= 25 ? 'ponadprzeciętni' : (ecoRatio >= 15 ? 'poziom referencyjny' : 'wymagający poprawy'));
+    var alarmColor = ecoRatio < 15 ? 'CZERWONY' : (ecoRatio < 25 ? 'ŻÓŁTY' : 'ZIELONY');
+
+    // Safe action generation (Bezpiecznik efektu niskiej bazy)
+    var var1Action, var1Impact;
+    if (efficiencyClass === 'liderzy systemowi' && !isBaseEffect) {
+      var1Action = "Skalowanie alokacji instrumentu (+20% budżetu)";
+      var1Impact = "Wzrost komercjalizacji B+R i trwałe zwiększenie ekoinnowacyjności w segmencie MŚP.";
+    } else if (efficiencyClass === 'liderzy systemowi' && isBaseEffect) {
+      var1Action = "Wynik obiecujący, lecz wymagający dalszej obserwacji lub pilotażowego skalowania z uwagi na wrażliwość niskiej bazy";
+      var1Impact = "Ochrona przed rynkową koncentracją przy kontrolowanym rozwoju.";
+    } else {
+      var1Action = "Utrzymanie obecnego poziomu alokacji z selektywną korektą kryteriów naboru";
+      var1Impact = "Stabilizacja wskaźników absorpcji i poprawa jakości wniosków.";
+    }
+
+    var var2Action = "Przegląd kryteriów premiujących ekoinnowacje oraz wsparcie doradcze dla MŚP";
+    var var2Impact = "Wzrost udziału MŚP i poprawa trwałości LCA realizowanych projektów.";
+
+    var var3Action = alarmColor === 'CZERWONY'
+      ? "Obowiązkowa audytowa weryfikacja procedur oraz wstrzymanie nowych naborów do czasu przeglądu"
+      : "Skrócenie czasu oceny wniosków oraz redukcja obciążeń biurokratycznych";
+    var var3Impact = alarmColor === 'CZERWONY'
+      ? "Zapobieganie nieefektywnej alokacji środków publicznych."
+      : "Przyśpieszenie wdrożeń i wyższy przyrost poziomu TRL.";
+
+    var recPackage = {
+      unitId: "program: " + pCode,
+      diagnosis: "Program " + pCode + ": " + pData.projects + " projektów, " + (Math.round(ecoRatio * 10) / 10) + "% ekoinnowacji.",
+      efficiencyClass: efficiencyClass,
+      alarmStatus: alarmColor,
+      rootCauses: [
+        ecoRatio < 30 ? "Niska proporcja projektów spełniających kompletne wymogi ekoinnowacyjne." : "Dobra dynamika ekoinnowacji.",
+        isBaseEffect ? "Wysoka koncentracja alokacji w pojedynczym projekcie/beneficjencie (efekt niskiej bazy)." : "Zrównoważony portfel beneficjentów."
+      ],
+      actionVariants: [
+        { variant: 1, title: "Wariant Główny", action: var1Action, predictedImpact: var1Impact },
+        { variant: 2, title: "Wariant Optymalizacyjny", action: var2Action, predictedImpact: var2Impact },
+        { variant: 3, title: "Wariant Audytowy/Proceduralny", action: var3Action, predictedImpact: var3Impact }
+      ],
+      predictedImpact: var1Impact,
+      risks: isBaseEffect ? ["Wysoce wrażliwy na pojedyncze duże obserwacje (efekt niskiej bazy)."] : ["Brak istotnych ryzyk niskiej bazy."],
+      requiresLegalReview: alarmColor === 'CZERWONY',
+      hitlStatus: "AUTOMATYCZNA" // Domyślna rekomendacja systemowa oczekująca na zatwierdzenie eksperta
+    };
+
+    nationalDSS.recommendations.push(recPackage);
+  });
+
   return {
     eispi: eispi,
     trends: trends,
@@ -1343,7 +1420,8 @@ function calculateTask11(projects, options) {
     benchmark: benchmark,
     alarms: alarms,
     statsDistribution: statsDistribution,
-    nationalBenchmark: nationalBenchmark
+    nationalBenchmark: nationalBenchmark,
+    nationalDSS: nationalDSS
   };
 }
 

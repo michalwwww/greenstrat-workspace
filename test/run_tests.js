@@ -379,6 +379,23 @@ function run() {
     hasError = true;
   }
 
+  console.log("\n--- TESTY Z-11: PRODUKT 11.8 KRAJOWY DETERMINISTYCZNY DSS W MODELU HITL ---");
+  const natDSS = task11Research.nationalDSS;
+
+  if (natDSS && Array.isArray(natDSS.recommendations) && natDSS.recommendations.length > 0) {
+    const sampleRec = natDSS.recommendations[0];
+    console.log(`  [OK] Z-11 Krajowy DSS wygenerował rekomendacje dla ${natDSS.recommendations.length} programów.`);
+    if (sampleRec && sampleRec.actionVariants && sampleRec.actionVariants.length === 3 && sampleRec.hitlStatus === "AUTOMATYCZNA") {
+      console.log(`  [OK] Z-11 Rekomendacja DSS ${sampleRec.unitId}: Klasa=${sampleRec.efficiencyClass}, Alarm=${sampleRec.alarmStatus}, HITLStatus=${sampleRec.hitlStatus}, LiczbaWariantów=${sampleRec.actionVariants.length}.`);
+    } else {
+      console.error("  [FAIL] Brak 3 wariantów akcji lub statusu HITL w rekomendacji DSS!");
+      hasError = true;
+    }
+  } else {
+    console.error("  [FAIL] Brak prawidłowej struktury Krajowego DSS (Produkt 11.8)!");
+    hasError = true;
+  }
+
   console.log("\n==================================================");
   console.log("  ZBIORCZA TABELA REGRESJI FAZY A (Z-1 DO Z-5)");
   console.log("==================================================");
