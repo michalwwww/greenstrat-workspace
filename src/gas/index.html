@@ -658,7 +658,51 @@
         <div class="themed-card rounded-2xl p-6 flex flex-col gap-3">
           <h3 class="font-display font-semibold text-xs mb-1">📥 Raporty & Eksport Statystyczny</h3>
           <p class="text-[10px] text-theme-secondary mb-2 leading-relaxed">Wygeneruj i pobierz pełne zestawienia danych badawczych, raporty naukowe lub eksportuj dane chmurowe bezpośrednio na swój Dysk Google.</p>
+        </div>
+
+        <!-- Panel Kontroli Źródeł Danych, Wydajności & Dziennika Audytowego (ETL & Exec Logs) -->
+        <div class="themed-card rounded-2xl p-6 flex flex-col gap-3">
+          <h3 class="font-display font-semibold text-xs mb-1 flex justify-between items-center">
+            <span>⚙️ Źródła Danych, Silnik & Logi Audytowe</span>
+            <span class="text-[9px] px-2 py-0.5 rounded-full bg-copper/20 text-copper font-mono font-bold">GREENSTRAT v0.5.0</span>
+          </h3>
           
+          <div class="grid grid-cols-2 gap-2 text-[10px]">
+            <div>
+              <label class="block font-bold text-theme-secondary mb-1">Źródło Danych Zewnętrznych</label>
+              <select id="extDataSource" onchange="logAuditMsg('Zmieniono źródło danych zewnętrznych na: ' + this.value, 'INFO')" class="w-full bg-transparent border border-theme rounded-lg p-1.5 focus:outline-none focus:border-copper">
+                <option value="GUS_EUROSTAT_LIVE">Arkusz Google / GUS API (Live Sync)</option>
+                <option value="STATIC_SNAPSHOT" selected>Statyczny Snapshot GUS/Eurostat (Offline)</option>
+                <option value="BIGQUERY_CLOUD">Google BigQuery / Cloud Storage</option>
+              </select>
+            </div>
+            <div>
+              <label class="block font-bold text-theme-secondary mb-1">Tryb Przetwarzania Wątków</label>
+              <select id="engineExecMode" onchange="logAuditMsg('Zmieniono tryb wykonawczy na: ' + this.value, 'INFO')" class="w-full bg-transparent border border-theme rounded-lg p-1.5 focus:outline-none focus:border-copper">
+                <option value="WEB_WORKER" selected>Web Worker (Background Thread - Fast)</option>
+                <option value="MAIN_THREAD">Main Thread V8 (Direct Sync)</option>
+                <option value="DUCKDB_WASM">DuckDB WASM (In-Browser SQL Engine)</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="flex items-center justify-between text-[10px] border-t border-b border-theme py-2 my-1">
+            <span class="text-theme-secondary">Stan Pamięci & Słownika:</span>
+            <span id="dataCacheStatus" class="font-mono text-copper font-bold">GUS/Eurostat: 3520 rekordów (Active)</span>
+          </div>
+
+          <div>
+            <div class="flex justify-between items-center mb-1">
+              <span class="text-[9px] font-bold uppercase text-theme-secondary">Dziennik Audytowy & Zdarzeń (Live Logs)</span>
+              <button onclick="clearAuditLog()" class="text-[8px] text-theme-secondary hover:text-copper">Wyczyść logi</button>
+            </div>
+            <div id="auditLogBox" class="w-full h-28 bg-black/60 border border-theme rounded-xl p-2 font-mono text-[9px] text-green-400 overflow-y-auto leading-tight space-y-1">
+              <div>[SYSTEM] Zainicjalizowano interfejs GREENSTRAT Engine v0.5.0.</div>
+              <div>[INFO] Załadowano słownik danych zewnętrznych GUS BDL / Eurostat (22 wskaźniki).</div>
+            </div>
+          </div>
+        </div>
+
           <button id="btnExportGoogleDrive" disabled onclick="exportToGoogleDriveSpreadsheet()" 
                   class="w-full bg-gradient-to-r from-copper to-gold hover:opacity-90 disabled:opacity-30 disabled:cursor-not-allowed text-white font-bold py-2.5 px-3 rounded-xl text-[11px] transition-all duration-300 flex items-center justify-center gap-2 shadow-lg shadow-copper-glow">
             📊 Utwórz arkusz statystyczny na Dysku Google
@@ -9584,6 +9628,24 @@ var calculateTask8Local = calculateTask8;
           titleEl.appendChild(btnContainer);
         }
       });
+    }
+
+    function logAuditMsg(msg, type) {
+      type = type || 'INFO';
+      const box = document.getElementById('auditLogBox');
+      if (!box) return;
+      const timeStr = new Date().toLocaleTimeString();
+      const colorClass = type === 'ERROR' ? 'text-red-400' : (type === 'SUCCESS' ? 'text-emerald-400' : 'text-green-400');
+      const div = document.createElement('div');
+      div.className = colorClass;
+      div.innerText = '[' + timeStr + '] [' + type + '] ' + msg;
+      box.appendChild(div);
+      box.scrollTop = box.scrollHeight;
+    }
+
+    function clearAuditLog() {
+      const box = document.getElementById('auditLogBox');
+      if (box) box.innerHTML = '<div class="text-gray-400">[SYSTEM] Wyczyszczono dziennik logów audytowych.</div>';
     }
   </script>
 </body>
