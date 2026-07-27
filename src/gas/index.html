@@ -378,51 +378,51 @@
     </div>
   </header>
 
-  <!-- Workspace Tabs Selector -->
-  <div class="max-w-7xl mx-auto px-6 mt-6">
-    <div class="flex border-b border-theme gap-2 font-display overflow-x-auto pb-px">
+  <!-- Workspace Tabs Selector (Sticky Header, Non-blocking) -->
+  <div class="sticky top-0 z-40 bg-black/80 backdrop-blur-lg border-b border-copper/30 px-6 py-3 shadow-xl">
+    <div class="max-w-7xl mx-auto flex border-b border-theme/40 gap-2 font-display overflow-x-auto pb-1 scrollbar-thin">
       <button onclick="switchTab('tab-ingest')" id="btn-tab-ingest" 
-              class="px-5 py-3 border-b-2 border-copper text-copper text-sm font-semibold flex items-center gap-2 whitespace-nowrap transition-all duration-300 focus:outline-none">
+              class="px-4 py-2 border-b-2 border-copper text-copper text-xs font-bold flex items-center gap-2 whitespace-nowrap transition-all duration-300 focus:outline-none hover:bg-copper/10 rounded-t-lg">
         🗂️ Ingestia & Walidacja
       </button>
       <button onclick="switchTab('tab-task4')" id="btn-tab-task4" 
-              class="px-5 py-3 border-b-2 border-transparent text-theme-secondary hover:text-theme-primary text-sm font-semibold flex items-center gap-2 whitespace-nowrap transition-all duration-300 focus:outline-none">
+              class="px-4 py-2 border-b-2 border-transparent text-theme-secondary hover:text-theme-primary text-xs font-bold flex items-center gap-2 whitespace-nowrap transition-all duration-300 focus:outline-none hover:bg-copper/10 rounded-t-lg">
         🌿 Zadanie 4: Specyfika Regionalna
       </button>
       <button onclick="switchTab('tab-task8')" id="btn-tab-task8" 
-              class="px-5 py-3 border-b-2 border-transparent text-theme-secondary hover:text-theme-primary text-sm font-semibold flex items-center gap-2 whitespace-nowrap transition-all duration-300 focus:outline-none">
+              class="px-4 py-2 border-b-2 border-transparent text-theme-secondary hover:text-theme-primary text-xs font-bold flex items-center gap-2 whitespace-nowrap transition-all duration-300 focus:outline-none hover:bg-copper/10 rounded-t-lg">
         📈 Zadanie 8: Ewaluacja & Rankingi
       </button>
       <button onclick="switchTab('tab-task11')" id="btn-tab-task11" 
-              class="px-5 py-3 border-b-2 border-transparent text-theme-secondary hover:text-theme-primary text-sm font-semibold flex items-center gap-2 whitespace-nowrap transition-all duration-300 focus:outline-none">
+              class="px-4 py-2 border-b-2 border-transparent text-theme-secondary hover:text-theme-primary text-xs font-bold flex items-center gap-2 whitespace-nowrap transition-all duration-300 focus:outline-none hover:bg-copper/10 rounded-t-lg">
         📊 Zadanie 11: Monitorowanie EISPI
       </button>
       <button onclick="switchTab('tab-task14')" id="btn-tab-task14" 
-              class="px-5 py-3 border-b-2 border-transparent text-theme-secondary hover:text-theme-primary text-sm font-semibold flex items-center gap-2 whitespace-nowrap transition-all duration-300 focus:outline-none">
+              class="px-4 py-2 border-b-2 border-transparent text-theme-secondary hover:text-theme-primary text-xs font-bold flex items-center gap-2 whitespace-nowrap transition-all duration-300 focus:outline-none hover:bg-copper/10 rounded-t-lg">
         🗺️ Zadanie 14: EKO_Lokacja & Sieci
       </button>
       <button onclick="switchTab('tab-logs')" id="btn-tab-logs" 
-              class="px-5 py-3 border-b-2 border-transparent text-theme-secondary hover:text-theme-primary text-sm font-semibold flex items-center gap-2 whitespace-nowrap transition-all duration-300 focus:outline-none">
+              class="px-4 py-2 border-b-2 border-transparent text-theme-secondary hover:text-theme-primary text-xs font-bold flex items-center gap-2 whitespace-nowrap transition-all duration-300 focus:outline-none hover:bg-copper/10 rounded-t-lg">
         🖥️ Logi Chmurowe
       </button>
       <button onclick="switchTab('tab-docs')" id="btn-tab-docs" 
-              class="px-5 py-3 border-b-2 border-transparent text-theme-secondary hover:text-theme-primary text-sm font-semibold flex items-center gap-2 whitespace-nowrap transition-all duration-300 focus:outline-none">
+              class="px-4 py-2 border-b-2 border-transparent text-theme-secondary hover:text-theme-primary text-xs font-bold flex items-center gap-2 whitespace-nowrap transition-all duration-300 focus:outline-none hover:bg-copper/10 rounded-t-lg">
         📖 Metodologia & Wskaźniki
       </button>
     </div>
   </div>
 
   <!-- ==================== STEP-BY-STEP GUIDED WIZARD & REAL SAFEGUARDS BAR ==================== -->
-  <div class="max-w-7xl mx-auto px-6 mt-4">
-    <!-- Stepper Bar -->
-    <div class="themed-card rounded-2xl p-4 mb-4 border border-copper/30 bg-gradient-to-r from-copper/10 via-gold/5 to-transparent">
+  <div class="max-w-7xl mx-auto px-6 mt-4 relative z-10">
+    <!-- Stepper Bar (Fully Interactive) -->
+    <div class="themed-card rounded-2xl p-4 mb-4 border border-copper/30 bg-gradient-to-r from-copper/10 via-gold/5 to-transparent shadow-lg">
       <div class="flex items-center justify-between text-xs font-display font-semibold mb-2">
         <span class="text-copper flex items-center gap-2">
           🧭 PRZEWODNIK KROK PO KROKU
           <span class="relative group cursor-pointer text-gold">
             ℹ️
             <span class="absolute hidden group-hover:block top-full left-0 mt-2 w-72 p-2.5 bg-black/95 text-[10px] text-gray-200 rounded-xl shadow-2xl border border-gold/40 z-50 font-sans font-normal leading-relaxed">
-              Przewodnik krok po kroku prowadzi uczestnika przez cały proces analityczny. W każdym kroku wyświetlane są chmurki informacyjne oraz faktyczny stan bezpieczników.
+              Kliknij dowolny krok poniżej, aby natychmiast przejść do właściwej sekcji analizu!
             </span>
           </span>
         </span>
@@ -430,26 +430,26 @@
       </div>
 
       <div class="grid grid-cols-5 gap-2 text-[10px]">
-        <div id="wizardStep1" class="p-2 rounded-xl bg-copper text-white font-bold text-center flex flex-col items-center justify-center gap-1 shadow-md">
+        <button onclick="goToWizardStep(1)" id="wizardStep1" class="p-2 rounded-xl bg-copper text-white font-bold text-center flex flex-col items-center justify-center gap-1 shadow-md hover:opacity-90 transition-all cursor-pointer">
           <span>1. Ustawienia & Źródła</span>
           <span class="text-[8px] opacity-80">Badawczy / DEMO</span>
-        </div>
-        <div id="wizardStep2" class="p-2 rounded-xl bg-theme-border/40 text-theme-secondary text-center flex flex-col items-center justify-center gap-1">
+        </button>
+        <button onclick="goToWizardStep(2)" id="wizardStep2" class="p-2 rounded-xl bg-theme-border/40 text-theme-secondary text-center flex flex-col items-center justify-center gap-1 hover:bg-copper/20 hover:text-white transition-all cursor-pointer">
           <span>2. Załadunek Pliku</span>
           <span class="text-[8px] opacity-80">.xlsx / .csv (31k)</span>
-        </div>
-        <div id="wizardStep3" class="p-2 rounded-xl bg-theme-border/40 text-theme-secondary text-center flex flex-col items-center justify-center gap-1">
+        </button>
+        <button onclick="goToWizardStep(3)" id="wizardStep3" class="p-2 rounded-xl bg-theme-border/40 text-theme-secondary text-center flex flex-col items-center justify-center gap-1 hover:bg-copper/20 hover:text-white transition-all cursor-pointer">
           <span>3. Bramka Walidacji</span>
           <span class="text-[8px] opacity-80">Test E1–E6 (Z-4)</span>
-        </div>
-        <div id="wizardStep4" class="p-2 rounded-xl bg-theme-border/40 text-theme-secondary text-center flex flex-col items-center justify-center gap-1">
+        </button>
+        <button onclick="goToWizardStep(4)" id="wizardStep4" class="p-2 rounded-xl bg-theme-border/40 text-theme-secondary text-center flex flex-col items-center justify-center gap-1 hover:bg-copper/20 hover:text-white transition-all cursor-pointer">
           <span>4. Moduły & Mapy</span>
           <span class="text-[8px] opacity-80">EIRRI / 10 Warstw</span>
-        </div>
-        <div id="wizardStep5" class="p-2 rounded-xl bg-theme-border/40 text-theme-secondary text-center flex flex-col items-center justify-center gap-1">
+        </button>
+        <button onclick="goToWizardStep(5)" id="wizardStep5" class="p-2 rounded-xl bg-theme-border/40 text-theme-secondary text-center flex flex-col items-center justify-center gap-1 hover:bg-copper/20 hover:text-white transition-all cursor-pointer">
           <span>5. Rekomendacje & Eksport</span>
           <span class="text-[8px] opacity-80">HITL / BigQuery / CSV</span>
-        </div>
+        </button>
       </div>
     </div>
 
@@ -9894,12 +9894,36 @@ var calculateTask8Local = calculateTask8;
         const stepEl = document.getElementById('wizardStep' + i);
         if (!stepEl) continue;
         if (i === stepNum) {
-          stepEl.className = "p-2 rounded-xl bg-copper text-white font-bold text-center flex flex-col items-center justify-center gap-1 shadow-md";
+          stepEl.className = "p-2 rounded-xl bg-copper text-white font-bold text-center flex flex-col items-center justify-center gap-1 shadow-md hover:opacity-90 transition-all cursor-pointer";
         } else if (i < stepNum) {
-          stepEl.className = "p-2 rounded-xl bg-emerald-500/20 text-emerald-400 font-semibold text-center flex flex-col items-center justify-center gap-1 border border-emerald-500/30";
+          stepEl.className = "p-2 rounded-xl bg-emerald-500/20 text-emerald-400 font-semibold text-center flex flex-col items-center justify-center gap-1 border border-emerald-500/30 hover:bg-emerald-500/30 transition-all cursor-pointer";
         } else {
-          stepEl.className = "p-2 rounded-xl bg-theme-border/40 text-theme-secondary text-center flex flex-col items-center justify-center gap-1";
+          stepEl.className = "p-2 rounded-xl bg-theme-border/40 text-theme-secondary text-center flex flex-col items-center justify-center gap-1 hover:bg-copper/20 hover:text-white transition-all cursor-pointer";
         }
+      }
+    }
+
+    function goToWizardStep(stepNum) {
+      updateWizardStep(stepNum);
+
+      if (stepNum === 1) {
+        switchTab('tab-ingest');
+        const el = document.getElementById('endpointUrl');
+        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      } else if (stepNum === 2) {
+        switchTab('tab-ingest');
+        const el = document.getElementById('dropzone');
+        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      } else if (stepNum === 3) {
+        switchTab('tab-ingest');
+        const el = document.getElementById('gatekeeperErrorBanner') || document.getElementById('ingestOverview');
+        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      } else if (stepNum === 4) {
+        switchTab('tab-task14');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      } else if (stepNum === 5) {
+        switchTab('tab-task11');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
       }
     }
 
