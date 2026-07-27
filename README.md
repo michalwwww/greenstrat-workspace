@@ -22,6 +22,9 @@ System charakteryzuje się:
 
 ```
 greenstrat-workspace/
+├── audit/                             ← Raporty audytu technicznego i spójności naukowej
+│   ├── GREENSTRAT_audyt_techniczny.md
+│   └── RAPORT_WERYFIKACJI_AUDYTU_v0.5.0.md
 ├── engine/
 │   └── greenstrat_engine.js           ← Kanoniczny Silnik Obliczeniowy (Jedno źródło prawdy)
 ├── src/
