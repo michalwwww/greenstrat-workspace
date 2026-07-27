@@ -589,6 +589,272 @@ function calculateTask8(projects, options) {
 }
 
 /**
+ * Calculate Task 11: System ilościowej oceny i monitoringu (EISPI Index & Databases)
+ */
+function calculateTask11(projects, options) {
+  var isDemo = (options && options.demoMode !== undefined) ? options.demoMode : demoMode;
+  var eispi = 0;
+  
+  if (!projects || projects.length === 0) {
+    return { eispi: 0, benchmark: {}, classification: {}, trends: [] };
+  }
+  
+  var years = [2021, 2022, 2023, 2024, 2025, 2026, 2027];
+  var yearData = {};
+  years.forEach(function(y) {
+    yearData[y] = { projects: 0, ecoProjects: 0, funding: 0, ecoFunding: 0, TRLsum: 0, TRLcount: 0, partnerships: 0, msp: 0, patents: 0 };
+  });
+  
+  var wojStats = {};
+  
+  projects.forEach(function(p) {
+    var funding = parseFloat(p.WART_PROJ_PLN) || 0;
+    var trlStart = parseInt(p.TRL_START) || 1;
+    var trlKoniec = parseInt(p.TRL_KONIEC) || 1;
+    var isEco = isProjectEco(p);
+    var partner = parseInt(p.NAUKA_BIZNES) === 1;
+    var woj = (p.WOJEWODZTWO || '').trim();
+    var bType = (p.BENEFICJENT_TYP || '').toString().trim().toUpperCase();
+    var isMsp = bType === 'MŚP' || bType === 'MSP' || bType === '1';
+    
+    var year = null;
+    if (p.ROK !== undefined && p.ROK !== null && p.ROK !== '') {
+      year = parseInt(p.ROK);
+    } else if (p.rok !== undefined && p.rok !== null && p.rok !== '') {
+      year = parseInt(p.rok);
+    } else if (p.Rok !== undefined && p.Rok !== null && p.Rok !== '') {
+      year = parseInt(p.Rok);
+    } else if (isDemo) {
+      var hash = 0;
+      var str = (p.ID_PROJ || '').toString();
+      for (var i = 0; i < str.length; i++) {
+        hash = str.charCodeAt(i) + ((hash << 5) - hash);
+      }
+      year = 2021 + Math.abs(hash % 7);
+    }
+
+    if (year && yearData[year]) {
+      yearData[year].projects++;
+      yearData[year].funding += funding;
+      
+      if (isEco) {
+        yearData[year].ecoProjects++;
+        yearData[year].ecoFunding += funding;
+        yearData[year].TRLsum += (trlKoniec - trlStart);
+        yearData[year].TRLcount++;
+        if (partner) yearData[year].partnerships++;
+        if (isMsp) yearData[year].msp++;
+        if (isDemo) {
+          var isDeepTech = parseInt(p.GEMINI_CATEGORY) === 1;
+          if (isDeepTech) yearData[year].patents += (Math.abs(hash) % 2 === 0 ? 1 : 0);
+        }
+      }
+    }
+    
+    if (woj) {
+      if (!wojStats[woj]) {
+        wojStats[woj] = { funding: 0, ecoFunding: 0, projects: 0, ecoProjects: 0 };
+      }
+      wojStats[woj].projects++;
+      wojStats[woj].funding += funding;
+      if (isEco) {
+        wojStats[woj].ecoProjects++;
+        wojStats[woj].ecoFunding += funding;
+      }
+    }
+  });
+  
+  var trends = [];
+  var fundingStart = yearData[2021].ecoFunding || 1;
+  var fundingEnd = yearData[2027].ecoFunding || 1;
+  var cagr = (Math.pow(fundingEnd / fundingStart, 1 / 6) - 1) * 100;
+  
+  years.forEach(function(y) {
+    trends.push({
+      year: y,
+      projects: yearData[y].projects,
+      ecoProjects: yearData[y].ecoProjects,
+      funding: yearData[y].funding,
+      ecoFunding: yearData[y].ecoFunding,
+      patents: isDemo ? (yearData[y].patents || (yearData[y].ecoProjects > 0 ? Math.ceil(yearData[y].ecoProjects * 0.2) : 0)) : 0
+    });
+  });
+  
+  var totalEcoProj = projects.filter(isProjectEco).length;
+  var ecoRatio = projects.length > 0 ? (totalEcoProj / projects.length) * 100 : 0;
+  eispi = Math.min(100, Math.round(ecoRatio * 1.5 + 20));
+  
+  var classification = {
+    'liderzy': [],
+    'rozwijające się': [],
+    'niewykorzystany potencjał': [],
+    'regiony transformacji': [],
+    'wymagające interwencji': []
+  };
+  
+  var task4Stats = calculateTask4(projects, options);
+  var eirsi = task4Stats.eirsi;
+  
+  for (var w in eirsi) {
+    var val = eirsi[w];
+    if (val >= 1.2) {
+      classification['liderzy'].push(w);
+    } else if (val >= 1.0) {
+      classification['rozwijające się'].push(w);
+    } else if (val >= 0.8) {
+      classification['niewykorzystany potencjał'].push(w);
+    } else if (val >= 0.6) {
+      classification['regiony transformacji'].push(w);
+    } else {
+      classification['wymagające interwencji'].push(w);
+    }
+  }
+  
+  var benchmark = isDemo ? {
+    polska: eispi,
+    eu27: "76.5 [DEMO / SYMULACJA]",
+    v4: "64.2 [DEMO / SYMULACJA]",
+    oecd: "71.8 [DEMO / SYMULACJA]"
+  } : {
+    polska: eispi,
+    eu27: null,
+    v4: null,
+    oecd: null
+  };
+  
+  return {
+    eispi: eispi,
+    trends: trends,
+    cagr: cagr,
+    classification: classification,
+    benchmark: benchmark
+  };
+}
+
+/**
+ * Calculate Task 14: Model oceny zdolności regionalnej i EKO_Lokacji (EIRRI & SNA indices)
+ */
+function calculateTask14(projects, options) {
+  var isDemo = (options && options.demoMode !== undefined) ? options.demoMode : demoMode;
+  if (!projects || projects.length === 0) {
+    return { eirri: {}, network: {} };
+  }
+  
+  var task4Stats = calculateTask4(projects, options);
+  var eirsi = task4Stats.eirsi;
+  
+  var eirri = {};
+  var regions = Object.keys(eirsi);
+  
+  regions.forEach(function(r) {
+    var lq = eirsi[r] || 0.5;
+    
+    var potInnov = Math.round(Math.min(100, lq * 70));
+    var potFin = Math.round(Math.min(100, 40 + lq * 30));
+    var potWdroz = Math.round(Math.min(100, 50 + lq * 25));
+    var potInst = Math.round(Math.min(100, 45 + lq * 35));
+    var potEnv = Math.round(Math.min(100, lq * 80));
+    var potSoc = Math.round(Math.min(100, 60 + lq * 15));
+    
+    var score = Math.round((potInnov + potFin + potWdroz + potInst + potEnv + potSoc) / 6);
+    
+    eirri[r] = {
+      score: score,
+      potentials: {
+        innovative: potInnov,
+        financial: potFin,
+        implementation: potWdroz,
+        institutional: potInst,
+        environmental: potEnv,
+        social: potSoc
+      }
+    };
+  });
+  
+  var sectors = ['Uczelnia', 'MŚP', 'Startup', 'NGO', 'Instytucja Naukowa', 'Duże przedsiębiorstwo'];
+  
+  var nodes = sectors.map(function(s, idx) {
+    return { id: s, group: idx + 1 };
+  });
+  
+  var links = [];
+  var linkMap = {};
+  
+  projects.forEach(function(p) {
+    var bType = (p.BENEFICJENT_TYP || '').toString().trim().toUpperCase();
+    var source = 'MŚP';
+    if (bType === 'STARTUP') source = 'Startup';
+    if (bType === 'UCZELNIA') source = 'Uczelnia';
+    if (bType === 'NGO') source = 'NGO';
+    if (bType === 'INSTYTUCJA NAUKOWA' || bType === 'INSTYTUCJA_NAUKOWA') source = 'Instytucja Naukowa';
+    if (bType === 'DUŻE' || bType === 'DUZE') source = 'Duże przedsiębiorstwo';
+    
+    var target = 'Duże przedsiębiorstwo';
+    if (parseInt(p.NAUKA_BIZNES) === 1) {
+      target = 'Uczelnia';
+    } else {
+      target = 'MŚP';
+    }
+    
+    if (source !== target) {
+      var key = source + "->" + target;
+      var revKey = target + "->" + source;
+      var activeKey = linkMap[key] ? key : (linkMap[revKey] ? revKey : key);
+      
+      linkMap[activeKey] = (linkMap[activeKey] || 0) + 1;
+    }
+  });
+  
+  Object.keys(linkMap).forEach(function(k) {
+    var parts = k.split("->");
+    links.push({
+      source: parts[0],
+      target: parts[1],
+      weight: linkMap[k],
+      type: "współpraca"
+    });
+  });
+  
+  if (links.length === 0 && isDemo) {
+    links = [
+      { source: 'Uczelnia', target: 'MŚP', weight: 8, type: 'współpraca [DEMO / SYMULACJA]' },
+      { source: 'Uczelnia', target: 'Startup', weight: 4, type: 'transfer [DEMO / SYMULACJA]' },
+      { source: 'Instytucja Naukowa', target: 'MŚP', weight: 5, type: 'współpraca [DEMO / SYMULACJA]' },
+      { source: 'Startup', target: 'Duże przedsiębiorstwo', weight: 6, type: 'komercjalizacja [DEMO / SYMULACJA]' },
+      { source: 'MŚP', target: 'Duże przedsiębiorstwo', weight: 10, type: 'dostawca [DEMO / SYMULACJA]' }
+    ];
+  }
+  
+  var partnerProjects = projects.filter(function(p) { return parseInt(p.NAUKA_BIZNES) === 1; }).length;
+  var colRatio = projects.length > 0 ? (partnerProjects / projects.length) * 100 : 0;
+  
+  var collaborationIndex = Math.round(colRatio);
+  var networkStrength = Math.round(Math.min(100, colRatio * 1.4 + 10));
+  var knowledgeTransfer = Math.round(Math.min(100, colRatio * 1.2 + 20));
+  var connectivityIndex = Math.round(Math.min(100, colRatio * 1.5 + 5));
+  var ris3Alignment = isDemo ? "82 [DEMO / SYMULACJA]" : null;
+  var maturityIndex = (ris3Alignment !== null)
+    ? Math.round((collaborationIndex + networkStrength + knowledgeTransfer + connectivityIndex + 82) / 5)
+    : Math.round((collaborationIndex + networkStrength + knowledgeTransfer + connectivityIndex) / 4);
+  
+  return {
+    eirri: eirri,
+    network: {
+      nodes: nodes,
+      links: links,
+      indices: {
+        collaborationIndex: collaborationIndex,
+        networkStrength: networkStrength,
+        knowledgeTransfer: knowledgeTransfer,
+        connectivityIndex: connectivityIndex,
+        ris3Alignment: ris3Alignment,
+        maturityIndex: maturityIndex
+      }
+    }
+  };
+}
+
+/**
  * Format scientific dataset export.
  */
 function exportScientificDataset(projects, options) {
@@ -624,6 +890,12 @@ function exportScientificDataset(projects, options) {
   return exported;
 }
 
+// Aliasy wsteczne dla lokalnego interfejsu index.html
+var calculateTask4Local = calculateTask4;
+var calculateTask8Local = calculateTask8;
+var calculateTask11Local = calculateTask11;
+var calculateTask14Local = calculateTask14;
+
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = {
     ENGINE_VERSION: ENGINE_VERSION,
@@ -637,6 +909,8 @@ if (typeof module !== 'undefined' && module.exports) {
     validateProjects: validateProjects,
     calculateTask4: calculateTask4,
     calculateTask8: calculateTask8,
+    calculateTask11: calculateTask11,
+    calculateTask14: calculateTask14,
     exportScientificDataset: exportScientificDataset
   };
 }

@@ -1039,67 +1039,13 @@ function calculateTask8(projects, options) {
 }
 
 /**
- * Format scientific dataset export.
- */
-function exportScientificDataset(projects, options) {
-  var isDemo = (options && options.demoMode !== undefined) ? options.demoMode : demoMode;
-  if (!projects || projects.length === 0) return [];
-
-  var exported = [];
-  for (var i = 0; i < projects.length; i++) {
-    var p = projects[i];
-    var yearVal = (p.ROK !== undefined && p.ROK !== null && p.ROK !== '') ? p.ROK : ((p.rok !== undefined && p.rok !== null && p.rok !== '') ? p.rok : null);
-
-    var rec = {
-      ID_PROJ: p.ID_PROJ || null,
-      PROGRAM_KOD: p.PROGRAM_KOD || null,
-      WOJEWODZTWO: p.WOJEWODZTWO || null,
-      WART_PROJ_PLN: p.WART_PROJ_PLN !== undefined ? Number(p.WART_PROJ_PLN) : null,
-      ROK: yearVal !== null ? yearVal : (isDemo ? "2024 [DEMO / SYMULACJA]" : null),
-      isComplete: isProjectComplete(p),
-      isEco: isProjectEco(p),
-      benchmarks: isDemo ? {
-        eu27: "76.5 [DEMO / SYMULACJA]",
-        v4: "64.2 [DEMO / SYMULACJA]",
-        oecd: "71.8 [DEMO / SYMULACJA]",
-        ris3Alignment: "82 [DEMO / SYMULACJA]"
-      } : null,
-      patents: isDemo ? 1 : 0,
-      snaEdges: isDemo ? [
-        { source: 'Uczelnia', target: 'MŚP', weight: 8, type: 'współpraca [DEMO / SYMULACJA]' }
-      ] : []
-    };
-    exported.push(rec);
-  }
-  return exported;
-}
-
-if (typeof module !== 'undefined' && module.exports) {
-  module.exports = {
-    ENGINE_VERSION: ENGINE_VERSION,
-    demoMode: demoMode,
-    setDemoMode: setDemoMode,
-    getDemoMode: getDemoMode,
-    baseProgramSpecs: baseProgramSpecs,
-    calculateDatasetHash: calculateDatasetHash,
-    isProjectComplete: isProjectComplete,
-    isProjectEco: isProjectEco,
-    validateProjects: validateProjects,
-    calculateTask4: calculateTask4,
-    calculateTask8: calculateTask8,
-    exportScientificDataset: exportScientificDataset
-  };
-}
-// ==ENGINE:END==
-
-/**
  * Calculate Task 11: System ilościowej oceny i monitoringu (EISPI Index & Databases)
  */
 function calculateTask11(projects, options) {
-  var isDemo = (options && options.demoMode !== undefined) ? options.demoMode : getDemoMode();
+  var isDemo = (options && options.demoMode !== undefined) ? options.demoMode : demoMode;
   var eispi = 0;
   
-  if (projects.length === 0) {
+  if (!projects || projects.length === 0) {
     return { eispi: 0, benchmark: {}, classification: {}, trends: [] };
   }
   
@@ -1126,9 +1072,11 @@ function calculateTask11(projects, options) {
       year = parseInt(p.ROK);
     } else if (p.rok !== undefined && p.rok !== null && p.rok !== '') {
       year = parseInt(p.rok);
+    } else if (p.Rok !== undefined && p.Rok !== null && p.Rok !== '') {
+      year = parseInt(p.Rok);
     } else if (isDemo) {
       var hash = 0;
-      var str = p.ID_PROJ || '';
+      var str = (p.ID_PROJ || '').toString();
       for (var i = 0; i < str.length; i++) {
         hash = str.charCodeAt(i) + ((hash << 5) - hash);
       }
@@ -1148,7 +1096,7 @@ function calculateTask11(projects, options) {
         if (isMsp) yearData[year].msp++;
         if (isDemo) {
           var isDeepTech = parseInt(p.GEMINI_CATEGORY) === 1;
-          if (isDeepTech) yearData[year].patents += (hash % 2 === 0 ? 1 : 0);
+          if (isDeepTech) yearData[year].patents += (Math.abs(hash) % 2 === 0 ? 1 : 0);
         }
       }
     }
@@ -1194,7 +1142,7 @@ function calculateTask11(projects, options) {
     'wymagające interwencji': []
   };
   
-  var task4Stats = calculateTask4(projects);
+  var task4Stats = calculateTask4(projects, options);
   var eirsi = task4Stats.eirsi;
   
   for (var w in eirsi) {
@@ -1237,12 +1185,12 @@ function calculateTask11(projects, options) {
  * Calculate Task 14: Model oceny zdolności regionalnej i EKO_Lokacji (EIRRI & SNA indices)
  */
 function calculateTask14(projects, options) {
-  var isDemo = (options && options.demoMode !== undefined) ? options.demoMode : getDemoMode();
-  if (projects.length === 0) {
+  var isDemo = (options && options.demoMode !== undefined) ? options.demoMode : demoMode;
+  if (!projects || projects.length === 0) {
     return { eirri: {}, network: {} };
   }
   
-  var task4Stats = calculateTask4(projects);
+  var task4Stats = calculateTask4(projects, options);
   var eirsi = task4Stats.eirsi;
   
   var eirri = {};
@@ -1335,7 +1283,7 @@ function calculateTask14(projects, options) {
   var knowledgeTransfer = Math.round(Math.min(100, colRatio * 1.2 + 20));
   var connectivityIndex = Math.round(Math.min(100, colRatio * 1.5 + 5));
   var ris3Alignment = isDemo ? "82 [DEMO / SYMULACJA]" : null;
-  var maturityIndex = ris3Alignment !== null 
+  var maturityIndex = (ris3Alignment !== null)
     ? Math.round((collaborationIndex + networkStrength + knowledgeTransfer + connectivityIndex + 82) / 5)
     : Math.round((collaborationIndex + networkStrength + knowledgeTransfer + connectivityIndex) / 4);
   
@@ -1355,6 +1303,68 @@ function calculateTask14(projects, options) {
     }
   };
 }
+
+/**
+ * Format scientific dataset export.
+ */
+function exportScientificDataset(projects, options) {
+  var isDemo = (options && options.demoMode !== undefined) ? options.demoMode : demoMode;
+  if (!projects || projects.length === 0) return [];
+
+  var exported = [];
+  for (var i = 0; i < projects.length; i++) {
+    var p = projects[i];
+    var yearVal = (p.ROK !== undefined && p.ROK !== null && p.ROK !== '') ? p.ROK : ((p.rok !== undefined && p.rok !== null && p.rok !== '') ? p.rok : null);
+
+    var rec = {
+      ID_PROJ: p.ID_PROJ || null,
+      PROGRAM_KOD: p.PROGRAM_KOD || null,
+      WOJEWODZTWO: p.WOJEWODZTWO || null,
+      WART_PROJ_PLN: p.WART_PROJ_PLN !== undefined ? Number(p.WART_PROJ_PLN) : null,
+      ROK: yearVal !== null ? yearVal : (isDemo ? "2024 [DEMO / SYMULACJA]" : null),
+      isComplete: isProjectComplete(p),
+      isEco: isProjectEco(p),
+      benchmarks: isDemo ? {
+        eu27: "76.5 [DEMO / SYMULACJA]",
+        v4: "64.2 [DEMO / SYMULACJA]",
+        oecd: "71.8 [DEMO / SYMULACJA]",
+        ris3Alignment: "82 [DEMO / SYMULACJA]"
+      } : null,
+      patents: isDemo ? 1 : 0,
+      snaEdges: isDemo ? [
+        { source: 'Uczelnia', target: 'MŚP', weight: 8, type: 'współpraca [DEMO / SYMULACJA]' }
+      ] : []
+    };
+    exported.push(rec);
+  }
+  return exported;
+}
+
+// Aliasy wsteczne dla lokalnego interfejsu index.html
+var calculateTask4Local = calculateTask4;
+var calculateTask8Local = calculateTask8;
+var calculateTask11Local = calculateTask11;
+var calculateTask14Local = calculateTask14;
+
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = {
+    ENGINE_VERSION: ENGINE_VERSION,
+    demoMode: demoMode,
+    setDemoMode: setDemoMode,
+    getDemoMode: getDemoMode,
+    baseProgramSpecs: baseProgramSpecs,
+    calculateDatasetHash: calculateDatasetHash,
+    isProjectComplete: isProjectComplete,
+    isProjectEco: isProjectEco,
+    validateProjects: validateProjects,
+    calculateTask4: calculateTask4,
+    calculateTask8: calculateTask8,
+    calculateTask11: calculateTask11,
+    calculateTask14: calculateTask14,
+    exportScientificDataset: exportScientificDataset
+  };
+}
+// ==ENGINE:END==
 
 /**
  * Creates a formatted and coded Spreadsheet directly on user's Google Drive.

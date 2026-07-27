@@ -270,6 +270,40 @@ function run() {
     hasError = true;
   }
 
+  console.log("\n--- TESTY L.20 / Z-6: TASK 11 I TASK 14 W SILNIKU ---");
+  const task11Research = engine.calculateTask11(sampleData, { demoMode: false });
+  const task14Research = engine.calculateTask14(sampleData, { demoMode: false });
+  const task11Demo = engine.calculateTask11(sampleData, { demoMode: true });
+  const task14Demo = engine.calculateTask14(sampleData, { demoMode: true });
+
+  // 1. Asercje braku danych symulowanych na proba_1000.xlsx w trybie badawczym
+  const stringified11 = JSON.stringify(task11Research);
+  const stringified14 = JSON.stringify(task14Research);
+  const forbiddenLiterals = ["76.5", "64.2", "71.8", "82"];
+  let hasForbiddenLiteral = false;
+  for (const lit of forbiddenLiterals) {
+    if (stringified11.includes(lit) || stringified14.includes(lit)) {
+      hasForbiddenLiteral = true;
+      console.error(`  [FAIL] Wykryto zakazany literał symulacji '${lit}' w wyniku trybu badawczego!`);
+    }
+  }
+
+  if (!hasForbiddenLiteral && task11Research.benchmark.eu27 === null && task14Research.network.indices.ris3Alignment === null) {
+    console.log("  [OK] Tryb badawczy dla proba_1000 (Z-6): benchmark.eu27 === null, ris3Alignment === null, brak zakazanych literałów symulowanych.");
+  } else {
+    console.error("  [FAIL] Niezgodność strukturalna wyników trybu badawczego dla Task 11 / Task 14!");
+    hasError = true;
+  }
+
+  // 2. Asercja obecności oznaczeń symulacji w trybie DEMO
+  if (task11Demo.benchmark.eu27 && task11Demo.benchmark.eu27.includes("[DEMO / SYMULACJA]") &&
+      task14Demo.network.indices.ris3Alignment && task14Demo.network.indices.ris3Alignment.includes("[DEMO / SYMULACJA]")) {
+    console.log("  [OK] Tryb DEMO dla Task 11 / Task 14 (Z-6): wskaźniki posiadają etykiety [DEMO / SYMULACJA].");
+  } else {
+    console.error("  [FAIL] Brak wymaganych etykiet [DEMO / SYMULACJA] w trybie DEMO dla Task 11 / Task 14!");
+    hasError = true;
+  }
+
   console.log("\n==================================================");
   console.log("  ZBIORCZA TABELA REGRESJI FAZY A (Z-1 DO Z-5)");
   console.log("==================================================");
