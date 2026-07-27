@@ -130,7 +130,7 @@ function doPost(e) {
 
     logToSheet('DATA_INGEST_START', null, 'SUCCESS', 'Rozpoczęto import ' + incomingProjects.length + ' wierszy [Plik: ' + fileName + '].', new Date().getTime() - startTime);
     
-    // 1. Semantic AI Categorization using Gemini with local rule fallback
+    // 1. Semantic AI Categorization: Local heuristics for bulk sample (> 5 items) to prevent GAS execution timeouts; Gemini API for single/small sample testing (<= 5)
     var processedCount = 0;
     var useHeuristics = incomingProjects.length > 5;
     for (var i = 0; i < incomingProjects.length; i++) {
@@ -225,10 +225,10 @@ function writeProjectsToSheet(projects) {
     var p = projects[i];
     
     // Gatekeeper rule implementation
-    var inn = (p.INNOWACYJNOSC !== undefined && p.INNOWACYJNOSC !== null && p.INNOWACYJNOSC !== '' && p.INNOWACYJNOSC !== -99 && p.INNOWACYJNOSC !== '-99') ? Number(p.INNOWACYJNOSC) : null;
-    var trw = (p.TRWALOSC_LCA !== undefined && p.TRWALOSC_LCA !== null && p.TRWALOSC_LCA !== '' && p.TRWALOSC_LCA !== -99 && p.TRWALOSC_LCA !== '-99') ? Number(p.TRWALOSC_LCA) : null;
-    var ef = (p.EFEKTYWNOSC_ZASOBOWA !== undefined && p.EFEKTYWNOSC_ZASOBOWA !== null && p.EFEKTYWNOSC_ZASOBOWA !== '' && p.EFEKTYWNOSC_ZASOBOWA !== -99 && p.EFEKTYWNOSC_ZASOBOWA !== '-99') ? Number(p.EFEKTYWNOSC_ZASOBOWA) : null;
-    var trsf = (p.TRANSFORMACYJNOSC !== undefined && p.TRANSFORMACYJNOSC !== null && p.TRANSFORMACYJNOSC !== '' && p.TRANSFORMACYJNOSC !== -99 && p.TRANSFORMACYJNOSC !== '-99') ? Number(p.TRANSFORMACYJNOSC) : null;
+    var inn = isValidRating(p.INNOWACYJNOSC) ? Number(p.INNOWACYJNOSC) : null;
+    var trw = isValidRating(p.TRWALOSC_LCA) ? Number(p.TRWALOSC_LCA) : null;
+    var ef = isValidRating(p.EFEKTYWNOSC_ZASOBOWA) ? Number(p.EFEKTYWNOSC_ZASOBOWA) : null;
+    var trsf = isValidRating(p.TRANSFORMACYJNOSC) ? Number(p.TRANSFORMACYJNOSC) : null;
     
     var isEcoInnov = (inn !== null && trw !== null && ef !== null && trsf !== null && inn > 0 && trw > 0 && ef > 0 && trsf > 0) ? 1 : 0;
     var deltaTrl = p.DELTA_TRL !== undefined ? Number(p.DELTA_TRL) : (Number(p.TRL_KONIEC) - Number(p.TRL_START) || 0);
@@ -352,7 +352,7 @@ function callGemini(description) {
                "1 - Deep Tech (nanotechnologia, zaawansowane materiały, robotyka, clean-tech, zaawansowane OZE, innowacje przełomowe)\n" +
                "2 - General Eco (klasyczne projekty środowiskowe, termomodernizacja, podstawowa ochrona środowiska, gospodarka odpadami, rekultywacja)\n" +
                "3 - Inna / Niezwiązana (brak komponentu ekologicznego lub innowacyjnego)\n\n" +
-               "Opis: \"" + description + "\"\n\n" +
+               "Opis: \"" + (description || '').replace(/"/g, '\\"') + "\"\n\n" +
                "Zwróć WYŁĄCZNIE pojedynczą cyfrę (1, 2 lub 3) reprezentującą kod kategorii. Nie dołączaj żadnego innego tekstu ani formatowania.";
                
   var payload = {
@@ -401,7 +401,7 @@ function callGemini(description) {
  * Heuristic Local Classifier as Zero-Error Fallback
  */
 function heuristicClassify(description) {
-  if (!description) return 2; // Default to general eco
+  if (!description) return 3; // Default to category 3 (Inna / brak opisu)
   var descLower = description.toLowerCase();
   
   // Keywords indicating advanced clean tech or deep eco innovation
@@ -615,9 +615,9 @@ function validateProjects(projects, opts) {
     var rejectedCode = null;
     var rejectedReason = null;
     
-    if (czyEcoDecl === 1 && (!hasComplete || innVal === 0 || trwVal === 0 || efVal === 0 || trsfVal === 0)) {
+    if ((czyEcoDecl === 1 || isNaN(czyEcoDecl)) && (!hasComplete || innVal === 0 || trwVal === 0 || efVal === 0 || trsfVal === 0)) {
       rejectedCode = 'E1';
-      rejectedReason = 'CZY_EKOINNOWACJA=1, ale nie spełniono kompletu 4 ocen operacyjnych > 0';
+      rejectedReason = isNaN(czyEcoDecl) ? 'Brak deklaracji ekoinnowacyjności (CZY_EKOINNOWACJA) lub brak ocen operacyjnych' : 'CZY_EKOINNOWACJA=1, ale nie spełniono kompletu 4 ocen operacyjnych > 0';
     }
     else if (czyEcoDecl === 0 && isOperationalEco) {
       rejectedCode = 'E2';
@@ -1066,6 +1066,11 @@ function calculateTask11(projects, options) {
     var woj = (p.WOJEWODZTWO || '').trim();
     var bType = (p.BENEFICJENT_TYP || '').toString().trim().toUpperCase();
     var isMsp = bType === 'MŚP' || bType === 'MSP' || bType === '1';
+    var strID = (p.ID_PROJ || p.UMOWA_NUMER || '').toString();
+    var hash = 0;
+    for (var i = 0; i < strID.length; i++) {
+      hash = strID.charCodeAt(i) + ((hash << 5) - hash);
+    }
     
     var year = null;
     if (p.ROK !== undefined && p.ROK !== null && p.ROK !== '') {
@@ -1075,19 +1080,13 @@ function calculateTask11(projects, options) {
     } else if (p.Rok !== undefined && p.Rok !== null && p.Rok !== '') {
       year = parseInt(p.Rok);
     } else {
-      // Parse year from date or contract ID (e.g., /23 -> 2023)
-      var strID = (p.ID_PROJ || p.UMOWA_NUMER || '').toString();
       var yearMatch = strID.match(/\/ (20[2-3][0-9])|\/([2-3][0-9])$/);
       if (yearMatch) {
         var yVal = yearMatch[1] || yearMatch[2];
         if (yVal.length === 2) yVal = '20' + yVal;
         year = parseInt(yVal);
       }
-      if (!year || year < 2021 || year > 2027) {
-        var hash = 0;
-        for (var i = 0; i < strID.length; i++) {
-          hash = strID.charCodeAt(i) + ((hash << 5) - hash);
-        }
+      if ((!year || year < 2021 || year > 2027) && isDemo) {
         year = 2021 + Math.abs(hash % 7);
       }
     }
@@ -1099,10 +1098,7 @@ function calculateTask11(projects, options) {
       if (isEco) {
         yearData[year].ecoProjects++;
         yearData[year].ecoFunding += funding;
-        yearData[year].TRLsum += (trlKoniec - trlStart);
-        yearData[year].TRLcount++;
-        if (partner) yearData[year].partnerships++;
-        if (isMsp) yearData[year].msp++;
+        
         if (isDemo) {
           var isDeepTech = parseInt(p.GEMINI_CATEGORY) === 1;
           if (isDeepTech) yearData[year].patents += (Math.abs(hash) % 2 === 0 ? 1 : 0);
@@ -1110,10 +1106,7 @@ function calculateTask11(projects, options) {
       }
     }
     
-    if (woj) {
-      if (!wojStats[woj]) {
-        wojStats[woj] = { funding: 0, ecoFunding: 0, projects: 0, ecoProjects: 0 };
-      }
+    if (woj && wojStats[woj]) {
       wojStats[woj].projects++;
       wojStats[woj].funding += funding;
       if (isEco) {
@@ -1124,9 +1117,12 @@ function calculateTask11(projects, options) {
   });
   
   var trends = [];
-  var fundingStart = yearData[2021].ecoFunding || 1;
-  var fundingEnd = yearData[2027].ecoFunding || 1;
-  var cagr = (Math.pow(fundingEnd / fundingStart, 1 / 6) - 1) * 100;
+  var fundingStart = (yearData[2021] && yearData[2021].ecoFunding) ? yearData[2021].ecoFunding : 0;
+  var fundingEnd = (yearData[2027] && yearData[2027].ecoFunding) ? yearData[2027].ecoFunding : 0;
+  var cagr = 0;
+  if (fundingStart > 0 && fundingEnd > 0) {
+    cagr = (Math.pow(fundingEnd / fundingStart, 1 / 6) - 1) * 100;
+  }
   
   years.forEach(function(y) {
     trends.push({
