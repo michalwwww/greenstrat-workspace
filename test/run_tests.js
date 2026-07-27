@@ -304,6 +304,27 @@ function run() {
     hasError = true;
   }
 
+  console.log("\n--- TESTY Z-7: PRODUKT 14.2 REALNY INDEKS EIRRI Z 6 FILARAMI I PCA (D.2) ---");
+  const eirriResult = task14Research.eirri;
+  const sampleRegion = eirriResult['mazowieckie'];
+
+  if (sampleRegion && sampleRegion.scoreVariants && 
+      sampleRegion.scoreVariants.pca !== undefined &&
+      sampleRegion.scoreVariants.equal !== undefined &&
+      sampleRegion.scoreVariants.expert !== undefined &&
+      sampleRegion.potentials.economic !== undefined &&
+      sampleRegion.potentials.innovative !== undefined &&
+      sampleRegion.potentials.absorption !== undefined &&
+      sampleRegion.potentials.implementation !== undefined &&
+      sampleRegion.potentials.environmental !== undefined &&
+      sampleRegion.potentials.institutional !== undefined) {
+    console.log(`  [OK] Z-7 EIRRI Mazowieckie: scorePCA=${sampleRegion.scoreVariants.pca}, scoreEqual=${sampleRegion.scoreVariants.equal}, scoreExpert=${sampleRegion.scoreVariants.expert}, niepewność=${sampleRegion.uncertaintyLevel} (Zakres=${sampleRegion.sensitivityRange}).`);
+    console.log(`  [OK] 6 Filarów: Env=${sampleRegion.potentials.environmental}, Wdroż=${sampleRegion.potentials.implementation}, Innov=${sampleRegion.potentials.innovative}, Econ=${sampleRegion.potentials.economic}, Abs=${sampleRegion.potentials.absorption}, Inst=${sampleRegion.potentials.institutional}.`);
+  } else {
+    console.error("  [FAIL] Brak pełnej struktury 6 filarów lub 3 wariantów ważenia w wyniku Z-7 EIRRI!");
+    hasError = true;
+  }
+
   console.log("\n==================================================");
   console.log("  ZBIORCZA TABELA REGRESJI FAZY A (Z-1 DO Z-5)");
   console.log("==================================================");

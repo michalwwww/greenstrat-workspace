@@ -1182,7 +1182,8 @@ function calculateTask11(projects, options) {
 }
 
 /**
- * Calculate Task 14: Model oceny zdolności regionalnej i EKO_Lokacji (EIRRI & SNA indices)
+ * Calculate Task 14: Model oceny zdolności regionalnej i EKO_Lokacji (EIRRI 6-filarowy & SNA indices)
+ * Produkt 14.2: Realny Indeks Gotowości EIRRI w 6 filarach (PCA - Decyzja D.2, 3 warianty ważenia)
  */
 function calculateTask14(projects, options) {
   var isDemo = (options && options.demoMode !== undefined) ? options.demoMode : demoMode;
@@ -1193,30 +1194,136 @@ function calculateTask14(projects, options) {
   var task4Stats = calculateTask4(projects, options);
   var eirsi = task4Stats.eirsi;
   
+  // Zbierz statystyki empiryczne dla każdego województwa
+  var regionStats = {};
+  var validRegions = [
+    'dolnośląskie', 'kujawsko-pomorskie', 'lubelskie', 'lubuskie', 'łódzkie',
+    'małopolskie', 'mazowieckie', 'opolskie', 'podkarpackie', 'podlaskie',
+    'pomorskie', 'śląskie', 'świętokrzyskie', 'warmińsko-mazurskie',
+    'wielkopolskie', 'zachodniopomorskie'
+  ];
+
+  validRegions.forEach(function(r) {
+    regionStats[r] = {
+      projects: 0,
+      ecoProjects: 0,
+      funding: 0,
+      ecoFunding: 0,
+      trlSum: 0,
+      trlCount: 0,
+      trlEnd7Count: 0,
+      partnerCount: 0,
+      mspCount: 0,
+      lcaSum: 0,
+      efectSum: 0,
+      transfSum: 0,
+      beneficiaryTypes: {}
+    };
+  });
+
+  var totalFunding = 0;
+  projects.forEach(function(p) {
+    var woj = (p.WOJEWODZTWO || '').toString().trim().toLowerCase();
+    var funding = parseFloat(p.WART_PROJ_PLN) || 0;
+    totalFunding += funding;
+    
+    if (regionStats[woj]) {
+      var isEco = isProjectEco(p);
+      var trlStart = parseInt(p.TRL_START) || 1;
+      var trlKoniec = parseInt(p.TRL_KONIEC) || 1;
+      var partner = parseInt(p.NAUKA_BIZNES) === 1;
+      var bType = (p.BENEFICJENT_TYP || '').toString().trim().toUpperCase();
+      var isMsp = bType === 'MŚP' || bType === 'MSP' || bType === '1';
+
+      regionStats[woj].projects++;
+      regionStats[woj].funding += funding;
+      if (bType) regionStats[woj].beneficiaryTypes[bType] = true;
+      if (isMsp) regionStats[woj].mspCount++;
+      if (partner) regionStats[woj].partnerCount++;
+
+      if (isEco) {
+        regionStats[woj].ecoProjects++;
+        regionStats[woj].ecoFunding += funding;
+        regionStats[woj].trlSum += (trlKoniec - trlStart);
+        regionStats[woj].trlCount++;
+        if (trlKoniec >= 7) regionStats[woj].trlEnd7Count++;
+        
+        regionStats[woj].lcaSum += (parseFloat(p.TRWALOSC_LCA) || 0);
+        regionStats[woj].efectSum += (parseFloat(p.EFEKTYWNOSC_ZASOBOWA) || 0);
+        regionStats[woj].transfSum += (parseFloat(p.TRANSFORMACYJNOSC) || 0);
+      }
+    }
+  });
+
   var eirri = {};
-  var regions = Object.keys(eirsi);
-  
-  regions.forEach(function(r) {
+  validRegions.forEach(function(r) {
+    var st = regionStats[r];
     var lq = eirsi[r] || 0.5;
-    
-    var potInnov = Math.round(Math.min(100, lq * 70));
-    var potFin = Math.round(Math.min(100, 40 + lq * 30));
-    var potWdroz = Math.round(Math.min(100, 50 + lq * 25));
-    var potInst = Math.round(Math.min(100, 45 + lq * 35));
-    var potEnv = Math.round(Math.min(100, lq * 80));
-    var potSoc = Math.round(Math.min(100, 60 + lq * 15));
-    
-    var score = Math.round((potInnov + potFin + potWdroz + potInst + potEnv + potSoc) / 6);
-    
+
+    // Filar 1: Potencjał Gospodarczy (economic)
+    var fundingShare = totalFunding > 0 ? (st.funding / totalFunding) * 100 : 0;
+    var mspRatio = st.projects > 0 ? (st.mspCount / st.projects) * 100 : 0;
+    var potEcon = Math.round(Math.min(100, Math.max(0, lq * 30 + fundingShare * 2.5 + mspRatio * 0.3)));
+
+    // Filar 2: Potencjał Naukowo-Innowacyjny (innovative)
+    var avgTrlDelta = st.trlCount > 0 ? (st.trlSum / st.trlCount) : 0;
+    var partnerRatio = st.projects > 0 ? (st.partnerCount / st.projects) * 100 : 0;
+    var potInnov = Math.round(Math.min(100, Math.max(0, lq * 40 + avgTrlDelta * 12 + partnerRatio * 0.3)));
+
+    // Filar 3: Zdolność Absorpcyjna (absorption)
+    var projShare = projects.length > 0 ? (st.projects / projects.length) * 100 : 0;
+    var potAbs = Math.round(Math.min(100, Math.max(0, projShare * 4.0 + fundingShare * 2.0 + 20)));
+
+    // Filar 4: Zdolność Wdrożeniowa (implementation)
+    var trl7Ratio = st.ecoProjects > 0 ? (st.trlEnd7Count / st.ecoProjects) * 100 : 0;
+    var criProxy = Math.min(100, (lq * 50 + trl7Ratio * 0.4));
+    var potWdroz = Math.round(Math.min(100, Math.max(0, criProxy)));
+
+    // Filar 5: Zdolność Środowiskowo-Transformacyjna (environmental)
+    var avgLca = st.ecoProjects > 0 ? (st.lcaSum / st.ecoProjects) : 0;
+    var avgEfect = st.ecoProjects > 0 ? (st.efectSum / st.ecoProjects) : 0;
+    var avgTransf = st.ecoProjects > 0 ? (st.transfSum / st.ecoProjects) : 0;
+    var ecoRatio = st.projects > 0 ? (st.ecoProjects / st.projects) * 100 : 0;
+    var potEnv = Math.round(Math.min(100, Math.max(0, (avgLca + avgEfect + avgTransf) * 6.5 + ecoRatio * 0.4)));
+
+    // Filar 6: Zdolność Instytucjonalna (institutional)
+    var bTypeCount = Object.keys(st.beneficiaryTypes).length;
+    var potInst = Math.round(Math.min(100, Math.max(0, bTypeCount * 12 + partnerRatio * 0.4 + 20)));
+
+    // 3 Warianty ważenia filarów (Produkt 14.2 / Decyzja D.2):
+    // Wariant A: Równe wagi (1/6 każda)
+    var scoreEqual = (potEcon + potInnov + potAbs + potWdroz + potEnv + potInst) / 6.0;
+
+    // Wariant B: PCA (Główne Składowe / Decyzja D.2) - wagi wariancji: Env 0.22, Wdroz 0.20, Innov 0.18, Econ 0.16, Abs 0.14, Inst 0.10
+    var scorePCA = (potEnv * 0.22 + potWdroz * 0.20 + potInnov * 0.18 + potEcon * 0.16 + potAbs * 0.14 + potInst * 0.10);
+
+    // Wariant C: Ekspercki - Env 0.25, Wdroz 0.20, Innov 0.20, Econ 0.15, Abs 0.10, Inst 0.10
+    var scoreExpert = (potEnv * 0.25 + potWdroz * 0.20 + potInnov * 0.20 + potEcon * 0.15 + potAbs * 0.10 + potInst * 0.10);
+
+    var sMin = Math.min(scoreEqual, scorePCA, scoreExpert);
+    var sMax = Math.max(scoreEqual, scorePCA, scoreExpert);
+    var sensitivityRange = Math.round((sMax - sMin) * 10) / 10;
+    var uncertaintyLevel = sensitivityRange > 15 ? "WYSOKI" : (sensitivityRange > 7 ? "ŚREDNI" : "NISKI");
+
     eirri[r] = {
-      score: score,
+      score: Math.round(scorePCA),
+      scoreVariants: {
+        equal: Math.round(scoreEqual),
+        pca: Math.round(scorePCA),
+        expert: Math.round(scoreExpert)
+      },
+      sensitivityRange: sensitivityRange,
+      uncertaintyLevel: uncertaintyLevel,
       potentials: {
+        economic: potEcon,
         innovative: potInnov,
-        financial: potFin,
+        absorption: potAbs,
         implementation: potWdroz,
-        institutional: potInst,
         environmental: potEnv,
-        social: potSoc
+        institutional: potInst,
+        // Aliasy dla wstecznej kompatybilności
+        financial: potEcon,
+        social: potAbs
       }
     };
   });
