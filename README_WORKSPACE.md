@@ -1,37 +1,40 @@
-# README — montaż workspace GREENSTRAT w Google Antigravity
-(dokument dla właściciela projektu; agent czyta AGENTS.md i backlog, nie ten plik)
+# README — Struktura Workspace GREENSTRAT w Google Antigravity
+(Dokument dla właściciela projektu i analityków; opisy struktury produkcyjnej po zakończeniu Fazy A i Fazy B)
 
-## 1. Docelowa struktura folderu
+## 1. Struktura produkcyjna workspace
 
 ```
 greenstrat-workspace/
-├── AGENTS.md                      ← konstytucja dla agenta (pakiet)
-├── README_WORKSPACE.md            ← ten plik
-├── CHANGELOG.md                   ← utworzy agent w Z-0
-├── package.json                   ← utworzy agent w Z-0
-├── .agents/
-│   └── workflows/
-│       └── weryfikacja.md         ← komenda /weryfikacja (pakiet)
+├── AGENTS.md                      ← Konstytucja dla agenta AI
+├── README.md                      ← Główny opis projektu w repozytorium GitHub
+├── README_WORKSPACE.md            ← Przewodnik po montażu workspace
+├── CHANGELOG.md                   ← Rejestr wydań i wprowadzonych prac
+├── GREENSTRAT_PROJECT_CONTEXT.md  ← Kontekst badawczo-architektoniczny
+├── package.json                   ← Skrypty npm test i npm run sync
+├── data/
+│   └── external_benchmarks_snapshot.json ← Empiryczny snapshot GUS BDL & Eurostat
 ├── docs/
-│   ├── BACKLOG_AGENTA.md          ← kolejka zadań (pakiet)
-│   ├── macierz_traceability.csv   ← mapa 69 wymagań (pakiet)
-│   ├── protokol_testu.docx        ← dla ludzi (opcjonalnie)
-│   └── spec_v3_szkielet.docx      ← dla ludzi (opcjonalnie)
-├── engine/                        ← powstanie w Z-1
+│   ├── INSTRUKCJA_OBSLUGI_GREENSTRAT.md ← Kompletna Instrukcja Obsługi Systemu
+│   ├── BACKLOG_FAZY_B.md          ← Kolejka zadań Fazy B (16 produktów)
+│   └── macierz_traceability.csv   ← Mapa 69 wymagań
+├── engine/
+│   └── greenstrat_engine.js       ← KANONICZNY SILNIK OBLICZENIOWY (v0.5.0)
+├── tools/
+│   ├── sync_engine.js             ← Narzędzie synchronizacji silnika
+│   ├── import_external_datasets.js← Importer ETL baz zewnętrznych
+│   └── export_formats.js          ← Wieloformatowy silnik eksportu
 ├── test/
-│   └── fixtures_kontrolne.json    ← WYROCZNIA (pakiet)
+│   ├── run_tests.js               ← Harness testowy (wyrocznia i asercje)
+│   └── fixtures_kontrolne.json    ← WYROCZNIA TESTOWA FAZY A I B
 ├── test-data/
 │   ├── GREENSTRAT_test_proba_1000.xlsx
 │   ├── GREENSTRAT_test_proba_5000.xlsx
 │   ├── GREENSTRAT_test_czesc_1.xlsx
-│   ├── GREENSTRAT_test_czesc_2.xlsx
-│   ├── GREENSTRAT_test_czesc_3.xlsx
-│   ├── GREENSTRAT_test_pelna_baza_31301.xlsx
-│   └── GREENSTRAT_test_walidacja_negatywna_1000.xlsx
+│   └── GREENSTRAT_test_pelna_baza_31301.xlsx
 └── src/
     └── gas/
-        ├── Code.gs                ← Twój kod (krok 3)
-        └── index.html             ← Twój kod (krok 3)
+        ├── Code.gs                ← Backend Google Apps Script Web App
+        └── index.html             ← Jednoplikowa Aplikacja Kliencka (UI)
 ```
 
 ## 2. Rozmieść pliki pakietu
