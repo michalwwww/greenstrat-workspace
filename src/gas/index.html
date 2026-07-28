@@ -49,6 +49,32 @@
         }
       }
     }
+
+    // Early theme initialization and toggle handler
+    function updateThemeIcon(theme) {
+      const sun = document.getElementById('theme-sun');
+      const moon = document.getElementById('theme-moon');
+      if (!sun || !moon) return;
+      if (theme === 'dark') {
+        sun.classList.add('hidden');
+        moon.classList.remove('hidden');
+      } else {
+        sun.classList.remove('hidden');
+        moon.classList.add('hidden');
+      }
+    }
+
+    function toggleTheme() {
+      const html = document.documentElement;
+      const currentTheme = html.getAttribute('data-theme') || 'dark';
+      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      html.setAttribute('data-theme', newTheme);
+      localStorage.setItem('greenstrat-theme', newTheme);
+      updateThemeIcon(newTheme);
+      if (typeof backendCalculatedData !== 'undefined' && backendCalculatedData && typeof renderAllCharts === 'function') {
+        renderAllCharts();
+      }
+    }
   </script>
 
   <!-- Custom CSS Variables for Theme Control -->

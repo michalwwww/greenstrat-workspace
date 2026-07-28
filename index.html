@@ -49,6 +49,32 @@
         }
       }
     }
+
+    // Early theme initialization and toggle handler
+    function updateThemeIcon(theme) {
+      const sun = document.getElementById('theme-sun');
+      const moon = document.getElementById('theme-moon');
+      if (!sun || !moon) return;
+      if (theme === 'dark') {
+        sun.classList.add('hidden');
+        moon.classList.remove('hidden');
+      } else {
+        sun.classList.remove('hidden');
+        moon.classList.add('hidden');
+      }
+    }
+
+    function toggleTheme() {
+      const html = document.documentElement;
+      const currentTheme = html.getAttribute('data-theme') || 'dark';
+      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      html.setAttribute('data-theme', newTheme);
+      localStorage.setItem('greenstrat-theme', newTheme);
+      updateThemeIcon(newTheme);
+      if (typeof backendCalculatedData !== 'undefined' && backendCalculatedData && typeof renderAllCharts === 'function') {
+        renderAllCharts();
+      }
+    }
   </script>
 
   <!-- Custom CSS Variables for Theme Control -->
@@ -4429,7 +4455,10 @@ function calculateTask11(projects, options) {
       }
     }
     
-    if (woj && wojStats[woj]) {
+    if (woj) {
+      if (!wojStats[woj]) {
+        wojStats[woj] = { funding: 0, ecoFunding: 0, projects: 0, ecoProjects: 0 };
+      }
       wojStats[woj].projects++;
       wojStats[woj].funding += funding;
       if (isEco) {
@@ -8376,13 +8405,14 @@ var calculateTask8Local = calculateTask8;
       .then(data => {
         if (data && data.status === 'success' && data.reply) {
           generatedPapers[taskId] = data.reply;
-          previewEl.innerHTML = data.reply.replace(/\n/g, '<br>');
+          previewEl.textContent = data.reply;
+          previewEl.style.whiteSpace = 'pre-wrap';
           const btnPdf = document.getElementById(`btn-dl-pdf-${taskId}`);
           const btnDocx = document.getElementById(`btn-dl-docx-${taskId}`);
           if (btnPdf) btnPdf.removeAttribute('disabled');
           if (btnDocx) btnDocx.removeAttribute('disabled');
         } else {
-          previewEl.innerHTML = "Błąd komunikacji z modelem AI. Upewnij się, że klucz API jest skonfigurowany w chmurze.";
+          previewEl.textContent = "Błąd komunikacji z modelem AI. Upewnij się, że klucz API jest skonfigurowany w chmurze.";
         }
       })
       .catch(err => {
