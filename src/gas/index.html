@@ -3319,7 +3319,7 @@
     }
 
     // Local processing fallback functions
-    function runLocalProcessing(cleanProjects, valReport) {
+    function runLocalProcessing(validProjects, valReport) {
       try {
         const acceptedCount = cleanProjects.length;
         const rejectedCount = valReport ? valReport.rejectedCount : 0;
@@ -5783,7 +5783,7 @@ var calculateTask8Local = calculateTask8;
         const isEco = (parseInt(row.CZY_EKOINNOWACJA) === 1) || (row.STATUS_WDROZ == 1) || (row.STATUS_KOMERC == 1);
         if (isEco) {
           const funding = parseFloat(row.WART_PROJ_PLN) || 0;
-          const trlStart = parseInt(row.TRL_START) || 1;
+          const trlStart = parseNullableNumber(row.TRL_START);
           
           let stage = 0;
           const etap = (row.ETAP_INNOWACJI || '').toString().trim().toLowerCase();
@@ -6183,7 +6183,7 @@ var calculateTask8Local = calculateTask8;
       // 12. Workflow Funnel Chart
       const trlStages = [0, 0, 0, 0, 0];
       rawSheetData.forEach(p => {
-        const trl = parseInt(p.TRL_KONIEC) || 1;
+        const trl = parseNullableNumber(p.TRL_KONIEC);
         if (trl <= 2) trlStages[0]++;
         else if (trl <= 4) trlStages[1]++;
         else if (trl <= 6) trlStages[2]++;
@@ -9785,7 +9785,7 @@ var calculateTask8Local = calculateTask8;
             if (pc < minPC) minPC = pc; if (pc > maxPC) maxPC = pc;
             if (deltaTrl < minTRL) minTRL = deltaTrl; if (deltaTrl > maxTRL) maxTRL = deltaTrl;
             if (funding < minVal) minVal = funding; if (funding > maxVal) maxVal = funding;
-            return { id: p.ID_PROJ || `P-${idx+1}`, funding, trlStart: p.TRL_START || 1, trlEnd: p.TRL_KONIEC || 1, deltaTrl, eco, inn, trw, ef, trsf, pc, bGrp, woj: p.WOJEWODZTWO || 'mazowieckie' };
+            return { id: p.ID_PROJ || `P-${idx+1}`, funding, trlStart: parseNullableNumber(p.TRL_START), trlEnd: parseNullableNumber(p.TRL_KONIEC), deltaTrl, eco, inn, trw, ef, trsf, pc, bGrp, woj: p.WOJEWODZTWO || 'mazowieckie' };
           });
           if (maxPC === minPC) maxPC = minPC + 1;
           if (maxTRL === minTRL) maxTRL = minTRL + 1;
