@@ -14,6 +14,10 @@ Wszystkie znaczące zmiany w tym projekcie będą dokumentowane w tym pliku.
 - **N-5 (Etykieta modelu GPQI)**: Pod suwakami symulatora GPQI (Task 8) dodano etykietę `⚠️ [Model poglądowy] — wyniki są przybliżonym oszacowaniem`.
 - `npm run sync` + `npm test` **100% GREEN [PASS]**; `verify_known_issues.js` **0 błędów [PASS]**.
 
+- **N-6 (Mieszane końce linii)**: Znormalizowano zakończenia linii do LF w całym `index.html` (10 221 linii) i `Code.gs`. Ustawiono `core.autocrlf=false`.
+- **N-2 (Snapshot regionalny)**: Zweryfikowano — `externalSnapshot` NIE jest martwym kodem. W środowisku Node/testów ładowany jest plik `data/external_benchmarks_snapshot.json`; w przeglądarce/GAS używana jest kopia wbudowana w blok ENGINE. Brakujący `tools/import_external_datasets.js` (wspomniany w komentarzu) to odrębne zadanie ETL — nie blokuje działania, nie wymaga interwencji.
+- `npm test` **100% GREEN [PASS]** · `verify_known_issues.js` **0 błędów [PASS]**.
+
 ## [0.2.1] - 2026-08-03
 ### Naprawiono / Uzupełniono (Zgodnie z RAPORT_POPRAWNOSCI_KODU_KIMI.md)
 - **K-1 (Realne 6 filarów EIRRI)**: Przepięto podgląd i eksport SPSS (Task 14) na autentyczne wyliczenia filarów z `engine.js` (`potentials.economic`, `.innovative`, `.absorption`, `.implementation`, `.environmental`, `.institutional`).
