@@ -39,6 +39,10 @@ Wszystkie znaczące zmiany w tym projekcie będą dokumentowane w tym pliku.
 - Z-15 (Faza B) — Produkty 14.6 & 14.9: Mapy Specjalizacji, Ryzyka i Białych Plam (10 Warstw Mapowych) oraz Katalog Rekomendacji dla JST i Województw: zaimplementowano w `calculateTask14` wyliczanie 10 kanonicznych warstw mapowych (`regionalMaps`) oraz ustandaryzowanego katalogu rekomendacji dla samorządów JST i organów wojewódzkich (`jstRecommendations`), łączącego 17 bazowych instrumentów, horyzonty czasowe, wskaźniki KPI i status `hitlStatus: "AUTOMATYCZNA"`. Z-15 zakończony sukcesem [PASS].
 - Z-16 (Faza B) — Produkty 11.5 & 14.5: Importer ETL Danych Zewnętrznych oraz Benchmark Międzynarodowy (Eurostat / European Innovation Scoreboard / Eco-Innovation Index / GUS BDL / UPRP): stworzono moduł ETL `tools/import_external_datasets.js` oraz zwalidowany statyczny snapshot `data/external_benchmarks_snapshot.json` (22 wskaźniki dla 6 filarów per NUTS 2). Zasilono karty *"Polska na tle UE"* (w `calculateTask11`) oraz europejskie benchmarki regionów (w `calculateTask14` — regiony bliźniacze i aspiracyjne). Z-16 zakończony sukcesem [PASS] — Faza B domknięta w 100%!
 
+## [Higiena repozytorium] - 2026-08-03
+### Usunięto
+- Usunięto zdezaktualizowany duplikat `index.html` z korzenia workspace. Plik był kopią frontendu dodaną w commicie `fc01a06` na potrzeby wdrożenia Netlify, ale rozjechał się z kanonicznym `src/gas/index.html` o 505 linii — nie otrzymał poprawek z commitów `886e629` (usunięcie linii poza zasięgiem w `DOMContentLoaded`) ani `e9834ee` (zabezpieczenia `null` przed `toString()` dla `ABSORPCJA` i `STATUS_*`). Duplikat nie był podłączony do żadnego mechanizmu: `netlify.toml` publikuje katalog `src/gas`, `tools/sync_engine.js` ma tylko dwa cele (`src/gas/Code.gs`, `src/gas/index.html`), a `test/run_tests.js` waliduje składnię wyłącznie kanonicznego pliku. Jedyne źródło prawdy frontendu to `src/gas/index.html`. Regresja po usunięciu: `npm test` [PASS] (hasze wyroczni bez zmian: `e69d1ad3`, `a41fae75`, `32dd9923`, `17d343dc`).
+
 
 
 
