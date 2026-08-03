@@ -3321,14 +3321,14 @@
     // Local processing fallback functions
     function runLocalProcessing(validProjects, valReport) {
       try {
-        const acceptedCount = cleanProjects.length;
+        const acceptedCount = validProjects.length;
         const rejectedCount = valReport ? valReport.rejectedCount : 0;
-        const datasetHash = calculateDatasetHash(cleanProjects);
+        const datasetHash = calculateDatasetHash(validProjects);
 
         const localData = {
           status: 'success',
           projectCount: acceptedCount,
-          projects: cleanProjects,
+          projects: validProjects,
           metadata: {
             engineVersion: ENGINE_VERSION,
             timestamp: new Date().toISOString(),
@@ -3337,14 +3337,14 @@
             rejectedCount: rejectedCount,
             datasetHash: datasetHash
           },
-          task4: calculateTask4(cleanProjects, { demoMode: demoMode }),
-          task8: calculateTask8(cleanProjects, { demoMode: demoMode }),
-          task11: calculateTask11(cleanProjects, { demoMode: demoMode, useExternalBenchmark: isBenchmarkModuleEnabled }),
-          task14: calculateTask14(cleanProjects, { demoMode: demoMode })
+          task4: calculateTask4(validProjects, { demoMode: demoMode }),
+          task8: calculateTask8(validProjects, { demoMode: demoMode }),
+          task11: calculateTask11(validProjects, { demoMode: demoMode, useExternalBenchmark: isBenchmarkModuleEnabled }),
+          task14: calculateTask14(validProjects, { demoMode: demoMode })
         };
         
         backendCalculatedData = localData;
-        rawSheetData = cleanProjects;
+        rawSheetData = validProjects;
         renderResultsDashboard(localData);
         updateWeightsAndRecalculate();
         switchTab('tab-task4');
