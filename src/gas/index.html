@@ -195,169 +195,6 @@
       background: #d4af37;
     }
 
-    /* Floating Chatbot Styles */
-    .chatbot-launcher {
-      position: fixed;
-      bottom: 24px;
-      right: 24px;
-      width: 56px;
-      height: 56px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, var(--bg-card) 0%, #1a1a24 100%);
-      border: 2px solid #b87333;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4), 0 0 15px rgba(184, 115, 51, 0.2);
-      cursor: pointer;
-      z-index: 1000;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      color: #d4af37;
-      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-    .chatbot-launcher:hover {
-      transform: scale(1.1) translateY(-2px);
-      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5), 0 0 25px rgba(212, 175, 55, 0.4);
-      border-color: #d4af37;
-    }
-    .chatbot-window {
-      position: fixed;
-      bottom: 96px;
-      right: 24px;
-      width: 380px;
-      height: 500px;
-      border-radius: 16px;
-      background: var(--bg-card);
-      backdrop-filter: blur(15px);
-      -webkit-backdrop-filter: blur(15px);
-      border: 1px solid var(--border-color);
-      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
-      z-index: 1000;
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-      transform: translateY(20px) scale(0.95);
-      opacity: 0;
-      pointer-events: none;
-      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-    .chatbot-window.active {
-      transform: translateY(0) scale(1);
-      opacity: 1;
-      pointer-events: auto;
-      border-color: #b87333;
-    }
-    .chatbot-header {
-      padding: 16px 20px;
-      background: rgba(184, 115, 51, 0.05);
-      border-bottom: 1px solid var(--border-color);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-    .chatbot-header-dot {
-      width: 8px;
-      height: 8px;
-      background-color: #10b981;
-      border-radius: 50%;
-    }
-    .chatbot-close-btn {
-      background: none;
-      border: none;
-      color: var(--text-secondary);
-      font-size: 1.5rem;
-      cursor: pointer;
-      transition: color 0.3s;
-      line-height: 1;
-    }
-    .chatbot-close-btn:hover {
-      color: #d4af37;
-    }
-    .chatbot-messages {
-      flex: 1;
-      padding: 20px;
-      overflow-y: auto;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      scroll-behavior: smooth;
-    }
-    .chatbot-msg {
-      padding: 10px 14px;
-      border-radius: 12px;
-      font-size: 12px;
-      line-height: 1.4;
-      max-width: 85%;
-      word-wrap: break-word;
-    }
-    .chatbot-msg.bot {
-      background: var(--bg-main);
-      color: var(--text-primary);
-      border-top-left-radius: 2px;
-      border: 1px solid var(--border-color);
-      align-self: flex-start;
-    }
-    .chatbot-msg.user {
-      background: #b87333;
-      color: #ffffff;
-      border-top-right-radius: 2px;
-      align-self: flex-end;
-    }
-    .chatbot-input-area {
-      padding: 12px 16px;
-      background: rgba(0, 0, 0, 0.1);
-      border-top: 1px solid var(--border-color);
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    .chatbot-input {
-      flex: 1;
-      background: var(--bg-main);
-      border: 1px solid var(--border-color);
-      border-radius: 8px;
-      padding: 8px 12px;
-      color: var(--text-primary);
-      font-size: 12px;
-      outline: none;
-      transition: border-color 0.3s;
-    }
-    .chatbot-input:focus {
-      border-color: #b87333;
-    }
-    .chatbot-send-btn {
-      background: #b87333;
-      color: #ffffff;
-      border: none;
-      border-radius: 8px;
-      padding: 8px 12px;
-      cursor: pointer;
-      transition: all 0.3s;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .chatbot-send-btn:hover {
-      background: #d4af37;
-    }
-    .chatbot-quick-btn {
-      display: block;
-      width: 100%;
-      background: rgba(184, 115, 51, 0.08);
-      border: 1px solid rgba(184, 115, 51, 0.2);
-      color: #d4af37;
-      padding: 6px 10px;
-      border-radius: 6px;
-      margin-top: 6px;
-      cursor: pointer;
-      text-align: left;
-      font-size: 11px;
-      transition: all 0.2s;
-    }
-    .chatbot-quick-btn:hover {
-      background: #b87333;
-      color: #ffffff;
-      border-color: #b87333;
-    }
   </style>
 </head>
 <body class="font-sans min-h-screen">
@@ -1034,7 +871,7 @@
           <button onclick="switchSubTab('task4', 'dashboard')" id="btn-sub-task4-dashboard" class="subtab-btn px-4 py-2 border-b-2 border-copper text-copper font-semibold">TAB 1: DASHBOARD & SYMULACJE</button>
           <button onclick="switchSubTab('task4', 'inspector')" id="btn-sub-task4-inspector" class="subtab-btn px-4 py-2 border-b-2 border-transparent text-theme-secondary hover:text-theme-primary">TAB 2: LIVE DATA INSPECTOR</button>
           <button onclick="switchSubTab('task4', 'spss')" id="btn-sub-task4-spss" class="subtab-btn px-4 py-2 border-b-2 border-transparent text-theme-secondary hover:text-theme-primary">TAB 3: EKSPORT DO SPSS</button>
-          <button onclick="switchSubTab('task4', 'ai')" id="btn-sub-task4-ai" class="subtab-btn px-4 py-2 border-b-2 border-transparent text-theme-secondary hover:text-theme-primary">TAB 4: KREATOR ARTYKUŁU</button>
+
           <button onclick="switchSubTab('task4', 'jasp'); runJaspAnalysis('task4')" id="btn-sub-task4-jasp" class="subtab-btn px-4 py-2 border-b-2 border-transparent text-theme-secondary hover:text-theme-primary">TAB 5: SILNIK STATYSTYCZNY JASP</button>
         </div>
 
@@ -1318,80 +1155,6 @@
           </div>
         </div>
 
-        <!-- SUB-PANEL 4: KREATOR ARTYKUŁU -->
-        <div id="panel-sub-task4-ai" class="sub-panel hidden themed-card rounded-2xl p-6 flex flex-col gap-4">
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-xs">
-            <div class="flex flex-col gap-4">
-              <h4 class="font-display font-semibold text-xs text-gold uppercase tracking-wider">✍️ Konfigurator AI Research Assistant</h4>
-              
-              <div>
-                <label class="block text-[9px] uppercase font-bold text-theme-secondary mb-1">Struktura artykułu (Structure Prompting)</label>
-                <select id="ai-structure-task4" class="w-full bg-transparent border border-theme rounded-lg p-2 focus:outline-none focus:border-copper">
-                  <option value="imrad">Klasyczny IMRaD (Introduction, Methods, Results, Discussion)</option>
-                  <option value="monograph">Układ Rozdziału Monograficznego</option>
-                </select>
-              </div>
-
-              <div>
-                <label class="block text-[9px] uppercase font-bold text-theme-secondary mb-1">Prompty modyfikujące (Custom Prompts)</label>
-                <textarea id="ai-prompt-task4" rows="2" placeholder="np. Uwzględnij kryteria taksonomii UE w podrozdziale Dyskusja..." class="w-full bg-transparent border border-theme rounded-lg p-2 focus:outline-none focus:border-copper resize-none"></textarea>
-              </div>
-
-              <div class="grid grid-cols-2 gap-2">
-                <div>
-                  <label class="block text-[9px] uppercase font-bold text-theme-secondary mb-1">Język</label>
-                  <select id="ai-lang-task4" class="w-full bg-transparent border border-theme rounded-lg p-2 focus:outline-none focus:border-copper">
-                    <option value="EN">Angielski (JCR-ready)</option>
-                    <option value="PL">Polski (Monografia)</option>
-                  </select>
-                </div>
-                <div>
-                  <label class="block text-[9px] uppercase font-bold text-theme-secondary mb-1">Styl akademicki</label>
-                  <select id="ai-style-task4" class="w-full bg-transparent border border-theme rounded-lg p-2 focus:outline-none focus:border-copper">
-                    <option value="econ">Ekonometryczny / Badawczy</option>
-                    <option value="policy">Polityki publiczne / Analiza systemowa</option>
-                  </select>
-                </div>
-              </div>
-
-              <div class="grid grid-cols-2 gap-2">
-                <div>
-                  <label class="block text-[9px] uppercase font-bold text-theme-secondary mb-1">Limit objętości (słów)</label>
-                  <input type="number" id="ai-words-task4" value="5000" class="w-full bg-transparent border border-theme rounded-lg p-2 focus:outline-none focus:border-copper">
-                </div>
-                <div>
-                  <label class="block text-[9px] uppercase font-bold text-theme-secondary mb-1">Styl bibliografii</label>
-                  <select id="ai-bib-task4" class="w-full bg-transparent border border-theme rounded-lg p-2 focus:outline-none focus:border-copper">
-                    <option value="apa">APA 7th</option>
-                    <option value="harvard">Harvard</option>
-                    <option value="chicago">Chicago</option>
-                  </select>
-                </div>
-              </div>
-
-              <div>
-                <label class="block text-[9px] uppercase font-bold text-theme-secondary mb-1">Journal Editorial Guidelines</label>
-                <textarea id="ai-guidelines-task4" rows="2" placeholder="Wklej tutaj szczegółowe wytyczne dla autorów czasopisma..." class="w-full bg-transparent border border-theme rounded-lg p-2 focus:outline-none focus:border-copper resize-none"></textarea>
-              </div>
-
-              <button onclick="generateResearchPaper('task4')" class="w-full bg-gradient-to-r from-copper to-gold text-white font-bold py-2.5 px-4 rounded-xl text-xs transition-all duration-300 flex items-center justify-center gap-2 shadow-lg shadow-copper-glow">
-                🤖 Generuj Artykuł Naukowy
-              </button>
-            </div>
-
-            <!-- Generated preview area -->
-            <div class="flex flex-col gap-3 min-h-[300px] border border-theme rounded-2xl p-4 bg-zinc-950/20">
-              <h4 class="font-display font-semibold text-xs text-theme-primary">Podgląd tekstu naukowego</h4>
-              <div id="ai-preview-task4" class="flex-1 overflow-y-auto max-h-96 text-[10px] leading-relaxed text-theme-secondary font-serif p-2 border border-theme/50 rounded-lg bg-zinc-950/50">
-                Tekst zostanie wygenerowany na podstawie danych badawczych...
-              </div>
-              <div class="flex gap-2">
-                <button id="btn-dl-pdf-task4" disabled onclick="downloadPaperFile('task4', 'pdf')" class="flex-1 bg-transparent border border-theme hover:bg-theme-border text-theme-primary font-semibold py-2 rounded-xl text-[10px] transition-all duration-300">
-                  📄 Pobierz PDF
-                </button>
-                <button id="btn-dl-docx-task4" disabled onclick="downloadPaperFile('task4', 'docx')" class="flex-1 bg-gradient-to-r from-copper to-gold text-white font-bold py-2 rounded-xl text-[10px] transition-all duration-300 shadow-md shadow-copper-glow">
-                  📝 Pobierz edytowalny DOCX
-                </button>
               </div>
             </div>
           </div>
@@ -1460,7 +1223,7 @@
           <button onclick="switchSubTab('task8', 'dashboard')" id="btn-sub-task8-dashboard" class="subtab-btn px-4 py-2 border-b-2 border-gold text-gold font-semibold">TAB 1: DASHBOARD & SYMULACJE</button>
           <button onclick="switchSubTab('task8', 'inspector')" id="btn-sub-task8-inspector" class="subtab-btn px-4 py-2 border-b-2 border-transparent text-theme-secondary hover:text-theme-primary">TAB 2: LIVE DATA INSPECTOR</button>
           <button onclick="switchSubTab('task8', 'spss')" id="btn-sub-task8-spss" class="subtab-btn px-4 py-2 border-b-2 border-transparent text-theme-secondary hover:text-theme-primary">TAB 3: EKSPORT DO SPSS</button>
-          <button onclick="switchSubTab('task8', 'ai')" id="btn-sub-task8-ai" class="subtab-btn px-4 py-2 border-b-2 border-transparent text-theme-secondary hover:text-theme-primary">TAB 4: KREATOR ARTYKUŁU</button>
+
           <button onclick="switchSubTab('task8', 'jasp'); runJaspAnalysis('task8')" id="btn-sub-task8-jasp" class="subtab-btn px-4 py-2 border-b-2 border-transparent text-theme-secondary hover:text-theme-primary">TAB 5: SILNIK STATYSTYCZNY JASP</button>
         </div>
 
@@ -1915,80 +1678,6 @@
           </div>
         </div>
 
-        <!-- SUB-PANEL 4: KREATOR ARTYKUŁU -->
-        <div id="panel-sub-task8-ai" class="sub-panel hidden themed-card rounded-2xl p-6 flex flex-col gap-4">
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-xs">
-            <div class="flex flex-col gap-4">
-              <h4 class="font-display font-semibold text-xs text-gold uppercase tracking-wider">✍️ Konfigurator AI Research Assistant (Zadanie 8)</h4>
-              
-              <div>
-                <label class="block text-[9px] uppercase font-bold text-theme-secondary mb-1">Struktura artykułu</label>
-                <select id="ai-structure-task8" class="w-full bg-transparent border border-theme rounded-lg p-2 focus:outline-none focus:border-gold">
-                  <option value="imrad">Klasyczny IMRaD (Pod kątem ewaluacji publicznej)</option>
-                  <option value="monograph">Rozdział Monografii Badawczej</option>
-                </select>
-              </div>
-
-              <div>
-                <label class="block text-[9px] uppercase font-bold text-theme-secondary mb-1">Prompty modyfikujące</label>
-                <textarea id="ai-prompt-task8" rows="2" placeholder="np. Zanalizuj problem obciążeń formalnych NCBR i zalecenia uproszczeń..." class="w-full bg-transparent border border-theme rounded-lg p-2 focus:outline-none focus:border-gold resize-none"></textarea>
-              </div>
-
-              <div class="grid grid-cols-2 gap-2">
-                <div>
-                  <label class="block text-[9px] uppercase font-bold text-theme-secondary mb-1">Język</label>
-                  <select id="ai-lang-task8" class="w-full bg-transparent border border-theme rounded-lg p-2 focus:outline-none focus:border-gold">
-                    <option value="EN">Angielski (JCR-ready)</option>
-                    <option value="PL">Polski (Monografia)</option>
-                  </select>
-                </div>
-                <div>
-                  <label class="block text-[9px] uppercase font-bold text-theme-secondary mb-1">Styl akademicki</label>
-                  <select id="ai-style-task8" class="w-full bg-transparent border border-theme rounded-lg p-2 focus:outline-none focus:border-gold">
-                    <option value="econ">Ekonometryczny / Badawczy</option>
-                    <option value="policy">Polityki publiczne / Administracyjny</option>
-                  </select>
-                </div>
-              </div>
-
-              <div class="grid grid-cols-2 gap-2">
-                <div>
-                  <label class="block text-[9px] uppercase font-bold text-theme-secondary mb-1">Limit objętości (słów)</label>
-                  <input type="number" id="ai-words-task8" value="5000" class="w-full bg-transparent border border-theme rounded-lg p-2 focus:outline-none focus:border-gold">
-                </div>
-                <div>
-                  <label class="block text-[9px] uppercase font-bold text-theme-secondary mb-1">Styl bibliografii</label>
-                  <select id="ai-bib-task8" class="w-full bg-transparent border border-theme rounded-lg p-2 focus:outline-none focus:border-gold">
-                    <option value="apa">APA 7th</option>
-                    <option value="harvard">Harvard</option>
-                    <option value="chicago">Chicago</option>
-                  </select>
-                </div>
-              </div>
-
-              <div>
-                <label class="block text-[9px] uppercase font-bold text-theme-secondary mb-1">Journal Guidelines</label>
-                <textarea id="ai-guidelines-task8" rows="2" placeholder="Wklej tutaj szczegółowe wytyczne czasopisma naukowego..." class="w-full bg-transparent border border-theme rounded-lg p-2 focus:outline-none focus:border-gold resize-none"></textarea>
-              </div>
-
-              <button onclick="generateResearchPaper('task8')" class="w-full bg-gradient-to-r from-copper to-gold text-white font-bold py-2.5 px-4 rounded-xl text-xs transition-all duration-300 flex items-center justify-center gap-2 shadow-lg shadow-gold-glow">
-                🤖 Generuj Artykuł Naukowy
-              </button>
-            </div>
-
-            <!-- Generated preview area -->
-            <div class="flex flex-col gap-3 min-h-[300px] border border-theme rounded-2xl p-4 bg-zinc-950/20">
-              <h4 class="font-display font-semibold text-xs text-theme-primary">Podgląd tekstu naukowego</h4>
-              <div id="ai-preview-task8" class="flex-1 overflow-y-auto max-h-96 text-[10px] leading-relaxed text-theme-secondary font-serif p-2 border border-theme/50 rounded-lg bg-zinc-950/50">
-                Tekst zostanie wygenerowany na podstawie analizy wąskich gardeł...
-              </div>
-              <div class="flex gap-2">
-                <button id="btn-dl-pdf-task8" disabled onclick="downloadPaperFile('task8', 'pdf')" class="flex-1 bg-transparent border border-theme hover:bg-theme-border text-theme-primary font-semibold py-2 rounded-xl text-[10px] transition-all duration-300">
-                  📄 Pobierz PDF
-                </button>
-                <button id="btn-dl-docx-task8" disabled onclick="downloadPaperFile('task8', 'docx')" class="flex-1 bg-gradient-to-r from-copper to-gold text-white font-bold py-2 rounded-xl text-[10px] transition-all duration-300 shadow-md shadow-copper-glow">
-                  📝 Pobierz edytowalny DOCX
-                </button>
               </div>
             </div>
           </div>
@@ -2056,7 +1745,7 @@
           <button onclick="switchSubTab('task11', 'dashboard')" id="btn-sub-task11-dashboard" class="subtab-btn px-4 py-2 border-b-2 border-copper text-copper font-semibold">TAB 1: DASHBOARD & SYMULACJE</button>
           <button onclick="switchSubTab('task11', 'inspector')" id="btn-sub-task11-inspector" class="subtab-btn px-4 py-2 border-b-2 border-transparent text-theme-secondary hover:text-theme-primary">TAB 2: LIVE DATA INSPECTOR</button>
           <button onclick="switchSubTab('task11', 'spss')" id="btn-sub-task11-spss" class="subtab-btn px-4 py-2 border-b-2 border-transparent text-theme-secondary hover:text-theme-primary">TAB 3: EKSPORT DO SPSS</button>
-          <button onclick="switchSubTab('task11', 'ai')" id="btn-sub-task11-ai" class="subtab-btn px-4 py-2 border-b-2 border-transparent text-theme-secondary hover:text-theme-primary">TAB 4: KREATOR ARTYKUŁU</button>
+
         </div>
 
         <!-- SUB-PANEL 1: DASHBOARD & SYMULACJE -->
@@ -2212,78 +1901,6 @@
             </button>
           </div>
         </div>
-
-        <!-- SUB-PANEL 4: KREATOR ARTYKUŁU -->
-        <div id="panel-sub-task11-ai" class="sub-panel hidden themed-card rounded-2xl p-6 flex flex-col gap-4">
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-xs">
-            <div class="flex flex-col gap-4">
-              <h4 class="font-display font-semibold text-xs text-gold uppercase tracking-wider">✍️ Konfigurator AI Research Assistant (Zadanie 11)</h4>
-              
-              <div>
-                <label class="block text-[9px] uppercase font-bold text-theme-secondary mb-1">Struktura artykułu</label>
-                <select id="ai-structure-task11" class="w-full bg-transparent border border-theme rounded-lg p-2 focus:outline-none focus:border-copper">
-                  <option value="imrad">Klasyczny IMRaD (Analiza trendów makro transformacji)</option>
-                  <option value="monograph">Monografia Ekonometryczna</option>
-                </select>
-              </div>
-
-              <div>
-                <label class="block text-[9px] uppercase font-bold text-theme-secondary mb-1">Prompty modyfikujące</label>
-                <textarea id="ai-prompt-task11" rows="2" placeholder="np. Zanalizuj tempo wzrostu zielonych patentów i CAGR nakładów na B+R..." class="w-full bg-transparent border border-theme rounded-lg p-2 focus:outline-none focus:border-copper resize-none"></textarea>
-              </div>
-
-              <div class="grid grid-cols-2 gap-2">
-                <div>
-                  <label class="block text-[9px] uppercase font-bold text-theme-secondary mb-1">Język</label>
-                  <select id="ai-lang-task11" class="w-full bg-transparent border border-theme rounded-lg p-2 focus:outline-none focus:border-copper">
-                    <option value="EN">Angielski (JCR-ready)</option>
-                    <option value="PL">Polski (Monografia)</option>
-                  </select>
-                </div>
-                <div>
-                  <label class="block text-[9px] uppercase font-bold text-theme-secondary mb-1">Styl akademicki</label>
-                  <select id="ai-style-task11" class="w-full bg-transparent border border-theme rounded-lg p-2 focus:outline-none focus:border-copper">
-                    <option value="econ">Ekonometryczny / Statystyczny</option>
-                    <option value="policy">Polityki publiczne / Zrównoważony rozwój</option>
-                  </select>
-                </div>
-              </div>
-
-              <div class="grid grid-cols-2 gap-2">
-                <div>
-                  <label class="block text-[9px] uppercase font-bold text-theme-secondary mb-1">Limit objętości (słów)</label>
-                  <input type="number" id="ai-words-task11" value="5000" class="w-full bg-transparent border border-theme rounded-lg p-2 focus:outline-none focus:border-copper">
-                </div>
-                <div>
-                  <label class="block text-[9px] uppercase font-bold text-theme-secondary mb-1">Styl bibliografii</label>
-                  <select id="ai-bib-task11" class="w-full bg-transparent border border-theme rounded-lg p-2 focus:outline-none focus:border-copper">
-                    <option value="apa">APA 7th</option>
-                    <option value="harvard">Harvard</option>
-                    <option value="chicago">Chicago</option>
-                  </select>
-                </div>
-              </div>
-
-              <div>
-                <label class="block text-[9px] uppercase font-bold text-theme-secondary mb-1">Journal Guidelines</label>
-                <textarea id="ai-guidelines-task11" rows="2" placeholder="Wklej tutaj wytyczne redakcji..." class="w-full bg-transparent border border-theme rounded-lg p-2 focus:outline-none focus:border-copper resize-none"></textarea>
-              </div>
-
-              <button onclick="generateResearchPaper('task11')" class="w-full bg-gradient-to-r from-copper to-gold text-white font-bold py-2.5 px-4 rounded-xl text-xs transition-all duration-300 flex items-center justify-center gap-2 shadow-lg shadow-copper-glow">
-                🤖 Generuj Artykuł Naukowy
-              </button>
-            </div>
-
-            <!-- Generated preview area -->
-            <div class="flex flex-col gap-3 min-h-[300px] border border-theme rounded-2xl p-4 bg-zinc-950/20">
-              <h4 class="font-display font-semibold text-xs text-theme-primary">Podgląd tekstu naukowego</h4>
-              <div id="ai-preview-task11" class="flex-1 overflow-y-auto max-h-96 text-[10px] leading-relaxed text-theme-secondary font-serif p-2 border border-theme/50 rounded-lg bg-zinc-950/50">
-                Tekst zostanie wygenerowany na podstawie baz trendów transformacji...
-              </div>
-              <div class="flex gap-2">
-                <button id="btn-dl-pdf-task11" disabled onclick="downloadPaperFile('task11', 'pdf')" class="flex-1 bg-transparent border border-theme hover:bg-theme-border text-theme-primary font-semibold py-2 rounded-xl text-[10px] transition-all duration-300">
-                  📄 Pobierz PDF
-                </button>
                 <button id="btn-dl-docx-task11" disabled onclick="downloadPaperFile('task11', 'docx')" class="flex-1 bg-gradient-to-r from-copper to-gold text-white font-bold py-2 rounded-xl text-[10px] transition-all duration-300 shadow-md shadow-copper-glow">
                   📝 Pobierz edytowalny DOCX
                 </button>
@@ -2312,7 +1929,7 @@
           <button onclick="switchSubTab('task14', 'dashboard')" id="btn-sub-task14-dashboard" class="subtab-btn px-4 py-2 border-b-2 border-copper text-copper font-semibold">TAB 1: DASHBOARD & SYMULACJE</button>
           <button onclick="switchSubTab('task14', 'inspector')" id="btn-sub-task14-inspector" class="subtab-btn px-4 py-2 border-b-2 border-transparent text-theme-secondary hover:text-theme-primary">TAB 2: LIVE DATA INSPECTOR</button>
           <button onclick="switchSubTab('task14', 'spss')" id="btn-sub-task14-spss" class="subtab-btn px-4 py-2 border-b-2 border-transparent text-theme-secondary hover:text-theme-primary">TAB 3: EKSPORT DO SPSS</button>
-          <button onclick="switchSubTab('task14', 'ai')" id="btn-sub-task14-ai" class="subtab-btn px-4 py-2 border-b-2 border-transparent text-theme-secondary hover:text-theme-primary">TAB 4: KREATOR ARTYKUŁU</button>
+
         </div>
 
         <!-- SUB-PANEL 1: DASHBOARD & SYMULACJE -->
@@ -2620,76 +2237,6 @@
           </div>
         </div>
 
-        <!-- SUB-PANEL 4: KREATOR ARTYKUŁU -->
-        <div id="panel-sub-task14-ai" class="sub-panel hidden themed-card rounded-2xl p-6 flex flex-col gap-4">
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-xs">
-            <div class="flex flex-col gap-4">
-              <h4 class="font-display font-semibold text-xs text-gold uppercase tracking-wider">✍️ Konfigurator AI Research Assistant (Zadanie 14)</h4>
-              
-              <div>
-                <label class="block text-[9px] uppercase font-bold text-theme-secondary mb-1">Struktura artykułu</label>
-                <select id="ai-structure-task14" class="w-full bg-transparent border border-theme rounded-lg p-2 focus:outline-none focus:border-copper">
-                  <option value="imrad">Klasyczny IMRaD (Analiza struktur sieciowych SNA)</option>
-                  <option value="monograph">Monografia Geografii Ekonomicznej</option>
-                </select>
-              </div>
-
-              <div>
-                <label class="block text-[9px] uppercase font-bold text-theme-secondary mb-1">Prompty modyfikujące</label>
-                <textarea id="ai-prompt-task14" rows="2" placeholder="np. Zanalizuj wskaźniki współpracy IOB-samorząd-nauka i luki w sieci..." class="w-full bg-transparent border border-theme rounded-lg p-2 focus:outline-none focus:border-copper resize-none"></textarea>
-              </div>
-
-              <div class="grid grid-cols-2 gap-2">
-                <div>
-                  <label class="block text-[9px] uppercase font-bold text-theme-secondary mb-1">Język</label>
-                  <select id="ai-lang-task14" class="w-full bg-transparent border border-theme rounded-lg p-2 focus:outline-none focus:border-copper">
-                    <option value="EN">Angielski (JCR-ready)</option>
-                    <option value="PL">Polski (Monografia)</option>
-                  </select>
-                </div>
-                <div>
-                  <label class="block text-[9px] uppercase font-bold text-theme-secondary mb-1">Styl akademicki</label>
-                  <select id="ai-style-task14" class="w-full bg-transparent border border-theme rounded-lg p-2 focus:outline-none focus:border-copper">
-                    <option value="econ">Ekonometryczny / SNA</option>
-                    <option value="policy">Polityki regionalnej / Innowacyjności</option>
-                  </select>
-                </div>
-              </div>
-
-              <div class="grid grid-cols-2 gap-2">
-                <div>
-                  <label class="block text-[9px] uppercase font-bold text-theme-secondary mb-1">Limit objętości (słów)</label>
-                  <input type="number" id="ai-words-task14" value="5000" class="w-full bg-transparent border border-theme rounded-lg p-2 focus:outline-none focus:border-copper">
-                </div>
-                <div>
-                  <label class="block text-[9px] uppercase font-bold text-theme-secondary mb-1">Styl bibliografii</label>
-                  <select id="ai-bib-task14" class="w-full bg-transparent border border-theme rounded-lg p-2 focus:outline-none focus:border-copper">
-                    <option value="apa">APA 7th</option>
-                    <option value="harvard">Harvard</option>
-                    <option value="chicago">Chicago</option>
-                  </select>
-                </div>
-              </div>
-
-              <div>
-                <label class="block text-[9px] uppercase font-bold text-theme-secondary mb-1">Journal Guidelines</label>
-                <textarea id="ai-guidelines-task14" rows="2" placeholder="Wklej wytyczne redakcyjne pod monografię lub czasopismo..." class="w-full bg-transparent border border-theme rounded-lg p-2 focus:outline-none focus:border-copper resize-none"></textarea>
-              </div>
-
-              <button onclick="generateResearchPaper('task14')" class="w-full bg-gradient-to-r from-copper to-gold text-white font-bold py-2.5 px-4 rounded-xl text-xs transition-all duration-300 flex items-center justify-center gap-2 shadow-lg shadow-copper-glow">
-                🤖 Generuj Artykuł Naukowy
-              </button>
-            </div>
-
-            <!-- Generated preview area -->
-            <div class="flex flex-col gap-3 min-h-[300px] border border-theme rounded-2xl p-4 bg-zinc-950/20">
-              <h4 class="font-display font-semibold text-xs text-theme-primary">Podgląd tekstu naukowego</h4>
-              <div id="ai-preview-task14" class="flex-1 overflow-y-auto max-h-96 text-[10px] leading-relaxed text-theme-secondary font-serif p-2 border border-theme/50 rounded-lg bg-zinc-950/50">
-                Tekst zostanie wygenerowany na podstawie struktur regionalnych SNA...
-              </div>
-              <div class="flex gap-2">
-                <button id="btn-dl-pdf-task14" disabled onclick="downloadPaperFile('task14', 'pdf')" class="flex-1 bg-transparent border border-theme hover:bg-theme-border text-theme-primary font-semibold py-2 rounded-xl text-[10px] transition-all duration-300">
-                  📄 Pobierz PDF
                 </button>
                 <button id="btn-dl-docx-task14" disabled onclick="downloadPaperFile('task14', 'docx')" class="flex-1 bg-gradient-to-r from-copper to-gold text-white font-bold py-2 rounded-xl text-[10px] transition-all duration-300 shadow-md shadow-copper-glow">
                   📝 Pobierz edytowalny DOCX
@@ -2978,22 +2525,6 @@
     </div>
   </div>
 
-  <!-- Floating Chatbot Daisy Widget -->
-  <div id="chatbot-launcher" class="chatbot-launcher" onclick="toggleChatbot()" title="Skonsultuj się z Daisy">
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-    </svg>
-  </div>
-
-  <div id="chatbot-window" class="chatbot-window">
-    <div class="chatbot-header">
-      <div class="flex items-center gap-3">
-        <div class="w-8 h-8 rounded-full bg-gradient-to-br from-copper to-gold flex items-center justify-center font-display font-extrabold text-sm text-white border border-theme shadow-md">
-          D
-        </div>
-        <div>
-          <h4 style="margin: 0; font-size: 13px; font-weight: 600; color: var(--text-primary);">Daisy</h4>
-          <div class="flex items-center gap-1.5 mt-0.5">
             <div class="chatbot-header-dot"></div>
             <span style="font-size: 10px; color: var(--text-secondary);">Konsultant naukowy</span>
           </div>
@@ -7601,158 +7132,6 @@ var calculateTask8Local = calculateTask8;
       }
     }
 
-    // ==================== DAISY CHATBOT LOGIC ====================
-    let chatHistory = [];
-    let chatInitialized = false;
-
-    function toggleChatbot() {
-      const win = document.getElementById('chatbot-window');
-      if (win) {
-        win.classList.toggle('active');
-        if (win.classList.contains('active') && !chatInitialized) {
-          resetChatbot();
-        }
-      }
-    }
-
-    function resetChatbot() {
-      const container = document.getElementById('chatbot-messages');
-      if (!container) return;
-
-      container.innerHTML = '';
-      chatHistory = [];
-      chatInitialized = true;
-
-      addChatbotMessage(
-        "Cześć! 👋 Jestem Daisy, wirtualny doradca naukowo-badawczy platformy GREENSTRAT. Odpowiem na pytania o wdrożone wskaźniki (Zadanie 4 i Zadanie 8) oraz formaty SPSS/JASP/R. W czym mogę pomóc?<br><br>" +
-        "<button class='chatbot-quick-btn' onclick='askAboutDaisyMetric(\"ISBI\")'>📊 Czym jest wskaźnik ISBI?</button>" +
-        "<button class='chatbot-quick-btn' onclick='askAboutDaisyMetric(\"EISEI\")'>📈 Jak działa indeks EISEI?</button>" +
-        "<button class='chatbot-quick-btn' onclick='askAboutDaisyMetric(\"JASP\")'>💾 Zgodność z programem JASP/SPSS</button>",
-        "bot"
-      );
-    }
-
-    function addChatbotMessage(text, sender) {
-      const container = document.getElementById('chatbot-messages');
-      if (!container) return;
-
-      const bubble = document.createElement('div');
-      bubble.className = `chatbot-msg ${sender}`;
-      bubble.innerHTML = text;
-      container.appendChild(bubble);
-
-      // Keep history format
-      if (sender !== 'system') {
-        chatHistory.push({
-          role: sender === 'bot' ? 'model' : 'user',
-          text: text.replace(/<button class='chatbot-quick-btn' onclick='[^']*'>[^<]*<\/button>/g, '') // remove quick reply html buttons from model memory
-        });
-      }
-
-      container.scrollTop = container.scrollHeight;
-    }
-
-    function handleChatbotKeypress(e) {
-      if (e.key === 'Enter') {
-        handleChatbotSend();
-      }
-    }
-
-    function handleChatbotSend() {
-      const input = document.getElementById('chatbot-input-field');
-      if (!input) return;
-
-      const text = input.value.trim();
-      if (!text) return;
-
-      input.value = '';
-      addChatbotMessage(text, "user");
-
-      // Add typing loader
-      const loaderId = 'daisy-typing-loader';
-      const container = document.getElementById('chatbot-messages');
-      const loader = document.createElement('div');
-      loader.id = loaderId;
-      loader.className = 'chatbot-msg bot italic text-[11px] text-zinc-500';
-      loader.innerHTML = "Daisy pisze...";
-      container.appendChild(loader);
-      container.scrollTop = container.scrollHeight;
-
-      // Call backend
-      const endpoint = document.getElementById('endpointUrl').value.trim();
-      if (!endpoint) {
-        const typingEl = document.getElementById(loaderId);
-        if (typingEl) typingEl.remove();
-        addChatbotMessage("Błąd: Brak zdefiniowanego URL aplikacji Web App w panelu Ingestii. Skonfiguruj endpoint, aby połączyć się z Daisy.", "bot");
-        return;
-      }
-
-      // Prepare a compact data summary to avoid slow server calculations
-      let dataSummary = "";
-      if (backendCalculatedData) {
-        const d = backendCalculatedData;
-        dataSummary = "\n\nAKTUALNE DANE BADAWCZE W BAZIE:\n" +
-                      `- Całkowita liczba wczytanych projektów: ${rawSheetData.length}\n` +
-                      `- Wskaźnik EIFII (Intensywność finansowania): ${safeFixed(d.task4.eifii, 2)}%\n` +
-                      `- Wskaźnik CRI (Dojrzałość rynkowa): ${safeFixed(d.task4.cri, 2)}%\n` +
-                      `- Wskaźnik ISBI (Zbalansowanie etapów): ${safeFixed(d.task4.isbi, 2)}\n\n` +
-                      "SPECYFIKA REGIONALNA (Województwa i EIRSI):\n";
-        
-        Object.keys(d.task4.eirsi).forEach(woj => {
-          dataSummary += `- ${woj}: EIRSI = ${safeFixed(d.task4.eirsi[woj], 2)}\n`;
-        });
-        
-        dataSummary += "\nEWALUACJA I RANKINGI PROGRAMÓW (Zadanie 8):\n";
-        d.task8.forEach(prog => {
-          dataSummary += `- Program ${prog.program}: EISEI = ${safeFixed(prog.eisei, 1)} | EIPI = ${safeFixed(prog.eipi, 1)} | TRLI = ${safeFixed(prog.trli, 1)} | Wiarygodność = ${safeFixed(prog.eisei_comp, 0)}% | Liczba = ${prog.projectCount}\n`;
-        });
-      } else {
-        dataSummary = "\n\nAKTUALNY STAN BAZY DANYCH: Baza danych jest obecnie pusta (brak zaimportowanych projektów).";
-      }
-
-      fetch(endpoint, {
-        method: 'POST',
-        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-        body: JSON.stringify({
-          action: 'askDaisy',
-          message: text,
-          chatHistory: chatHistory,
-          dataSummary: dataSummary
-        })
-      })
-      .then(r => r.json())
-      .then(data => {
-        const typingEl = document.getElementById(loaderId);
-        if (typingEl) typingEl.remove();
-        if (data && data.status === 'success' && data.reply) {
-          addChatbotMessage(data.reply, "bot");
-        } else {
-          addChatbotMessage("Wystąpił błąd podczas pobierania odpowiedzi od bota. Upewnij się, że klucz GEMINI_API_KEY jest poprawnie skonfigurowany na serwerze.", "bot");
-        }
-      })
-      .catch(err => {
-        const typingEl = document.getElementById(loaderId);
-        if (typingEl) typingEl.remove();
-        addChatbotMessage("Błąd komunikacji z chmurą: " + err.toString(), "bot");
-      });
-    }
-
-    function askAboutDaisyMetric(metricName) {
-      let query = "";
-      if (metricName === "ISBI") {
-        query = "Wyjaśnij mi proszę wskaźnik ISBI (Innovation Stage Balance Index) w kontekście Zadania 4.";
-      } else if (metricName === "EISEI") {
-        query = "Jak wyliczany jest indeks syntetyczny EISEI (Master Index) w Zadaniu 8?";
-      } else if (metricName === "JASP") {
-        query = "W jaki sposób dane są formatowane dla zgodności z JASP/SPSS/R?";
-      }
-
-      addChatbotMessage(query, "user");
-      
-      // Simulate click sending
-      document.getElementById('chatbot-input-field').value = query;
-      handleChatbotSend();
-    }
 
     // ==================== TABS 11 AND 14 ACTIONS ====================
     let currentSubDb = 'db-capacity';
@@ -8350,7 +7729,7 @@ var calculateTask8Local = calculateTask8;
 
     // ==================== UNIVERSAL SUB-TABS SWITCHER ====================
     function switchSubTab(taskId, subTabId) {
-      const panels = ['dashboard', 'inspector', 'spss', 'ai', 'jasp'];
+      const panels = ['dashboard', 'inspector', 'spss', 'jasp'];
       panels.forEach(p => {
         const panelEl = document.getElementById(`panel-sub-${taskId}-${p}`);
         const btnEl = document.getElementById(`btn-sub-${taskId}-${p}`);
@@ -9187,165 +8566,6 @@ var calculateTask8Local = calculateTask8;
       });
     }
 
-    // ==================== AI RESEARCH PAPER GENERATION & DOCX ====================
-    let generatedPapers = {};
-    function generateResearchPaper(taskId) {
-      const structure = document.getElementById(`ai-structure-${taskId}`).value;
-      const customPrompt = document.getElementById(`ai-prompt-${taskId}`).value;
-      const lang = document.getElementById(`ai-lang-${taskId}`).value;
-      const style = document.getElementById(`ai-style-${taskId}`).value;
-      const words = document.getElementById(`ai-words-${taskId}`).value;
-      const bib = document.getElementById(`ai-bib-${taskId}`).value;
-      
-      const previewEl = document.getElementById(`ai-preview-${taskId}`);
-      previewEl.innerHTML = "⌛ Trwa analiza danych i kompozycja tekstu naukowego przez AI...";
-      
-      const d = backendCalculatedData;
-      let stats = "";
-      if (d) {
-        stats = `EIFII: ${d.task4.eifii.toFixed(2)}%, CRI: ${d.task4.cri.toFixed(2)}%, ISBI: ${d.task4.isbi.toFixed(2)}, total projects: ${rawSheetData.length}.`;
-      } else {
-        stats = "Brak załadowanych danych - generowanie na bazie założeń teoretycznych.";
-      }
-      
-      const endpoint = document.getElementById('endpointUrl').value.trim();
-      if (!endpoint) {
-        setTimeout(() => {
-          const text = simulatePaperText(taskId, structure, lang, bib, stats);
-          generatedPapers[taskId] = text;
-          previewEl.innerHTML = text.replace(/\n/g, '<br>');
-          
-          const btnPdf = document.getElementById(`btn-dl-pdf-${taskId}`);
-          const btnDocx = document.getElementById(`btn-dl-docx-${taskId}`);
-          if (btnPdf) btnPdf.removeAttribute('disabled');
-          if (btnDocx) btnDocx.removeAttribute('disabled');
-        }, 1500);
-        return;
-      }
-      
-      fetch(endpoint, {
-        method: 'POST',
-        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-        body: JSON.stringify({
-          action: 'askDaisy',
-          message: `Jesteś ekspertem naukowym. Napisz bezpośrednio streszczenie i wstęp (ok. 600-800 słów) artykułu naukowego w strukturze ${structure} w języku ${lang} w stylu ${style} z bibliografią w standardzie ${bib}. Wprowadź tabelę statystyczną na podstawie parametrów: ${stats}. Przypisy w tekście w formacie [SIMIK_2026_X]. Ogranicz tekst do streszczenia i wstępu, aby nie przekroczyć limitu znaków. Pod żadnym pozorem nie pisz żadnych słów wstępnych do użytkownika, nie tłumacz się, nie zadawaj pytań, nie przepraszaj ani nie pisz, co możesz a czego nie możesz zrobić - po prostu rozpocznij pisanie artykułu od razu. Dodatkowy prompt użytkownika: ${customPrompt}`
-        })
-      })
-      .then(r => r.json())
-      .then(data => {
-        if (data && data.status === 'success' && data.reply) {
-          generatedPapers[taskId] = data.reply;
-          previewEl.textContent = data.reply;
-          previewEl.style.whiteSpace = 'pre-wrap';
-          const btnPdf = document.getElementById(`btn-dl-pdf-${taskId}`);
-          const btnDocx = document.getElementById(`btn-dl-docx-${taskId}`);
-          if (btnPdf) btnPdf.removeAttribute('disabled');
-          if (btnDocx) btnDocx.removeAttribute('disabled');
-        } else {
-          previewEl.textContent = "Błąd komunikacji z modelem AI. Upewnij się, że klucz API jest skonfigurowany w chmurze.";
-        }
-      })
-      .catch(err => {
-        previewEl.innerHTML = "Błąd: " + err.toString();
-      });
-    }
-
-    function simulatePaperText(taskId, structure, lang, bib, stats) {
-      const d = backendCalculatedData;
-      const eifiiVal = (d && d.task4 && d.task4.eifii !== undefined && d.task4.eifii !== null) ? d.task4.eifii.toFixed(1) + '%' : 'b.d.';
-      const criVal = (d && d.task4 && d.task4.cri !== undefined && d.task4.cri !== null) ? d.task4.cri.toFixed(1) + '%' : 'b.d.';
-      const isbiVal = (d && d.task4 && d.task4.isbi !== undefined && d.task4.isbi !== null) ? d.task4.isbi.toFixed(1) + '%' : 'b.d.';
-
-      if (lang === 'PL') {
-        return `STRESZCZENIE BADAWCZE (Zadanie: ${taskId.toUpperCase()})\n\n` +
-               `Wstęp: Niniejszy artykuł przedstawia empiryczną analizę wpływu mechanizmów wsparcia na transformację ekoinnowacyjną w Polsce. Badania opierają się na faktycznych wskaźnikach z próby badawczej: ${stats}\n\n` +
-               `Metodologia: Zastosowano model bodźców systemowych DSS. Wykorzystano współczynnik Location Quotient (LQ), 6 filarów EIRRI oraz indeks EISEI.\n\n` +
-               `Wyniki i Dyskusja: Wykazano zbalansowanie regionalne alokacji funduszy (EIFII: ${eifiiVal}, CRI: ${criVal}, ISBI: ${isbiVal}). Poniższa tabela przedstawia szczegółowe wyniki empiryczne:\n\n` +
-               `[TABELA_STATYSTYCZNA]\n\n` +
-               `Wnioski: Konieczna jest ścieżka prawna modyfikacji załączników kryteriów formalnych naborów publicznych.\n\n` +
-               `Bibliografia (Standard ${bib.toUpperCase()}):\n` +
-               `1. GUS BDL / Eurostat (2024). Bank Danych Lokalnych oraz Regional Innovation Scoreboard. Link: bdl.stat.gov.pl`;
-      } else {
-        return `RESEARCH ABSTRACT (Task: ${taskId.toUpperCase()})\n\n` +
-               `Introduction: This paper explores the empirical impact of public support instruments on eco-innovation transfer in Poland. The research uses actual database indicators: ${stats}\n\n` +
-               `Methodology: We implement Multi-criteria DSS decision indexing and NUTS 2 regional clustering.\n\n` +
-               `Results & Discussion: The empirical results highlight significant voivodeship specialization (EIFII: ${eifiiVal}, CRI: ${criVal}, ISBI: ${isbiVal}). The statistical output is detailed in the table below:\n\n` +
-               `[STATISTICAL_TABLE]\n\n` +
-               `Conclusions: We recommend updating legal guidelines for SME co-financing rules.\n\n` +
-               `References (${bib.toUpperCase()}):\n` +
-               `1. Statistics Poland (GUS) & Eurostat (2024). Local Data Bank & Regional Innovation Scoreboard. URL: bdl.stat.gov.pl`;
-      }
-    }
-
-    function downloadPaperFile(taskId, format) {
-      const text = generatedPapers[taskId];
-      if (!text) return;
-      
-      const d = backendCalculatedData;
-      const eifiiVal = (d && d.task4 && d.task4.eifii) ? d.task4.eifii.toFixed(1) + '%' : 'Brak danych';
-      const criVal = (d && d.task4 && d.task4.cri) ? d.task4.cri.toFixed(1) + '%' : 'Brak danych';
-      const isbiVal = (d && d.task4 && d.task4.isbi) ? d.task4.isbi.toFixed(1) + '%' : 'Brak danych';
-
-      if (format === 'pdf') {
-        const w = window.open("", "_blank");
-        if (!w) {
-          alert("Wyskakujące okienko zostało zablokowane przez przeglądarkę. Zezwól na okna podręczne, aby wygenerować plik PDF.");
-          return;
-        }
-        w.document.write(`<pre style="font-family: Outfit, sans-serif; font-size:12px; white-space: pre-wrap; padding:40px; color:#1a1a24;">${text}</pre>`);
-        w.document.close();
-        w.print();
-      } else if (format === 'docx') {
-        let tableHtml = `
-          <table border="1" style="border-collapse:collapse; width:100%; font-family:Arial; font-size:11px; text-align:left;">
-            <tr style="background:#e5e7eb; font-weight:bold;">
-              <th>Wskaźnik wejściowy</th>
-              <th>Wartość wyliczona z próby</th>
-              <th>Zalecenia legislacyjne</th>
-            </tr>
-            <tr>
-              <td>EIFII (Intensywność Ekoinnowacyjna)</td>
-              <td>${eifiiVal}</td>
-              <td>Ustawa o finansowaniu ochrony środowiska</td>
-            </tr>
-            <tr>
-              <td>CRI (Dojrzałość Komercyjna)</td>
-              <td>${criVal}</td>
-              <td>Rozporządzenie wykonawcze MFiPR</td>
-            </tr>
-            <tr>
-              <td>ISBI (Zbalansowanie Innowacji)</td>
-              <td>${isbiVal}</td>
-              <td>Krajowe Inteligentne Specjalizacje (KIS)</td>
-            </tr>
-          </table>
-        `;
-        
-        const docHtml = `
-          <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
-          <head><title>Artykuł Naukowy</title>
-          <style>
-            body { font-family: 'Times New Roman', serif; font-size: 12pt; line-height: 1.5; padding: 20px; }
-            h1 { font-size: 16pt; font-weight: bold; margin-bottom: 12px; text-transform: uppercase; }
-            p { margin-bottom: 12px; text-align: justify; }
-          </style>
-          </head>
-          <body>
-            <h1>Raport DSS - GREENSTRAT</h1>
-            <p>${text.replace(/\n/g, '</p><p>').replace('[TABELA_STATYSTYCZNA]', tableHtml).replace('[STATISTICAL_TABLE]', tableHtml)}</p>
-          </body>
-          </html>
-        `;
-        
-        const blob = new Blob(["\ufeff" + docHtml], { type: 'application/msword' });
-        const link = document.createElement("a");
-        link.href = URL.createObjectURL(blob);
-        link.setAttribute("download", `artykul_naukowy_${taskId}.doc`);
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-      }
-    }
 
     // ==================== JASP-ALTERNATIVE STATISTICAL ENGINE ====================
     function normalCDF(z) {
