@@ -1,0 +1,154 @@
+﻿Pytanie 1
+TWOJA ODPOWIEDŹ:
+Poniżej znajduje się zestaw mierzalnych wskaźników definiujących każdy z sześciu filarów, wraz ze wskazaniem publicznie dostępnych źródeł danych.
+1. Potencjał innowacyjny
+Mierzy zdolność regionu do generowania nowej wiedzy, technologii i rozwiązań proekologicznych.
+* Nakłady ogółem na B+R (GERD) w relacji do PKB regionu | Źródło: GUS BDL / Eurostat
+* Nakłady przedsiębiorstw na B+R (BERD) na 1 mieszkańca | Źródło: GUS BDL / Eurostat
+* Personel B+R (ekwiwalent pełnego czasu pracy - EPC) na 1000 aktywnych zawodowo | Źródło: GUS BDL
+* Aktywność patentowa – liczba zgłoszeń patentowych ze szczególnym uwzględnieniem zielonych patentów na 100 tys. mieszkańców | Źródło: Urząd Patentowy RP / EPO / Eurostat
+2. Potencjał finansowy
+Mierzy obecność mechanizmów i zasobów finansowych pozwalających sfinansować ekoinnowacje oraz zieloną transformację.
+* Nakłady na środki trwałe służące ochronie środowiska i gospodarki wodnej w sektorze przedsiębiorstw na 1 mieszkańca | Źródło: GUS BDL
+* Wydatki inwestycyjne JST na ochronę środowiska, gospodarkę komunalną i energię na 1 mieszkańca | Źródło: GUS BDL / Ministerstwo Finansów
+* Wykorzystanie środków UE na cele klimatyczne i innowacyjne – wartość dofinansowania z programów regionalnych i krajowych na 1 mieszkańca | Źródło: MFiPR / Portal Funduszy Europejskich (CST)
+* Wartość publicznego finansowania projektów ekoinnowacyjnych/B+R przedsiębiorstw – dofinansowanie z programów NCBR/PARP na 100 tys. podmiotów | Źródło: NCBR / PARP / MFiPR
+* Wartość inwestycji VC/PE w przedsiębiorstwa regionu na 100 tys. podmiotów (wskaźnik warunkowy – zależny od pełnej dostępności spójnych danych regionalnych) | Źródło: PFR Ventures / Invest Europe
+3. Potencjał wdrożeniowy
+Mierzy zdolność lokalnej gospodarki i przemysłu do absorpcji, komercjalizacji i praktycznego stosowania rozwiązań ekologicznych.
+* Udział przedsiębiorstw wdrażających innowacje (produktowe lub procesowe) w ogólnej liczbie firm (%) | Źródło: GUS (Działalność innowacyjna przedsiębiorstw)
+* Udział odpadów przemysłowych poddanych odzyskowi – odsetek wytworzonych odpadów przemysłowych poddanych odzyskowi (%) (proxy wdrażania praktyk gospodarki cyrkularnej) | Źródło: GUS BDL
+* Udział firm w sektorach wysokiej technologii i usługach wiedzochłonnych (High-Tech / KIS) w ogólnej liczbie podmiotów w REGON | Źródło: GUS BDL / REGON
+* Stopień cyfryzacji przedsiębiorstw (np. udział firm korzystających z chmury obliczeniowej lub rozwiązań AI) | Źródło: GUS (Społeczeństwo informacyjne)
+4. Potencjał instytucjonalny
+Mierzy zagęszczenie, aktywność oraz rzeczywistą zdolność operacyjną instytucji wspierających transformację.
+* Gęstość Instytucji Otoczenia Biznesu (IOB) – liczba parków technologicznych, inkubatorów i centrów transferu technologii na 10 tys. zarejestrowanych firm | Źródło: PARP / SOOIPP
+* Liczba przedsiębiorstw objętych wsparciem przez IOB i ośrodki innowacji na 10 tys. podmiotów gospodarczych | Źródło: PARP / sprawozdawczość IOB
+* Aktywność projektowa instytucji w programach B+R i zielonych – wartość projektów realizowanych przez uczelnie, instytuty i IOB na 100 tys. mieszkańców | Źródło: NCBR / MFiPR
+* Sprawność wykorzystania środków publicznych – poziom zakontraktowania alokacji programów regionalnych w obszarach innowacji i środowiska | Źródło: MFiPR / Urzędy Marszałkowskie
+5. Potencjał środowiskowy
+Mierzy środowiskowe i infrastrukturalne uwarunkowania sprzyjające wdrażaniu ekoinnowacji.
+* Udział energii elektrycznej wytworzonej z OZE w całkowitej produkcji energii w województwie (%) | Źródło: GUS BDL / ARE
+* Energochłonność gospodarki regionalnej – zużycie energii elektrycznej w relacji do PKB regionu (destymulanta) | Źródło: GUS BDL
+* Emisyjność gospodarki regionalnej – emisja zanieczyszczeń gazowych (w tym CO₂) z zakładów szczególnie uciążliwych w relacji do PKB regionu (destymulanta) | Źródło: GUS BDL
+* Stopień uzbrojenia infrastrukturalnego – udział ludności korzystającej z oczyszczalni ścieków (%) | Źródło: GUS BDL
+6. Potencjał społeczny
+Mierzy kapitał ludzki, kompetencje kadr oraz społeczną zdolność absorpcji i obsługi zmian technologiczno-ekologicznych.
+* Poziom wykształcenia mieszkańców – udział osób w wieku 25–64 lata z wykształceniem wyższym (%) | Źródło: GUS BDL / Eurostat
+* Kapitał specjalistyczny STEM – liczba absolwentów kierunków nauk ścisłych, technicznych i przyrodniczych na 10 tys. mieszkańców | Źródło: POL-on / GUS
+* Uczenie się przez całe życie (Lifelong Learning) – udział dorosłych biorących udział w kształceniu lub szkoleniach (%) | Źródło: Eurostat (LFS) / GUS
+* Kompetencje cyfrowe mieszkańców – udział osób posiadających co najmniej podstawowe umiejętności cyfrowe (%) | Źródło: Eurostat / GUS
+Ostateczny dobór poszczególnych zmiennych może wymagać korekty po weryfikacji ciągłości i porównywalności danych dla wszystkich 16 województw.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Pytanie 2
+ODPOWIEDŹ:
+Rekomendacja generowana przez aplikację powinna wskazywać nie tylko sam typ interwencji, ale opierać się na zależności:
+
+1. Słownik bazowy instrumentów wsparcia GREENSTRAT (Zestaw MVP)
+Poniżej znajduje się zamknięty katalog 17 bazowych typów interwencji stanowiący przestrzeń wyboru dla aplikacji:
+1. Dotacje na B+R / Proof of Concept
+   * Główna bariera: Wysokie ryzyko technologiczne, brak środków na wczesne prace badawcze.
+   * Adresat decyzji: Kraj / Region
+   * Główny beneficjent: MŚP, startupy, konsorcja naukowo-przemysłowe
+   * Orientacyjny TRL: 1–6
+2. Bony na innowacje i usługi B+R
+   * Główna bariera: Brak zaplecza badawczego w firmie, trudności w pierwszym kontakcie z nauką.
+   * Adresat decyzji: Region / Kraj
+   * Główny beneficjent: Mikro i MŚP
+   * Orientacyjny TRL: 3–7
+3. Audyty technologiczne, energetyczne i GOZ
+   * Główna bariera: Brak wiedzy o potencjale optymalizacyjnym, nieznajomość wymogów cyrkularnych/efektywnościowych.
+   * Adresat decyzji: Region / Kraj
+   * Główny beneficjent: MŚP, duże firmy
+   * Orientacyjny TRL: Nie dotyczy / Wskazanie ścieżki wdrożenia
+4. Doradztwo regulacyjne, certyfikacyjne i IP
+   * Główna bariera: Skomplikowane otoczenie prawne (ESG, Taksonomia UE, pozwolenia), koszty ochrony własności intelektualnej.
+   * Adresat decyzji: Region / Kraj
+   * Główny beneficjent: MŚP, startupy
+   * Orientacyjny TRL: Nie dotyczy / TRL 6–9
+5. Preferencyjne pożyczki na ekoinnowacje
+   * Główna bariera: Wysoki koszt kapitału komercyjnego przy inwestycjach o średnim ryzyku.
+   * Adresat decyzji: Kraj / Region
+   * Główny beneficjent: MŚP, duże firmy, spółki komunalne
+   * Orientacyjny TRL: 8–9
+6. Gwarancje i poręczenia finansowania
+   * Główna bariera: Brak wystarczających zabezpieczeń majątkowych dla kredytodawców bankowych.
+   * Adresat decyzji: Kraj / Region (Fundusze Poręczeniowe)
+   * Główny beneficjent: MŚP, startupy
+   * Orientacyjny TRL: 7–9
+7. Instrumenty kapitałowe (VC / Equity)
+   * Główna bariera: Brak kapitału wysokiego ryzyka na skalowanie komercyjne proekologicznych technologii.
+   * Adresat decyzji: Kraj (fundusze publiczno-prywatne) / Region
+   * Główny beneficjent: Startupy, spin-offy, spółki technologiczne
+   * Orientacyjny TRL: 4–9 (zależnie od strategii funduszu i modelu biznesowego)
+8. Finansowanie pilotaży i demonstratorów
+   * Główna bariera: Wysokie koszty walidacji technologii w warunkach rzeczywistych i tzw. „dolina śmierci”.
+   * Adresat decyzji: Kraj / Region
+   * Główny beneficjent: MŚP, duże firmy, konsorcja
+   * Orientacyjny TRL: 6–8
+9. Wsparcie transferu technologii, komercjalizacji i współpracy nauka–biznes
+   * Główna bariera: Słabe zakotwiczenie wyników badań naukowych w gospodarce, luka komercjalizacyjna.
+   * Adresat decyzji: Kraj / Region
+   * Główny beneficjent: Uczelnie, instytuty, centra transferu technologii, spółki spin-off
+   * Orientacyjny TRL: 3–7
+10. Living Labs (Żywe Laboratoria)
+   * Główna bariera: Brak możliwości testowania i optymalizacji rozwiązań z udziałem końcowych użytkowników w realnym otoczeniu.
+   * Adresat decyzji: Region / Miasta
+   * Główny beneficjent: Przedsiębiorstwa, JST, IOB (z udziałem użytkowników końcowych jako testerów)
+   * Orientacyjny TRL: 5–8
+11. Regulatory Sandboxes (Piaskownice Regulacyjne)
+   * Główna bariera: Bariery prawne i administracyjne uniemożliwiające przetestowanie nowatorskich technologii (np. w energetyce/recyklingu).
+   * Adresat decyzji: Kraj (Regulatory/Ministerstwa)
+   * Główny beneficjent: Startupy, konsorcja, innowatorzy
+   * Orientacyjny TRL: 6–8
+12. Zielone Zamówienia Publiczne (GPP)
+   * Główna bariera: Brak rynku referencyjnego dla ekoinnowacji, dominacja kryterium najniższej ceny w przetargach publicznych.
+   * Adresat decyzji: Kraj / Region / JST
+   * Główny beneficjent: MŚP, dostawcy zielonych technologii
+   * Orientacyjny TRL: Przede wszystkim rozwiązania dojrzałe rynkowo (TRL 8–9 tam, gdzie klasyfikacja ma zastosowanie)
+13. Zamówienia przedkomercyjne i innowacyjne (PCP / PPI)
+   * Główna bariera: Brak na rynku gotowych rozwiązań odpowiadających na konkretne wyzwania publiczne.
+   * Adresat decyzji: Kraj / JST / Sektor publiczny
+   * Główny beneficjent: Konsorcja B+R, przedsiębiorstwa innowacyjne
+   * Orientacyjny TRL: PCP – rozwiązania wymagające prac B+R i walidacji (orientacyjnie TRL 3–7); PPI – rozwiązania zasadniczo rozwinięte, ale jeszcze niewystarczająco upowszechnione rynkowo (orientacyjnie TRL 8–9)
+14. Rozbudowa infrastruktury B+R, testowej i centrów kompetencji
+   * Główna bariera: Brak dostępu do specjalistycznej aparatury badawczej i uniwersalnych horyzontalnych instalacji pilotażowych.
+   * Adresat decyzji: Region / Kraj
+   * Główny beneficjent: Uczelnie, IOB, parki technologiczne, grupy przedsiębiorstw
+   * Orientacyjny TRL: Wszechstronny (służy różnym etapom)
+15. Regionalne punkty obsługi ekoinnowacji (One-Stop-Shop)
+   * Główna bariera: Rozproszenie informacji o wsparciu, trudna nawigacja po systemie wsparcia dla przedsiębiorcy.
+   * Adresat decyzji: Region
+   * Główny beneficjent: MŚP, lokalni innowatorzy
+   * Orientacyjny TRL: Nie dotyczy (funkcja koordynacyjno-informacyjna)
+16. Wsparcie skalowania, internacjonalizacji i ekspansji rynkowej
+   * Główna bariera: Mała skala rynku lokalnego, wysokie koszty wejścia na rynki zagraniczne dla zielonych technologii.
+   * Adresat decyzji: Kraj / Region
+   * Główny beneficjent: Dojrzałe MŚP, spółki ekoinnowacyjne
+   * Orientacyjny TRL: 9
+17. Programy podnoszenia kompetencji i szkoleń (Kapitał Ludzki)
+   * Główna bariera: Brak kadr i umiejętności niezbędnych do obsługi i wdrażania nowych technologii proekologicznych.
+   * Adresat decyzji: Region / Kraj
+   * Główny beneficjent: Pracownicy MŚP, kadra IOB, administracja publiczna
+   * Orientacyjny TRL: Nie dotyczy

@@ -1,0 +1,1302 @@
+ZAKTUALIZOWANY PLAN PRODUKTÓW I ANALIZ DLA ZADAÑ 11 I 14
+Za³o¿enie wspólne
+Aplikacja AI powinna wykorzystywaæ pe³n¹ bazê 31 301 projektów Funduszy Europejskich 2021–2027 oraz wyniki opracowane wczeœniej w ramach zadañ 4 i 8, w szczególnoœci:
+    • klasyfikacjê ekoinnowacyjnoœci;
+    • EIESI;
+    • EIRRI;
+    • CRI;
+    • TRL pocz¹tkowy i koñcowy;
+    • przyrost TRL;
+    • wyniki ocen innowacyjnoœci;
+    • trwa³oœæ LCA;
+    • efektywnoœæ zasobow¹;
+    • transformacyjnoœæ;
+    • typ beneficjenta;
+    • program i fundusz;
+    • województwo;
+    • wartoœæ projektu i dofinansowania;
+    • dotychczasowe klastry;
+    • wyniki regresji;
+    • wyniki ANOVA;
+    • zidentyfikowane luki wdro¿eniowe, kapita³owe i regionalne.
+Zasada eliminowania powtórzeñ
+Aplikacja nie powinna ponownie wykonywaæ analiz diagnostycznych przeprowadzonych w zadaniach 4 i 8, chyba ¿e jest to konieczne:
+    • do aktualizacji wyników po zmianie bazy;
+    • do walidacji nowego produktu;
+    • do utworzenia szeregu czasowego;
+    • do przeprowadzenia benchmarkingu krajowego lub miêdzynarodowego;
+    • do sprawdzenia stabilnoœci indeksu;
+    • do dzia³ania dashboardu;
+    • do dzia³ania systemu alarmowego;
+    • do dzia³ania DSS.
+Zasada rozdzielenia warstw aplikacji
+Aplikacja powinna sk³adaæ siê z czterech odrêbnych warstw:
+    1. Warstwa danych
+Importuje, porz¹dkuje, waliduje i przelicza dane.
+    2. Warstwa analityczna
+Wylicza wskaŸniki, klasy benchmarkowe, poziomy ryzyka i wyniki indeksów.
+    3. Deterministyczny silnik regu³ DSS
+Przypisuje rekomendowane warianty dzia³añ na podstawie wczeœniej zatwierdzonych regu³, progów i drzew decyzyjnych.
+    4. Warstwa generatywna AI
+Opracowuje opis, uzasadnienie, raport, kartê regionaln¹ lub rekomendacjê tekstow¹, ale nie podejmuje samodzielnie decyzji o finansowaniu.
+Zasada human-in-the-loop
+Ka¿da rekomendacja DSS powinna mieæ status:
+    • rekomendacja automatyczna;
+    • rekomendacja oczekuj¹ca na weryfikacjê;
+    • rekomendacja zatwierdzona przez eksperta;
+    • rekomendacja odrzucona;
+    • rekomendacja zmodyfikowana przez eksperta.
+Aplikacja nie mo¿e przedstawiaæ decyzji o ograniczeniu, zwiêkszeniu lub wycofaniu finansowania jako decyzji ostatecznej bez zatwierdzenia przez cz³owieka.
+Zasada audytowalnoœci
+Dla ka¿dego wskaŸnika, alarmu i zalecenia aplikacja musi umo¿liwiaæ przeœledzenie pe³nego ³añcucha:
+Ÿród³o danych ? obserwacja Ÿród³owa ? transformacja ? wskaŸnik ? próg ? regu³a DSS ? rekomendacja ? decyzja eksperta.
+Zasada wersjonowania
+Ka¿da zmiana:
+    • wzoru wskaŸnika;
+    • zestawu danych;
+    • wag indeksu;
+    • sposobu normalizacji;
+    • progów alarmowych;
+    • drzewa decyzyjnego;
+    • modelu imputacji;
+    • sposobu przypisywania projektów wieloregionalnych
+musi prowadziæ do utworzenia nowej wersji modelu.
+Wynik powinien zawsze zawieraæ:
+    • numer wersji;
+    • datê wygenerowania;
+    • zakres danych;
+    • rok referencyjny;
+    • zastosowan¹ metodê;
+    • autora lub podmiot zatwierdzaj¹cy.
+Zasada obs³ugi niepewnoœci
+Ka¿dy wynik powinien mieæ przypisane:
+    • poziom kompletnoœci danych;
+    • poziom aktualnoœci;
+    • udzia³ wartoœci imputowanych;
+    • zakres niepewnoœci;
+    • stabilnoœæ wyniku;
+    • wra¿liwoœæ na zmianê wag;
+    • poziom wiarygodnoœci: wysoki, œredni lub niski.
+Zasada kontroli efektu niskiej bazy
+Aplikacja powinna automatycznie identyfikowaæ przypadki, w których wysoka dynamika wskaŸnika wynika przede wszystkim z:
+    • niskiej wartoœci pocz¹tkowej;
+    • pojedynczego du¿ego projektu;
+    • pojedynczego beneficjenta;
+    • krótkiego szeregu czasowego;
+    • niewielkiej liczby obserwacji;
+    • jednorazowego wzrostu finansowania;
+    • zmiany sposobu raportowania danych.
+W takich przypadkach wynik powinien zostaæ oznaczony jako:
+wysoce wra¿liwy na efekt bazy lub obserwacje jednostkowe.
+Aplikacja nie mo¿e na tej podstawie automatycznie rekomendowaæ skalowania instrumentu lub zwiêkszenia finansowania bez dodatkowej oceny:
+    • trwa³oœci efektu;
+    • liczby projektów;
+    • liczby beneficjentów;
+    • dywersyfikacji Ÿróde³ wyniku;
+    • wyników w kolejnych okresach;
+    • zdolnoœci instytucjonalnej regionu.
+
+ZADANIE 11
+System monitorowania, benchmarkingu i wspomagania decyzji w polityce ekoinnowacyjnej
+Cel zadania 11
+Celem zadania 11 jest przekszta³cenie wyników zadañ 4 i 8 w krajowy system:
+    • ci¹g³ego monitorowania polityki ekoinnowacyjnej;
+    • oceny programów i instrumentów finansowych;
+    • benchmarkingu krajowego i miêdzynarodowego;
+    • wykrywania nieprawid³owoœci;
+    • generowania wariantów interwencji;
+    • wspomagania decyzji administracji publicznej.
+Zadanie 11 nie powinno ponownie odpowiadaæ na pytanie, jaka jest struktura systemu finansowania. Powinno odpowiadaæ na pytania:
+    • jak system monitorowaæ;
+    • jak rozpoznaæ pogorszenie efektywnoœci;
+    • jak porównywaæ programy;
+    • kiedy nale¿y podj¹æ interwencjê;
+    • jakie warianty decyzji s¹ uzasadnione danymi.
+
+PRODUKT 11.1. Zintegrowana baza monitorowania GREENSTRAT
+Co przekazaæ aplikacji
+    • pe³n¹ bazê projektów;
+    • wyniki EIESI, EIRRI, CRI i TRL;
+    • dane o programach, funduszach, dzia³aniach, beneficjentach i regionach;
+    • daty rozpoczêcia i zakoñczenia projektów;
+    • dotychczasowe klasy jakoœci;
+    • wyniki klasteryzacji;
+    • s³ownik zmiennych;
+    • formu³y wskaŸników;
+    • historiê aktualizacji danych.
+Co aplikacja ma wykonaæ
+    1. Zintegrowaæ dane projektowe i wyniki zadañ 4 i 8.
+    2. Utworzyæ nastêpuj¹ce poziomy agregacji:
+        ? projekt;
+        ? beneficjent;
+        ? dzia³anie;
+        ? priorytet;
+        ? program;
+        ? fundusz;
+        ? województwo;
+        ? rok.
+    3. Utworzyæ rejestr Ÿróde³ danych.
+    4. Oznaczyæ:
+        ? Ÿród³o;
+        ? rok referencyjny;
+        ? poziom przestrzenny;
+        ? datê aktualizacji;
+        ? kompletnoœæ;
+        ? sposób pozyskania;
+        ? sposób transformacji.
+    5. Zachowaæ historiê zmian wskaŸników.
+    6. Oddzieliæ dane:
+        ? obserwowane;
+        ? obliczone;
+        ? imputowane;
+        ? ekspercko zaklasyfikowane.
+    7. Utworzyæ unikatowe identyfikatory projektów, beneficjentów, programów, regionów i wskaŸników.
+Wymagania techniczne
+Baza powinna umo¿liwiaæ eksport co najmniej do:
+    • Parquet;
+    • DuckDB;
+    • CSV;
+    • JSON-Stat;
+    • relacyjnej bazy SQL.
+Dla dashboardu zalecany jest format Parquet lub DuckDB, natomiast dla wymiany danych statystycznych tak¿e JSON-Stat.
+Walidacja
+Aplikacja powinna sprawdziæ:
+    • duplikaty;
+    • brakuj¹ce identyfikatory;
+    • b³êdne zakresy dat;
+    • niespójne nazwy regionów;
+    • zmiany granic i klasyfikacji NUTS;
+    • wartoœci ujemne lub nielogiczne;
+    • projekty przypisane jednoczeœnie do sprzecznych kategorii.
+Rezultat
+Jednolita, wersjonowana i audytowalna baza monitoringowa, stanowi¹ca Ÿród³o dla wszystkich kolejnych produktów zadania 11.
+
+PRODUKT 11.2. System KPI GREENSTRAT
+Co przekazaæ aplikacji
+Wszystkie wskaŸniki opracowane wczeœniej oraz instrukcjê ich uporz¹dkowania w nastêpuj¹cych wymiarach:
+    1. finansowanie;
+    2. dostêpnoœæ;
+    3. jakoœæ;
+    4. wdro¿enie;
+    5. efektywnoœæ;
+    6. efekt œrodowiskowy;
+    7. transformacyjnoœæ;
+    8. równoœæ terytorialna;
+    9. równoœæ podmiotowa;
+    10. pozycja miêdzynarodowa.
+Co aplikacja ma opracowaæ
+Dla ka¿dego KPI:
+    • nazwê;
+    • definicjê;
+    • cel;
+    • wzór;
+    • jednostkê;
+    • kierunek interpretacji;
+    • poziom agregacji;
+    • Ÿród³o;
+    • rok referencyjny;
+    • czêstotliwoœæ aktualizacji;
+    • sposób normalizacji;
+    • wartoœæ referencyjn¹;
+    • próg ostrzegawczy;
+    • próg krytyczny;
+    • poziom niepewnoœci;
+    • regu³ê reakcji DSS.
+Minimalny zestaw KPI
+Finansowanie
+    • liczba projektów;
+    • suma dofinansowania;
+    • mediana dofinansowania;
+    • œrednia odporna;
+    • udzia³ najwiêkszych projektów;
+    • koncentracja alokacji;
+    • udzia³ 1%, 5%, 10% i 20% najwiêkszych projektów;
+    • udzia³ projektów ponad okreœlony próg wartoœci;
+    • intensywnoœæ dofinansowania.
+Dostêpnoœæ
+    • liczba beneficjentów;
+    • udzia³ nowych beneficjentów;
+    • udzia³ MŒP;
+    • udzia³ JST;
+    • udzia³ uczelni i jednostek naukowych;
+    • koncentracja podmiotowa;
+    • udzia³ beneficjentów realizuj¹cych wiêcej ni¿ jeden projekt.
+Jakoœæ
+    • EIESI;
+    • innowacyjnoœæ;
+    • trwa³oœæ LCA;
+    • efektywnoœæ zasobowa;
+    • transformacyjnoœæ;
+    • udzia³ projektów wysokiej jakoœci;
+    • udzia³ rzeczywistych ekoinnowacji.
+Wdro¿enie
+    • CRI;
+    • TRL koñcowy;
+    • przyrost TRL;
+    • udzia³ projektów osi¹gaj¹cych próg wdro¿enia;
+    • udzia³ projektów skomercjalizowanych;
+    • wielkoœæ luki wdro¿eniowej;
+    • czas przejœcia od pocz¹tku projektu do fazy wdro¿eniowej.
+Efektywnoœæ
+    • EIRRI;
+    • EIRRI na 1 mln z³;
+    • rezultat na jednostkê finansowania;
+    • koszt jednostki postêpu technologicznego;
+    • koszt osi¹gniêcia fazy komercjalizacji;
+    • udzia³ projektów wysoko efektywnych w ca³kowitej alokacji.
+Równoœæ terytorialna
+    • finansowanie per capita;
+    • finansowanie na przedsiêbiorstwo;
+    • finansowanie na MŒP;
+    • finansowanie jako udzia³ regionalnego PKB;
+    • projekty na 100 tys. mieszkañców;
+    • udzia³ regionów s³abiej rozwiniêtych;
+    • regionalna koncentracja alokacji.
+Pozycja miêdzynarodowa
+    • wartoœæ wzglêdem œredniej UE = 100;
+    • dystans do lidera;
+    • dystans do grupy porównawczej;
+    • tempo konwergencji;
+    • zmiana pozycji w czasie.
+Walidacja KPI
+Aplikacja powinna sprawdzaæ:
+    • odpornoœæ na obserwacje skrajne;
+    • korelacjê pomiêdzy KPI;
+    • redundancjê;
+    • dostêpnoœæ danych w kolejnych latach;
+    • mo¿liwoœæ porównania krajowego i miêdzynarodowego;
+    • wra¿liwoœæ na zmianê okresu referencyjnego;
+    • wra¿liwoœæ na nisk¹ wartoœæ pocz¹tkow¹;
+    • udzia³ pojedynczego projektu lub beneficjenta w wyniku;
+    • stabilnoœæ dynamiki po wy³¹czeniu najwiêkszej obserwacji.
+Rezultat
+Katalog KPI stanowi¹cy formaln¹ instrukcjê dzia³ania dashboardu, systemu alarmowego i DSS.
+
+PRODUKT 11.3. Dashboard GREENSTRAT
+Co przekazaæ aplikacji
+    • bazê monitorowania;
+    • katalog KPI;
+    • profile u¿ytkowników;
+    • regu³y uprawnieñ;
+    • klasy alarmów;
+    • regu³y interpretacyjne.
+Co aplikacja ma wygenerowaæ
+Panele:
+    1. System krajowy
+        ? skala finansowania;
+        ? struktura systemu;
+        ? jakoœæ;
+        ? efektywnoœæ.
+    2. Programy i fundusze
+        ? klasy efektywnoœci;
+        ? dynamika wyników;
+        ? udzia³ w lukach systemowych.
+    3. Beneficjenci
+        ? struktura dostêpu;
+        ? koncentracja;
+        ? efektywnoœæ typów beneficjentów.
+    4. Komercjalizacja
+        ? lejek ekoinnowacji;
+        ? CRI;
+        ? luka wdro¿eniowa;
+        ? czas wdro¿enia.
+    5. Regiony
+        ? absorpcja;
+        ? EIRRI;
+        ? równoœæ terytorialna;
+        ? zmiany w czasie.
+    6. Œrodowisko i transformacja
+        ? LCA;
+        ? efektywnoœæ zasobowa;
+        ? transformacyjnoœæ.
+    7. Benchmark UE
+        ? Polska;
+        ? œrednia UE;
+        ? pañstwa porównawcze;
+        ? liderzy.
+    8. Alarmy
+        ? status;
+        ? trwa³oœæ;
+        ? wiarygodnoœæ;
+        ? rekomendowana reakcja.
+    9. Jakoœæ danych
+        ? aktualnoœæ;
+        ? kompletnoœæ;
+        ? udzia³ imputacji;
+        ? poziom niepewnoœci.
+    10. Efekt bazy i obserwacje dominuj¹ce
+        ? udzia³ najwiêkszego projektu w wyniku;
+        ? udzia³ najwiêkszego beneficjenta;
+        ? liczba obserwacji;
+        ? wynik przed i po wy³¹czeniu obserwacji dominuj¹cej;
+        ? flaga wra¿liwoœci na nisk¹ bazê.
+Rezultat
+Interaktywny dashboard umo¿liwiaj¹cy filtrowanie wed³ug roku, funduszu, programu, beneficjenta, typu projektu i regionu.
+
+PRODUKT 11.4. Benchmark krajowy
+Co przekazaæ aplikacji
+Dane zagregowane dla:
+    • programów;
+    • funduszy;
+    • dzia³añ;
+    • typów beneficjentów;
+    • regionów.
+WskaŸniki:
+    • EIESI;
+    • EIRRI;
+    • CRI;
+    • TRL;
+    • jakoœæ;
+    • finansowanie;
+    • efektywnoœæ kosztowa;
+    • koncentracja;
+    • dostêpnoœæ dla MŒP.
+Co aplikacja ma wykonaæ
+Utworzyæ klasy benchmarkowe, nie tylko prosty ranking:
+    • liderzy systemowi;
+    • ponadprzeciêtni;
+    • poziom referencyjny;
+    • wymagaj¹cy poprawy;
+    • krytyczni.
+Klasy powinny wynikaæ z:
+    • median;
+    • kwartyli;
+    • percentyli;
+    • odchyleñ od benchmarku;
+    • stabilnoœci wyniku w czasie.
+Zasada odpornoœci
+W przypadku silnie skoœnych rozk³adów aplikacja powinna stosowaæ:
+    • medianê;
+    • IQR;
+    • winsoryzacjê;
+    • transformacjê logarytmiczn¹;
+    • skalowanie odporne.
+Klasa lidera nie mo¿e zostaæ nadana wy³¹cznie na podstawie wysokiej procentowej dynamiki wynikaj¹cej z niskiej bazy lub pojedynczego projektu.
+Rezultat
+Macierz programów, funduszy i typów beneficjentów przypisanych do klas benchmarkowych wraz z uzasadnieniem, poziomem wiarygodnoœci i informacj¹ o stabilnoœci klasyfikacji.
+
+PRODUKT 11.5. Benchmark miêdzynarodowy Polski
+Cel
+Okreœliæ pozycjê Polski w europejskim systemie innowacji i ekoinnowacji oraz zidentyfikowaæ obszary, w których skala krajowego finansowania nie przek³ada siê na poprawê wyników makroekonomicznych, innowacyjnych lub œrodowiskowych.
+Dane zewnêtrzne
+European Innovation Scoreboard
+Do wykorzystania:
+    • Summary Innovation Index;
+    • nak³ady B+R;
+    • innowacyjne MŒP;
+    • wspó³praca MŒP;
+    • patenty;
+    • kapita³ ludzki;
+    • zatrudnienie w dzia³alnoœci wiedzoch³onnej;
+    • sprzeda¿ innowacji;
+    • venture capital;
+    • cyfryzacja.
+Eco-Innovation Index
+Do wykorzystania:
+    • nak³ady na ekoinnowacje;
+    • aktywnoœæ ekoinnowacyjna;
+    • rezultaty;
+    • efektywnoœæ zasobowa;
+    • rezultaty spo³eczno-gospodarcze.
+Eurostat
+Do wykorzystania:
+    • GERD jako procent PKB;
+    • BERD jako procent PKB;
+    • wydatki publiczne i prywatne na B+R;
+    • personel B+R;
+    • patenty;
+    • zatrudnienie w high-tech;
+    • produktywnoœæ zasobów;
+    • circular material use rate;
+    • odpady;
+    • recykling;
+    • emisje;
+    • inwestycje i zatrudnienie w GOZ.
+OECD
+Do wykorzystania:
+    • jakoœæ administracji;
+    • jakoœæ regulacji;
+    • polityki green growth;
+    • finansowanie innowacji;
+    • wspó³praca nauka–biznes;
+    • regionalne dobre praktyki;
+    • modele ewaluacji polityk.
+Grupy porównawcze
+Aplikacja powinna porównaæ Polskê z:
+    • œredni¹ UE;
+    • Czechami;
+    • S³owacj¹;
+    • Wêgrami;
+    • pañstwami Europy Œrodkowo-Wschodniej;
+    • pañstwami o zbli¿onym poziomie PKB per capita;
+    • liderami innowacji;
+    • liderami ekoinnowacji.
+Zasady porównywalnoœci
+Aplikacja nie mo¿e porównywaæ wy³¹cznie wartoœci bezwzglêdnych. Powinna stosowaæ odpowiednio:
+    • wartoœci per capita;
+    • wartoœci jako procent PKB;
+    • wartoœci na przedsiêbiorstwo;
+    • wartoœci na MŒP;
+    • wartoœci na pracownika B+R;
+    • wartoœci na jednostkê nak³adów;
+    • indeks UE = 100.
+Zgodnoœæ czasowa
+Dla ka¿dego porównania aplikacja powinna wskazaæ:
+    • rok danych krajowych;
+    • rok danych europejskich;
+    • opóŸnienie;
+    • sposób dopasowania okresów;
+    • czy zastosowano najbli¿szy wspólny rok;
+    • czy wykorzystano œredni¹ krocz¹c¹.
+Co aplikacja ma policzyæ
+    • pozycjê Polski;
+    • dystans do œredniej UE;
+    • dystans do liderów;
+    • zmianê w czasie;
+    • tempo konwergencji;
+    • stabilnoœæ trendu;
+    • mocne i s³abe strony;
+    • obszary du¿ego finansowania i niskiego rezultatu;
+    • obszary niewielkiego finansowania i ponadprzeciêtnych rezultatów.
+Rezultat
+    1. Karta „Polska na tle UE”.
+    2. Macierz luka–potencja³.
+    3. Profil konwergencji.
+    4. Mapa zgodnoœci krajowych nak³adów z wynikami miêdzynarodowymi.
+    5. Lista dobrych praktyk mo¿liwych do adaptacji.
+    6. Informacja o wiarygodnoœci ka¿dego porównania.
+
+PRODUKT 11.6. Macierz efektywnoœci programów
+Co przekazaæ aplikacji
+Dla ka¿dego programu:
+    • liczbê projektów;
+    • alokacjê;
+    • medianê finansowania;
+    • EIESI;
+    • EIRRI;
+    • CRI;
+    • TRL;
+    • efekt œrodowiskowy;
+    • udzia³ MŒP;
+    • koncentracjê beneficjentów;
+    • udzia³ projektów wielkoskalowych;
+    • dynamikê wyników.
+Co aplikacja ma opracowaæ
+Macierz:
+    • wysoka alokacja – wysoka efektywnoœæ;
+    • wysoka alokacja – niska efektywnoœæ;
+    • niska alokacja – wysoka efektywnoœæ;
+    • niska alokacja – niska efektywnoœæ.
+Dodatkowo:
+    • stabilna efektywnoœæ;
+    • spadaj¹ca efektywnoœæ;
+    • rosn¹ca efektywnoœæ;
+    • wynik niepewny z powodu niskiej jakoœci danych;
+    • wynik wysoce zale¿ny od jednej obserwacji;
+    • wynik wra¿liwy na efekt niskiej bazy.
+Rezultat
+Klasyfikacja programów do:
+    • potencjalnego skalowania;
+    • kontynuacji;
+    • korekty;
+    • pog³êbionej analizy;
+    • audytu.
+Klasyfikacja nie jest automatyczn¹ decyzj¹ finansow¹. Jest rekomendacj¹ do oceny eksperckiej.
+Program nie mo¿e zostaæ zakwalifikowany do skalowania wy³¹cznie na podstawie wysokiego przyrostu procentowego, je¿eli:
+    • liczba projektów jest ma³a;
+    • wynik zale¿y od jednego du¿ego projektu;
+    • efekt nie utrzymuje siê w kolejnych okresach;
+    • nie wystêpuje wzrost liczby beneficjentów;
+    • nie wzrasta zdolnoœæ instytucjonalna.
+
+PRODUKT 11.7. System progów i alarmów
+Co przekazaæ aplikacji
+    • historyczne rozk³ady KPI;
+    • mediany;
+    • kwartyle;
+    • percentyle;
+    • benchmarki;
+    • dynamikê rok do roku;
+    • jakoœæ danych.
+Co aplikacja ma ustaliæ
+Progi nale¿y wyprowadzaæ z:
+    • percentyli;
+    • rozstêpów miêdzykwartylowych;
+    • odchyleñ od benchmarków;
+    • spadków rok do roku;
+    • utrzymywania siê niekorzystnego wyniku;
+    • wspó³wystêpowania kilku sygna³ów.
+Skala alertów
+Zielony
+    • wynik w normie;
+    • brak istotnych odchyleñ;
+    • brak potrzeby interwencji.
+¯ó³ty
+    • wynik ostrzegawczy;
+    • pojedyncze odchylenie;
+    • potrzeba analizy;
+    • brak automatycznej rekomendacji ograniczenia finansowania.
+Czerwony
+    • wynik krytyczny;
+    • trwa³e lub wielowymiarowe odchylenie;
+    • koniecznoœæ uruchomienia DSS;
+    • obowi¹zkowa weryfikacja ekspercka.
+Dodatkowe atrybuty alarmu
+Ka¿dy alarm powinien zawieraæ:
+    • kolor;
+    • poziom wiarygodnoœci;
+    • trwa³oœæ zjawiska;
+    • liczbê potwierdzaj¹cych KPI;
+    • kompletnoœæ danych;
+    • udzia³ imputacji;
+    • rekomendowane dzia³anie analityczne;
+    • informacjê o efekcie niskiej bazy;
+    • udzia³ najwiêkszej obserwacji;
+    • wynik analizy po wy³¹czeniu obserwacji dominuj¹cej.
+Rezultat
+Tabela:
+jednostka ? KPI ? wartoœæ ? próg ? kolor ? trwa³oœæ ? wiarygodnoœæ ? efekt bazy ? koncentracja obserwacji ? Ÿród³o ? rekomendowane dzia³anie.
+
+PRODUKT 11.8. Krajowy system DSS
+Co przekazaæ aplikacji
+    • KPI;
+    • klasy benchmarkowe;
+    • alarmy;
+    • cele polityki;
+    • ograniczenia bud¿etowe;
+    • katalog dopuszczalnych instrumentów;
+    • ograniczenia prawne;
+    • zatwierdzone drzewa decyzyjne;
+    • katalog rekomendacji.
+Architektura DSS
+Decyzje powinny powstawaæ na podstawie:
+    1. deterministycznych regu³;
+    2. progów;
+    3. drzew decyzyjnych;
+    4. macierzy problem–interwencja;
+    5. analizy scenariuszowej.
+LLM mo¿e:
+    • opisaæ wynik;
+    • przygotowaæ uzasadnienie;
+    • zestawiæ argumenty;
+    • wygenerowaæ kartê rekomendacji.
+LLM nie mo¿e samodzielnie:
+    • ograniczyæ finansowania;
+    • zakwalifikowaæ programu do likwidacji;
+    • zmieniæ progów;
+    • zmieniæ wag indeksu;
+    • ustanowiæ nowej regu³y bez akceptacji eksperckiej.
+Bezpiecznik efektu bazy
+DSS nie mo¿e rekomendowaæ skalowania wy³¹cznie na podstawie wysokiej dynamiki procentowej.
+Przed rekomendacj¹ skalowania aplikacja powinna sprawdziæ:
+    • minimaln¹ liczbê projektów;
+    • minimaln¹ liczbê beneficjentów;
+    • udzia³ najwiêkszego projektu;
+    • udzia³ najwiêkszego beneficjenta;
+    • trwa³oœæ wyniku;
+    • powtarzalnoœæ efektu;
+    • dywersyfikacjê Ÿróde³ wzrostu;
+    • zdolnoœæ instytucjonaln¹ do obs³ugi wiêkszej alokacji.
+Je¿eli warunki nie s¹ spe³nione, DSS powinien zwróciæ rekomendacjê:
+wynik obiecuj¹cy, lecz wymagaj¹cy dalszej obserwacji lub pilota¿owego skalowania.
+Co aplikacja ma generowaæ
+Dla programu lub instrumentu:
+    • diagnozê;
+    • klasê efektywnoœci;
+    • alarmy;
+    • przyczyny;
+    • poziom niepewnoœci;
+    • maksymalnie trzy warianty dzia³ania;
+    • przewidywany efekt;
+    • ryzyka;
+    • KPI kontroli;
+    • informacjê, czy decyzja wymaga oceny prawnej;
+    • status zatwierdzenia eksperckiego.
+Rezultat
+Audytowalny krajowy system wspomagania decyzji dzia³aj¹cy w modelu human-in-the-loop.
+
+PRODUKT 11.9. Katalog rekomendacji systemowych
+Format
+Problem	Dowód	Wiarygodnoœæ	Efekt bazy	Przyczyna	Interwencja	Ograniczenia prawne	Adresat	Priorytet	Horyzont	Oczekiwany efekt	KPI	Status zatwierdzenia
+Rezultat
+Operacyjna, wersjonowana baza rekomendacji po³¹czona z dashboardem, systemem alarmowym i DSS.
+
+
+
+
+ZADANIE 14
+Regionalny system zarz¹dzania ekoinnowacjami i model EKO_Lokacji
+Cel zadania 14
+Celem zadania 14 jest przekszta³cenie wyników projektowych, regionalnych i miêdzynarodowych w system umo¿liwiaj¹cy:
+    • ocenê gotowoœci województw;
+    • identyfikacjê specjalizacji;
+    • identyfikacjê deficytów;
+    • porównanie regionów z odpowiednikami europejskimi;
+    • dobór interwencji do typu regionu;
+    • wskazanie funkcji i lokalizacji EKO_Lokacji;
+    • opracowanie rekomendacji dla samorz¹dów i instytucji regionalnych.
+Zadanie 14 nie ma ponownie tworzyæ rankingu EIRRI. EIRRI jest jednym z komponentów oceny zdolnoœci wdro¿eniowej regionu.
+
+PRODUKT 14.1. Regionalna baza GREENSTRAT
+Co przekazaæ aplikacji
+Z bazy projektów:
+    • lokalizacjê;
+    • wartoœæ projektu;
+    • dofinansowanie;
+    • beneficjenta;
+    • program;
+    • fundusz;
+    • kategoriê interwencji;
+    • EIESI;
+    • EIRRI;
+    • CRI;
+    • TRL;
+    • oceny œrodowiskowe;
+    • transformacyjnoœæ.
+Dane zewnêtrzne
+GUS – Bank Danych Lokalnych
+    • ludnoœæ;
+    • PKB regionalny;
+    • przedsiêbiorstwa;
+    • MŒP;
+    • dochody JST;
+    • wydatki inwestycyjne;
+    • jednostki naukowe;
+    • podmioty B+R;
+    • nak³ady B+R;
+    • personel B+R;
+    • bezrobocie;
+    • struktura gospodarcza;
+    • urbanizacja.
+Eurostat – NUTS 2
+    • PKB per capita;
+    • nak³ady B+R;
+    • zatrudnienie high-tech;
+    • kapita³ ludzki;
+    • patenty;
+    • produktywnoœæ;
+    • demografia;
+    • wybrane wskaŸniki œrodowiskowe.
+Regional Innovation Scoreboard
+    • wynik ogólny RIS;
+    • filary RIS;
+    • klasa regionu;
+    • zmiana pozycji;
+    • grupa regionów podobnych.
+Dane œrodowiskowe
+ród³a:
+    • GUS;
+    • Eurostat;
+    • GIOŒ;
+    • KOBiZE;
+    • URE;
+    • BDO.
+Zakres:
+    • emisje;
+    • OZE;
+    • zu¿ycie energii;
+    • odpady;
+    • recykling;
+    • jakoœæ powietrza;
+    • energoch³onnoœæ;
+    • gospodarka wodna.
+Obs³uga zgodnoœci czasowej
+Dla ka¿dej zmiennej aplikacja ma zapisaæ:
+    • rok referencyjny;
+    • datê publikacji;
+    • opóŸnienie;
+    • poziom NUTS;
+    • mo¿liwoœæ bezpoœredniego porównania.
+Aplikacja powinna preferowaæ:
+    1. wspólny rok;
+    2. najbli¿szy wspólny rok;
+    3. œredni¹ z maksymalnie trzech lat;
+    4. kontrolowane przesuniêcie czasowe.
+Obs³uga projektów wieloregionalnych
+Aplikacja powinna utworzyæ trzy warianty:
+    1. wariant bezpoœredni
+Tylko projekty przypisane do jednego regionu;
+    2. wariant rozdzielony
+Projekty wieloregionalne dzielone wed³ug jawnego klucza, np.:
+        ? udzia³u ludnoœci;
+        ? udzia³u beneficjentów;
+        ? rzeczywistych lokalizacji;
+        ? wartoœci dzia³añ;
+    3. wariant centralny
+Projekty ogólnokrajowe pozostawione jako odrêbna kategoria.
+Nie wolno domyœlnie rozdzielaæ projektów ogólnokrajowych równomiernie miêdzy województwa.
+Imputacja
+Imputacja mo¿e dotyczyæ brakuj¹cych wartoœci statystycznych, ale nie mo¿e automatycznie tworzyæ lokalizacji projektu.
+Ka¿da wartoœæ imputowana powinna zawieraæ:
+    • metodê;
+    • zakres niepewnoœci;
+    • powód imputacji;
+    • udzia³ wartoœci imputowanych w wyniku koñcowym.
+Identyfikacja obserwacji dominuj¹cych
+Dla ka¿dego województwa aplikacja powinna obliczyæ:
+    • udzia³ najwiêkszego projektu w regionalnym finansowaniu;
+    • udzia³ najwiêkszego beneficjenta;
+    • udzia³ trzech i piêciu najwiêkszych projektów;
+    • zmianê wyniku po wy³¹czeniu najwiêkszego projektu;
+    • zmianê wyniku po wy³¹czeniu najwiêkszego beneficjenta;
+    • liczbê projektów stanowi¹cych podstawê wyniku.
+Rezultat
+Baza „województwo × rok” oraz – w miarê mo¿liwoœci – baza „powiat/gmina × rok”, wraz z wariantami alokacji projektów wieloregionalnych i rejestrem obserwacji dominuj¹cych.
+
+PRODUKT 14.2. Regionalny Indeks Gotowoœci GREENSTRAT
+Cel
+Oceniæ wielowymiarow¹ gotowoœæ województw do:
+    • absorpcji œrodków;
+    • tworzenia ekoinnowacji;
+    • wdra¿ania;
+    • komercjalizacji;
+    • transformacji œrodowiskowej;
+    • wspó³pracy instytucjonalnej.
+Filary
+1. Potencja³ gospodarczy
+    • PKB per capita;
+    • liczba przedsiêbiorstw;
+    • liczba MŒP;
+    • inwestycje;
+    • struktura przemys³u;
+    • produktywnoœæ.
+2. Potencja³ naukowo-innowacyjny
+    • nak³ady B+R;
+    • personel B+R;
+    • jednostki naukowe;
+    • patenty;
+    • RIS;
+    • zatrudnienie w sektorach wiedzoch³onnych.
+3. Zdolnoœæ absorpcyjna
+    • projekty na mieszkañca;
+    • finansowanie per capita;
+    • finansowanie na przedsiêbiorstwo;
+    • liczba beneficjentów;
+    • udzia³ nowych beneficjentów;
+    • dywersyfikacja programów.
+4. Zdolnoœæ wdro¿eniowa
+    • EIRRI;
+    • CRI;
+    • TRL koñcowy;
+    • udzia³ projektów skomercjalizowanych;
+    • koszt komercjalizacji;
+    • luka wdro¿eniowa.
+5. Zdolnoœæ œrodowiskowo-transformacyjna
+    • LCA;
+    • efektywnoœæ zasobowa;
+    • transformacyjnoœæ;
+    • udzia³ projektów zielonych;
+    • emisje;
+    • OZE;
+    • odpady;
+    • recykling;
+    • produktywnoœæ zasobów.
+6. Zdolnoœæ instytucjonalna
+    • aktywnoœæ JST;
+    • liczba instytucji realizuj¹cych projekty;
+    • wspó³praca partnerska;
+    • regularnoœæ absorpcji;
+    • dywersyfikacja beneficjentów;
+    • udzia³ konsorcjów;
+    • wspó³praca nauka–biznes.
+Normalizacja
+Aplikacja powinna przetestowaæ:
+    • min-max;
+    • z-score;
+    • robust scaling z median¹ i IQR.
+Dla zmiennych finansowych nale¿y rozwa¿yæ:
+    • logarytmowanie;
+    • winsoryzacjê;
+    • przeliczenia wzglêdne.
+Kontrola wspó³liniowoœci
+Aplikacja powinna:
+    • obliczyæ korelacje;
+    • sprawdziæ VIF;
+    • wykryæ wskaŸniki redundantne;
+    • porównaæ indeks z pe³nym i ograniczonym zestawem zmiennych.
+Wagi
+Nale¿y zastosowaæ co najmniej trzy warianty:
+    1. wagi równe;
+    2. wagi eksperckie;
+    3. wagi empiryczne.
+Analiza wra¿liwoœci
+Aplikacja powinna sprawdziæ:
+    • zmianê rankingu przy zmianie wag;
+    • zmianê klasy regionu;
+    • stabilnoœæ filarów;
+    • wp³yw imputacji;
+    • wp³yw projektów ogólnokrajowych;
+    • wp³yw metody normalizacji;
+    • wp³yw wy³¹czenia najwiêkszego projektu;
+    • wp³yw wy³¹czenia najwiêkszego beneficjenta;
+    • wp³yw niskiej wartoœci pocz¹tkowej;
+    • stabilnoœæ wyniku przy zastosowaniu œredniej wieloletniej.
+Bezpiecznik efektu niskiej bazy
+Region powinien zostaæ oznaczony jako wysoce wra¿liwy na efekt bazy, je¿eli jednoczeœnie wystêpuje co najmniej jedna z nastêpuj¹cych sytuacji:
+    • du¿y przyrost procentowy przy niskiej wartoœci pocz¹tkowej;
+    • wynik oparty na bardzo ma³ej liczbie projektów;
+    • pojedynczy projekt odpowiada za znacz¹c¹ czêœæ przyrostu;
+    • pojedynczy beneficjent dominuje w wyniku;
+    • wzrost nie powtarza siê w kolejnych okresach;
+    • wzrost nie jest potwierdzony popraw¹ innych filarów.
+Oznaczenie to nie obni¿a automatycznie wyniku regionu, ale ogranicza mo¿liwoœæ nadania mu statusu trwa³ego lidera.
+Co aplikacja ma zwróciæ
+    • wynik ka¿dego filaru;
+    • wynik ogólny;
+    • zakres niepewnoœci;
+    • stabilnoœæ pozycji;
+    • wra¿liwoœæ na zmianê wag;
+    • udzia³ danych imputowanych;
+    • dominuj¹ce przewagi;
+    • krytyczne deficyty;
+    • udzia³ obserwacji dominuj¹cych;
+    • flagê efektu niskiej bazy;
+    • wynik indeksu po wy³¹czeniu najwiêkszej obserwacji.
+Rezultat
+Regionalny Indeks Gotowoœci z pe³n¹ dokumentacj¹ metodologiczn¹. EIRRI pozostaje komponentem zdolnoœci wdro¿eniowej, a nie ca³ym indeksem.
+
+PRODUKT 14.3. Profile 16 województw
+Co aplikacja ma wygenerowaæ
+Dla ka¿dego województwa:
+    1. skalê finansowania;
+    2. strukturê finansowania;
+    3. EIESI;
+    4. EIRRI;
+    5. CRI;
+    6. TRL;
+    7. wyniki szeœciu filarów;
+    8. potencja³ gospodarczy;
+    9. potencja³ naukowy;
+    10. specjalizacje projektowe;
+    11. pozycjê krajow¹;
+    12. pozycjê europejsk¹;
+    13. mocne strony;
+    14. s³abe strony;
+    15. niewykorzystany potencja³;
+    16. ryzyka;
+    17. jakoœæ danych;
+    18. rekomendowane instrumenty;
+    19. rekomendowany typ EKO_Lokacji;
+    20. udzia³ najwiêkszego projektu i beneficjenta;
+    21. ocenê efektu niskiej bazy;
+    22. stabilnoœæ wyniku w czasie.
+Zasada prezentacji
+Ka¿dy profil powinien zawieraæ:
+    • dane bezwzglêdne;
+    • dane wzglêdne;
+    • benchmark krajowy;
+    • benchmark europejski;
+    • poziom niepewnoœci;
+    • informacjê o projektach ogólnokrajowych;
+    • wynik podstawowy;
+    • wynik po wy³¹czeniu najwiêkszej obserwacji;
+    • informacjê, czy wzrost ma charakter systemowy czy jednostkowy.
+Rezultat
+16 standaryzowanych i porównywalnych kart regionalnych.
+
+PRODUKT 14.4. Typologia regionów
+Co przekazaæ aplikacji
+Wyniki szeœciu filarów Regionalnego Indeksu Gotowoœci, a nie wszystkie surowe zmienne.
+Mo¿liwe typy
+    • liderzy wielowymiarowi;
+    • regiony naukowo-innowacyjne;
+    • regiony wdro¿eniowe;
+    • regiony transformacji przemys³owej;
+    • regiony wysokiego potencja³u i niskiej absorpcji;
+    • regiony zale¿ne od du¿ych projektów publicznych;
+    • regiony rozproszone instytucjonalnie;
+    • regiony o niskiej gotowoœci systemowej;
+    • regiony o wysokiej dynamice, lecz niestabilnej bazie;
+    • regiony zale¿ne od pojedynczych projektów lub beneficjentów.
+Walidacja
+Aplikacja powinna sprawdziæ:
+    • stabilnoœæ typologii;
+    • zmianê typów przy zmianie metody;
+    • zgodnoœæ typologii z RIS;
+    • zgodnoœæ z wynikami ekspertów;
+    • wp³yw danych imputowanych;
+    • wp³yw wy³¹czenia projektów dominuj¹cych;
+    • trwa³oœæ klasyfikacji w kolejnych latach.
+Rezultat
+Typologia regionów wraz z opisem ich potrzeb, ograniczeñ i rekomendowanych instrumentów.
+
+PRODUKT 14.5. Europejski benchmark regionalny
+Co przekazaæ aplikacji
+    • dane polskich województw;
+    • RIS;
+    • Eurostat NUTS 2;
+    • regionalne dane gospodarcze;
+    • regionalne dane B+R;
+    • dane spo³eczne i œrodowiskowe.
+Co aplikacja ma wykonaæ
+Dla ka¿dego województwa dobraæ:
+    1. regiony podobne strukturalnie;
+    2. regiony o podobnym poziomie rozwoju;
+    3. regiony, które wczeœniej mia³y podobny profil, lecz osi¹gnê³y lepsze wyniki;
+    4. realistyczny region aspiracyjny.
+Kryteria podobieñstwa
+    • PKB per capita;
+    • struktura przemys³u;
+    • udzia³ us³ug;
+    • urbanizacja;
+    • nak³ady B+R;
+    • RIS;
+    • kapita³ ludzki;
+    • zatrudnienie high-tech;
+    • demografia;
+    • charakter transformacji.
+Zasady porównania
+Aplikacja powinna:
+    • przeliczaæ dane per capita lub jako udzia³ PKB;
+    • stosowaæ rok wspólny lub najbli¿szy;
+    • oznaczaæ brak bezpoœredniej porównywalnoœci;
+    • nie porównywaæ mechanicznie regionów sto³ecznych z regionami peryferyjnymi;
+    • uwzglêdniaæ typ gospodarki regionu;
+    • kontrolowaæ wp³yw niskiej bazy;
+    • porównywaæ zarówno poziom wskaŸnika, jak i skalê wartoœci bezwzglêdnych;
+    • nie traktowaæ wysokiej dynamiki jako przewagi bez potwierdzenia trwa³oœci.
+Rezultat
+Dla ka¿dego województwa:
+    • grupa regionów podobnych;
+    • region aspiracyjny;
+    • dystans;
+    • luki;
+    • mocne strony;
+    • praktyki mo¿liwe do adaptacji;
+    • poziom wiarygodnoœci benchmarku;
+    • informacja o wra¿liwoœci wyniku na efekt bazy.
+
+PRODUKT 14.6. Mapa specjalizacji i luk regionalnych
+Co aplikacja ma obliczyæ
+    • specjalizacjê projektow¹;
+    • specjalizacjê technologiczn¹;
+    • specjalizacjê œrodowiskow¹;
+    • koncentracjê programow¹;
+    • zale¿noœæ od jednego funduszu;
+    • udzia³ nauki;
+    • udzia³ MŒP;
+    • udzia³ JST;
+    • luki komercjalizacyjne;
+    • luki finansowe;
+    • luki instytucjonalne;
+    • luki kompetencyjne;
+    • luki terytorialne;
+    • bia³e plamy;
+    • obszary zale¿ne od pojedynczych projektów;
+    • obszary wysokiej dynamiki i niskiej trwa³oœci.
+Zasada interpretacji
+Bia³a plama mo¿e oznaczaæ:
+    • rzeczywisty brak projektów;
+    • brak potencja³u;
+    • niewykorzystany potencja³;
+    • brak danych;
+    • b³êdne przypisanie terytorialne.
+Wysoka dynamika mo¿e natomiast oznaczaæ:
+    • trwa³y rozwój systemowy;
+    • efekt niskiej bazy;
+    • wp³yw jednego du¿ego projektu;
+    • zmianê metodologii;
+    • jednorazowe przesuniêcie alokacji.
+Aplikacja musi rozró¿niaæ te przypadki.
+Rezultat
+Mapy:
+    1. potencja³u;
+    2. absorpcji;
+    3. wdro¿eniowoœci;
+    4. transformacyjnoœci;
+    5. specjalizacji;
+    6. ryzyka;
+    7. bia³ych plam;
+    8. jakoœci i kompletnoœci danych;
+    9. efektu niskiej bazy;
+    10. koncentracji wyników w pojedynczych projektach.
+
+PRODUKT 14.7. Regionalny DSS
+Co przekazaæ aplikacji
+    • typ regionu;
+    • profil województwa;
+    • Regionalny Indeks Gotowoœci;
+    • benchmark europejski;
+    • katalog instrumentów;
+    • ograniczenia bud¿etowe;
+    • ograniczenia prawne;
+    • cele regionalnych strategii.
+Architektura
+DSS powinien opieraæ siê na:
+    • deterministycznych regu³ach;
+    • drzewach decyzyjnych;
+    • klasach regionów;
+    • progach;
+    • katalogu interwencji.
+LLM powinien wy³¹cznie:
+    • syntetyzowaæ wynik;
+    • opisywaæ rekomendacjê;
+    • przygotowaæ uzasadnienie;
+    • stworzyæ wariant raportu.
+Co aplikacja ma rekomendowaæ
+    • typy projektów do finansowania;
+    • preferowane poziomy TRL;
+    • grupy beneficjentów;
+    • potrzebê zwiêkszenia udzia³u MŒP;
+    • potrzebê wzmocnienia JST;
+    • potrzebê wspó³pracy nauka–biznes;
+    • projekty demonstracyjne;
+    • skalowanie;
+    • dzia³ania doradcze;
+    • potrzebê audytu;
+    • w³aœciwe KPI.
+Bezpiecznik regionalnego skalowania
+DSS nie powinien rekomendowaæ pe³nego skalowania instrumentu, gdy wysoki wynik regionu:
+    • zale¿y od jednego projektu;
+    • zale¿y od jednego beneficjenta;
+    • wynika z niskiej wartoœci pocz¹tkowej;
+    • nie utrzymuje siê w czasie;
+    • nie jest potwierdzony wzrostem potencja³u instytucjonalnego;
+    • nie obejmuje wiêkszej liczby podmiotów;
+    • nie przek³ada siê na wzrost wdro¿eñ lub komercjalizacji.
+W takiej sytuacji rekomendowanym wariantem powinno byæ:
+    • utrzymanie pilota¿u;
+    • dalsze monitorowanie;
+    • ograniczone skalowanie;
+    • dywersyfikacja beneficjentów;
+    • wzmocnienie infrastruktury instytucjonalnej;
+    • ocena po kolejnym okresie.
+Rezultat
+Dla ka¿dego województwa maksymalnie trzy warianty interwencji, zawieraj¹ce:
+    • dowody;
+    • przewidywany efekt;
+    • ryzyka;
+    • koszty;
+    • KPI;
+    • ograniczenia prawne;
+    • poziom niepewnoœci;
+    • status akceptacji eksperckiej;
+    • ocenê wp³ywu efektu niskiej bazy;
+    • ocenê zale¿noœci od pojedynczych obserwacji.
+
+PRODUKT 14.8. Model EKO_Lokacji
+Cel
+Wskazaæ:
+    • gdzie EKO_Lokacja powinna dzia³aæ;
+    • jak¹ funkcjê pe³niæ;
+    • jakie podmioty obs³ugiwaæ;
+    • jakie instrumenty stosowaæ;
+    • jak mierzyæ efekty.
+Dane wejœciowe
+    • koncentracja projektów;
+    • koncentracja beneficjentów;
+    • instytucje B+R;
+    • aktywnoœæ MŒP;
+    • aktywnoœæ JST;
+    • EIRRI;
+    • CRI;
+    • Regionalny Indeks Gotowoœci;
+    • specjalizacje;
+    • bia³e plamy;
+    • dostêpnoœæ transportowa;
+    • dostêpnoœæ cyfrowa;
+    • rozproszenie ludnoœci;
+    • europejskie benchmarki;
+    • stabilnoœæ wyników;
+    • efekt niskiej bazy;
+    • zale¿noœæ od pojedynczych projektów.
+Mo¿liwe modele
+    • hub transferu technologii;
+    • centrum komercjalizacji;
+    • centrum transformacji przemys³owej;
+    • centrum GOZ;
+    • centrum efektywnoœci zasobowej;
+    • centrum wsparcia MŒP;
+    • centrum doradcze JST;
+    • model sieciowy;
+    • model mobilny;
+    • model hybrydowy.
+Co aplikacja ma wygenerowaæ
+Dla ka¿dego regionu:
+    • rekomendowany model;
+    • wariant lokalizacyjny;
+    • uzasadnienie;
+    • odbiorców;
+    • us³ugi;
+    • partnerów;
+    • instrumenty;
+    • KPI;
+    • ryzyka;
+    • przewidywany wp³yw;
+    • alternatywny wariant w przypadku niepewnych danych.
+Region o wysokim, lecz niestabilnym wyniku nie powinien automatycznie otrzymywaæ rekomendacji rozbudowanego centrum stacjonarnego. Aplikacja powinna rozwa¿yæ:
+    • model pilota¿owy;
+    • model sieciowy;
+    • model mobilny;
+    • wspó³dzielenie infrastruktury;
+    • etapowe zwiêkszanie skali.
+Rezultat
+Macierz:
+typ regionu ? stabilnoœæ wyniku ? efekt bazy ? typ EKO_Lokacji ? lokalizacja ? odbiorcy ? us³ugi ? partnerzy ? KPI ? efekt ? ryzyko ? status akceptacji.
+
+PRODUKT 14.9. Katalog rekomendacji dla województw i JST
+Format
+Region	Typ regionu	Luka	Dowód	Wiarygodnoœæ	Efekt bazy	Zale¿noœæ od obserwacji jednostkowych	Interwencja	Ograniczenia	Odpowiedzialny podmiot	Finansowanie	Termin	KPI	Status zatwierdzenia
+Rezultat
+Oddzielne pakiety rekomendacji dla:
+    • w³adz wojewódzkich;
+    • instytucji poœrednicz¹cych;
+    • JST;
+    • uczelni;
+    • IOB;
+    • MŒP;
+    • administracji centralnej.
+
+WYMAGANIA WALIDACYJNE DLA CA£EGO SYSTEMU
+1. Walidacja danych
+Aplikacja ma raportowaæ:
+    • kompletnoœæ;
+    • aktualnoœæ;
+    • spójnoœæ;
+    • udzia³ imputacji;
+    • niezgodnoœci czasowe;
+    • niezgodnoœci przestrzenne.
+2. Walidacja indeksów
+Aplikacja ma przeprowadziæ:
+    • analizê korelacji;
+    • kontrolê wspó³liniowoœci;
+    • analizê wra¿liwoœci wag;
+    • analizê stabilnoœci rankingu;
+    • testy alternatywnych normalizacji;
+    • test wp³ywu obserwacji skrajnych;
+    • test wp³ywu najwiêkszego projektu;
+    • test wp³ywu najwiêkszego beneficjenta;
+    • test efektu niskiej bazy;
+    • test stabilnoœci przy zastosowaniu œredniej wieloletniej.
+3. Walidacja rekomendacji
+Rekomendacje powinny byæ sprawdzone pod k¹tem:
+    • wykonalnoœci;
+    • zgodnoœci prawnej;
+    • zgodnoœci z regulacjami UE;
+    • kosztu;
+    • ryzyka;
+    • sprawiedliwoœci terytorialnej;
+    • wp³ywu na MŒP;
+    • mo¿liwoœci wdro¿enia;
+    • trwa³oœci przewidywanego efektu;
+    • zale¿noœci od pojedynczych projektów.
+4. Test sprawiedliwoœci
+System powinien wykrywaæ, czy rekomendacje:
+    • nie preferuj¹ systematycznie najwiêkszych regionów;
+    • nie premiuj¹ wy³¹cznie podmiotów publicznych;
+    • nie marginalizuj¹ MŒP;
+    • nie karz¹ regionów za brak danych;
+    • nie utrwalaj¹ istniej¹cej koncentracji finansowania;
+    • nie premiuj¹ sztucznie regionów o niskiej bazie;
+    • nie uto¿samiaj¹ wysokiego przyrostu procentowego z trwa³ym potencja³em;
+    • nie rekomenduj¹ skalowania na podstawie jednej obserwacji;
+    • nie zani¿aj¹ potrzeb regionów o stabilnym, lecz stopniowym rozwoju.
+Analityczny bezpiecznik efektu bazy
+Dla ka¿dego regionu aplikacja powinna równolegle prezentowaæ:
+    1. zmianê procentow¹;
+    2. zmianê bezwzglêdn¹;
+    3. wartoœæ pocz¹tkow¹;
+    4. wartoœæ koñcow¹;
+    5. liczbê projektów;
+    6. liczbê beneficjentów;
+    7. udzia³ najwiêkszego projektu;
+    8. udzia³ najwiêkszego beneficjenta;
+    9. wynik po wy³¹czeniu najwiêkszej obserwacji;
+    10. trwa³oœæ efektu w kolejnych okresach.
+Region powinien otrzymaæ flagê:
+wysoka dynamika – ograniczona trwa³oœæ systemowa
+je¿eli wysoki wzrost nie jest potwierdzony odpowiedni¹ skal¹, dywersyfikacj¹ i stabilnoœci¹.
+Flaga ta powinna automatycznie blokowaæ rekomendacjê natychmiastowego pe³nego skalowania i kierowaæ przypadek do:
+    • obserwacji;
+    • pilota¿u;
+    • analizy eksperckiej;
+    • dodatkowego okresu walidacji.
+5. Walidacja ekspercka
+Przed operacyjnym wykorzystaniem systemu nale¿y przeprowadziæ ocenê z udzia³em:
+    • ekspertów polityki publicznej;
+    • ekspertów funduszy europejskich;
+    • specjalistów regionalnych;
+    • przedstawicieli instytucji wdra¿aj¹cych;
+    • prawników;
+    • przedstawicieli MŒP;
+    • przedstawicieli samorz¹dów.
+
+MINIMALNY PAKIET POLECEÑ DLA APLIKACJI AI
+Zadanie 11
+Na podstawie pe³nej bazy projektów oraz zatwierdzonych wyników zadañ 4 i 8 zbuduj krajowy system monitorowania polityki ekoinnowacyjnej. Nie powtarzaj istniej¹cej diagnozy EIESI, EIRRI, CRI, TRL, ANOVA, regresji i klasteryzacji, lecz wykorzystaj j¹ jako dane wejœciowe.
+Opracuj:
+    1. wersjonowan¹ bazê monitoringow¹;
+    2. katalog KPI;
+    3. dashboard;
+    4. benchmark krajowy;
+    5. benchmark miêdzynarodowy;
+    6. macierz efektywnoœci;
+    7. system alarmowy;
+    8. deterministyczny DSS;
+    9. katalog rekomendacji.
+Dla ka¿dego wyniku podaj:
+    • Ÿród³o;
+    • rok;
+    • sposób transformacji;
+    • poziom niepewnoœci;
+    • udzia³ imputacji;
+    • wersjê modelu;
+    • wp³yw najwiêkszej obserwacji;
+    • ocenê efektu niskiej bazy.
+Rekomendacje DSS maj¹ wynikaæ z zatwierdzonych regu³ i drzew decyzyjnych. Model jêzykowy mo¿e przygotowaæ wy³¹cznie ich opis i uzasadnienie. Wszystkie decyzje wymagaj¹ zatwierdzenia eksperckiego.
+Nie rekomenduj skalowania wy³¹cznie na podstawie wysokiego wzrostu procentowego. SprawdŸ skalê bezwzglêdn¹, liczbê projektów, liczbê beneficjentów, trwa³oœæ efektu i koncentracjê wyniku.
+Zadanie 14
+Na podstawie danych projektowych, wyników EIESI, EIRRI, CRI i TRL oraz danych regionalnych GUS, Eurostatu, RIS i Ÿróde³ œrodowiskowych zbuduj regionalny system zarz¹dzania ekoinnowacjami.
+Opracuj:
+    1. bazê województwo × rok;
+    2. trzy warianty przypisania projektów wieloregionalnych;
+    3. Regionalny Indeks Gotowoœci;
+    4. analizê wra¿liwoœci indeksu;
+    5. profile 16 województw;
+    6. typologiê regionów;
+    7. europejski benchmark NUTS 2;
+    8. mapy specjalizacji, ryzyka i bia³ych plam;
+    9. regionalny DSS;
+    10. model EKO_Lokacji;
+    11. katalog rekomendacji.
+Nie przypisuj automatycznie projektów ogólnokrajowych do województw. Nie stosuj imputacji do tworzenia fikcyjnej lokalizacji projektu. Ka¿da wartoœæ imputowana musi byæ oznaczona. Rekomendacje maj¹ mieæ charakter wariantowy i wymagaj¹ akceptacji cz³owieka.
+Dla ka¿dego regionu sprawdŸ:
+    • efekt niskiej bazy;
+    • udzia³ najwiêkszego projektu;
+    • udzia³ najwiêkszego beneficjenta;
+    • stabilnoœæ wyniku w czasie;
+    • wynik po wy³¹czeniu obserwacji dominuj¹cej;
+    • dywersyfikacjê projektów i beneficjentów.
+Nie rekomenduj pe³nego skalowania instrumentów w regionie, którego wynik opiera siê g³ównie na pojedynczym projekcie, jednorazowym wzroœcie lub niskiej wartoœci pocz¹tkowej.
+
+OSTATECZNY ZESTAW PRODUKTÓW
+Zadanie 11
+    1. Zintegrowana i wersjonowana baza monitorowania.
+    2. Katalog KPI wraz z metadanymi.
+    3. Dashboard GREENSTRAT.
+    4. Benchmark krajowy.
+    5. Benchmark Polski wzglêdem UE.
+    6. Macierz efektywnoœci programów.
+    7. Trzystopniowy system alarmowy.
+    8. Krajowy DSS w modelu human-in-the-loop.
+    9. Audytowalny katalog rekomendacji.
+    10. Rejestr jakoœci, niepewnoœci i pochodzenia danych.
+    11. Modu³ identyfikacji efektu niskiej bazy i obserwacji dominuj¹cych.
+Zadanie 14
+    1. Regionalna baza województwo × rok.
+    2. System obs³ugi projektów wieloregionalnych.
+    3. Regionalny Indeks Gotowoœci.
+    4. Analiza wra¿liwoœci i stabilnoœci indeksu.
+    5. Profile 16 województw.
+    6. Typologia regionów.
+    7. Europejski benchmark regionów NUTS 2.
+    8. Mapy potencja³u, absorpcji, specjalizacji, ryzyka i bia³ych plam.
+    9. Regionalny DSS w modelu human-in-the-loop.
+    10. Model EKO_Lokacji.
+    11. Katalog rekomendacji dla województw i JST.
+    12. Rejestr jakoœci, niepewnoœci i kompletnoœci danych.
+    13. Modu³ kontroli efektu niskiej bazy, trwa³oœci systemowej i zale¿noœci od pojedynczych projektów.
+Najwa¿niejsza zasada wdro¿eniowa brzmi:
+aplikacja ma obliczaæ, porównywaæ, klasyfikowaæ i generowaæ warianty rekomendacji, ale ka¿da decyzja zarz¹dcza musi byæ oparta na audytowalnej regule i zatwierdzona przez cz³owieka. Wysoka dynamika wskaŸnika nie mo¿e byæ automatycznie uto¿samiana z trwa³ym sukcesem, je¿eli wynika z niskiej bazy, pojedynczego projektu lub pojedynczego beneficjenta.
+Ta korekta domyka specyfikacjê: system bêdzie rozpoznawa³ nie tylko wyniki wysokie i niskie, lecz równie¿ ró¿nicê miêdzy rzeczywistym, trwa³ym rozwojem regionalnego ekosystemu a statystycznym skokiem wywo³anym jedn¹ obserwacj¹.
+

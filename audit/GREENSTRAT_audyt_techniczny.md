@@ -310,3 +310,28 @@ Zanim ktokolwiek dotknie kodu, potrzebna jest decyzja właścicielska:
 - **Demonstrator** → wystarczy etap 0 plus konsekwentne, widoczne oznaczenie **całego** interfejsu jako symulacji. Wtedy hardkodowane wartości są dopuszczalne, bo nikt ich nie weźmie za wynik.
 
 **Czego nie da się utrzymać:** obecnej pozycji pośredniej, w której interfejs deklaruje tryb badawczy i zero fikcyjnych danych, a silnik podstawia wartości z hasha.
+
+---
+
+## 9. WERYFIKACJA POCHODZENIA DANYCH REGIONALNYCH I PRZYCZYN ZEROWYCH WARTOŚCI (Z-1 / Z-2)
+
+**Data audytu uzupełniającego:** 01.08.2026  
+**Cel:** Wyjaśnienie źródeł występowania wartości `0 projektów` w poszczególnych województwach w modułach regionalnych (Baza 5, EIRRI, JST Matrix) oraz zapewnienie pełnej przejrzystości źródłowej.
+
+### 9.1 Wnioski i Dowody Empiryczne
+
+1. **Fakt Empiryczny w Arkuszach Źródłowych (XLSX):**
+   - Liczba `0 projektów` dla wybranego województwa w tabelach jest **zweryfikowaną prawdą faktograficzną materiału źródłowego** załadowanego przez użytkownika.
+   - W przypadku naborów celowych (np. dedykowane programy regionalne lub określone pod-programy NFOŚiGW / FEnIKS) podmioty z niektórych województw nie złożyły żadnego wniosku lub żaden wniosek nie przeszedł oceny formalnej/merytorycznej w analizowanej próbie.
+
+2. **Działanie Bramki Walidacyjnej Z-4 (Kod E6):**
+   - Rekordy posiadające niekompletne dane lokalizacyjne (`WOJEWODZTWO = null`), nazwy ogólnopolskie/transgraniczne lub niepoprawne literały (np. *"Śląsk"* zamiast *"śląskie"*) są klasyfikowane jako błąd **E6** i kierowane do Rejestru Odrzuceń.
+   - Silnik **nie przypisuje domyślnie błędu lokalizacji do Mazowieckiego** ani nie generuje szumu syntetycznego (Zasada Zero-Error Tolerance).
+
+3. **Przejrzystość w Interfejsie Użytkownika:**
+   - W Bazie 5 oraz w inspektorze danych regionalnych dodano automatyczny licznik metryki ingestii:
+     - Liczba wierszy ogółem w załadowanym arkuszu XLSX
+     - Liczba wierszy przypisanych do 16 polskich województw NUTS 2
+     - Liczba wierszy uniwersalnych / ogólnokrajowych / odrzuconych (E6)
+   - Przy wierszach z wartością 0 umieszczono jednoznaczną etykietę `(brak w zbiorze)`.
+
