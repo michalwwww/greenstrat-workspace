@@ -910,8 +910,9 @@
                 ⚙️ Kalkulator Indeksu EIESI
                 <span class="text-xs font-bold font-mono text-copper bg-copper/10 px-2 py-0.5 rounded" id="eiesiSumVal">100%</span>
               </h3>
-              <div id="eiesiWarning" class="hidden text-[10px] text-red-500 font-semibold bg-red-500/10 border border-red-500/25 p-2 rounded-lg mb-3">
-                ⚠️ Suma wag EIESI musi wynosić dokładnie 100%!
+              <div id="eiesiWarning" class="hidden text-[10px] text-red-500 font-semibold bg-red-500/10 border border-red-500/25 p-2 rounded-lg mb-3 flex justify-between items-center">
+                <span>⚠️ Suma wag EIESI musi wynosić dokładnie 100%!</span>
+                <button onclick="autoNormalizeEiesiWeights()" class="px-2 py-0.5 rounded bg-copper hover:bg-copper-hover text-white text-[10px] shadow transition-all">⚡ Przeskaluj do 100%</button>
               </div>
               <div class="space-y-4">
                 <div>
@@ -2957,79 +2958,86 @@
           }
 
           // Check if file is raw CSV database format (has Numer umowy/decyzji...)
-          let isRawFormat = false;
-          if (data.length > 0) {
-            const keys = Object.keys(data[0]);
-            if (keys.includes('Numer umowy/decyzji/ Contract number') || keys.includes('Program/ Programme') || keys.includes('Miejsce\u00A0realizacji\u00A0projektu/\u00A0Project\u00A0location\u00A0') || keys.includes('Miejsce\u00a0realizacji\u00a0projektu/\u00a0Project\u00a0location\u00a0')) {
-              isRawFormat = true;
+          // Universal Header Mapper & Normalizer for all datasets
+          rawSheetData = data.map((row, index) => {
+            function getField(candidates) {
+              const keys = Object.keys(row);
+              for (let c of candidates) {
+                for (let k of keys) {
+                  const cleanK = k.toLowerCase().replace(/\s+/g, ' ').trim();
+                  if (cleanK === c || cleanK.includes(c)) {
+                    if (row[k] !== undefined && row[k] !== null && row[k] !== '') {
+                      return row[k];
+                    }
+                  }
+                }
+              }
+              return undefined;
             }
-          }
 
-          if (isRawFormat) {
-            // Map the raw public program record headers dynamically
-            rawSheetData = data.map((row, index) => {
-              // Find matching location key (handle non-breaking spaces)
-              let locationKey = '';
-              Object.keys(row).forEach(k => {
-                if (k.toLowerCase().includes('miejsce') && k.toLowerCase().includes('realizacji')) {
-                  locationKey = k;
-                }
-              });
-              
-              let valueKey = '';
-              Object.keys(row).forEach(k => {
-                if (k.toLowerCase().includes('warto') && k.toLowerCase().includes('projektu')) {
-                  valueKey = k;
-                }
-              });
+            const idProj = getField(['id_proj', 'numer umowy', 'contract number', 'id projektu', 'numer projektu', 'lp.', 'id']) || `PROJ-${String(index + 1).padStart(3, '0')}`;
+            const prog = getField(['program_kod', 'program/ programme', 'program', 'kod programu', 'programme']) || 'FEnIKS';
+            const rawWoj = getField(['wojewodztwo', 'województwo', 'miejsce realizacji', 'project location', 'region', 'woj']);
+            const woj = extractVoivodeship(rawWoj ? String(rawWoj) : '') || (getField(['wojewodztwo', 'województwo']) ? String(getField(['wojewodztwo', 'województwo'])) : 'Brak danych');
+            const fundingVal = getField(['wart_proj_pln', 'wartość projektu', 'project value', 'wartość ogółem', 'wartość', 'kwota']) || '0';
+            const desc = getField(['opis_technologii', 'opis projektu', 'project summary', 'nazwa projektu', 'project name', 'tytuł projektu', 'opis', 'tytuł']) || '';
 
-              const idProj = row['Numer umowy/decyzji/ Contract number'] || `RAW-${index + 1}`;
-              const prog = row['Program/ Programme'] || row['Program'] || 'FEnIKS';
-              const location = locationKey ? row[locationKey] : '';
-              const woj = extractVoivodeship(location) || 'Brak danych';
-              let fundingStr = valueKey ? row[valueKey] : '0';
-              
-              // In research mode, do NOT invent synthetic TRL/ratings from hashes!
-              const hash = hashCode(idProj);
-              const trlStart = demoMode ? ((Math.abs(hash) % 4) + 1) : (row['TRL_START'] ? Number(row['TRL_START']) : null);
-              const trlKoniec = demoMode ? (trlStart + (Math.abs(hash) % 4) + 1) : (row['TRL_KONIEC'] ? Number(row['TRL_KONIEC']) : null);
-              const statusWdroz = demoMode ? (Math.abs(hash) % 2) : (row['STATUS_WDROZ'] ? Number(row['STATUS_WDROZ']) : null);
-              const statusKomerc = demoMode ? ((statusWdroz === 1 && Math.abs(hash) % 3 === 0) ? 1 : 0) : (row['STATUS_KOMERC'] ? Number(row['STATUS_KOMERC']) : null);
-              
-              const desc = row['Opis projektu/ Project summary'] || row['Nazwa projektu/ Project name'] || '';
-              const isEco = demoMode ? (heuristicClassifyLocal(desc) <= 2 ? 1 : 0) : (row['CZY_EKOINNOWACJA'] !== undefined ? Number(row['CZY_EKOINNOWACJA']) : (heuristicClassifyLocal(desc) <= 2 ? 1 : 0));
-              
-              const naukaBiznes = demoMode ? ((Math.abs(hash) % 5 === 0) ? 1 : 0) : (row['NAUKA_BIZNES'] !== undefined && row['NAUKA_BIZNES'] !== null && row['NAUKA_BIZNES'] !== '' ? Number(row['NAUKA_BIZNES']) : null);
-              const absorpcja = demoMode ? (0.7 + (Math.abs(hash) % 30) / 100) : (row['ABSORPCJA'] !== undefined && row['ABSORPCJA'] !== null && row['ABSORPCJA'] !== '' ? Number(row['ABSORPCJA']) : null);
-              const innowacyjnosc = demoMode ? (isEco === 1 ? ((Math.abs(hash) % 3) + 1) : 0) : (row['INNOWACYJNOSC'] !== undefined && row['INNOWACYJNOSC'] !== null && row['INNOWACYJNOSC'] !== '' ? Number(row['INNOWACYJNOSC']) : null);
-              const trwalosc = demoMode ? (isEco === 1 ? ((Math.abs(hash * 3) % 3) + 1) : 0) : (row['TRWALOSC_LCA'] !== undefined && row['TRWALOSC_LCA'] !== null && row['TRWALOSC_LCA'] !== '' ? Number(row['TRWALOSC_LCA']) : null);
-              const efektywnosc = demoMode ? (isEco === 1 ? ((Math.abs(hash * 7) % 3) + 1) : 0) : (row['EFEKTYWNOSC_ZASOBOWA'] !== undefined && row['EFEKTYWNOSC_ZASOBOWA'] !== null && row['EFEKTYWNOSC_ZASOBOWA'] !== '' ? Number(row['EFEKTYWNOSC_ZASOBOWA']) : null);
-              const transformacyjnosc = demoMode ? (isEco === 1 ? ((Math.abs(hash * 11) % 3) + 1) : 0) : (row['TRANSFORMACYJNOSC'] !== undefined && row['TRANSFORMACYJNOSC'] !== null && row['TRANSFORMACYJNOSC'] !== '' ? Number(row['TRANSFORMACYJNOSC']) : null);
+            const hash = hashCode(String(idProj));
 
-              return {
-                ID_PROJ: idProj,
-                PROGRAM_KOD: prog,
-                WOJEWODZTWO: woj,
-                WART_PROJ_PLN: fundingStr,
-                TRL_START: trlStart,
-                TRL_KONIEC: trlKoniec,
-                STATUS_WDROZ: statusWdroz,
-                STATUS_KOMERC: statusKomerc,
-                OPIS_TECHNOLOGII: desc,
-                BENEFICJENT_TYP: row['Nazwa beneficjenta/ Beneficiary name'] ? cleanBeneficiaryType(row['Nazwa beneficjenta/ Beneficiary name']) : 'MŚP',
-                NAUKA_BIZNES: naukaBiznes,
-                ABSORPCJA: absorpcja, 
-                CZY_EKOINNOWACJA: isEco,
-                ETAP_INNOWACJI: trlStart ? mapTRLToStage(trlStart) : 'Badania',
-                INNOWACYJNOSC: innowacyjnosc,
-                TRWALOSC_LCA: trwalosc,
-                EFEKTYWNOSC_ZASOBOWA: efektywnosc,
-                TRANSFORMACYJNOSC: transformacyjnosc
-              };
-            });
-          } else {
-            rawSheetData = data;
-          }
+            const directInn = getField(['innowacyjnosc', 'innowacyjność']);
+            const directTrw = getField(['trwalosc_lca', 'trwałość_lca', 'trwalosc']);
+            const directEf = getField(['efektywnosc_zasobowa', 'efektywność_zasobowa', 'efektywnosc']);
+            const directTrsf = getField(['transformacyjnosc', 'transformacyjność']);
+
+            const directEco = getField(['czy_ekoinnowacja', 'ekoinnowacja', 'is_eco']);
+            const isEco = demoMode 
+              ? (heuristicClassifyLocal(desc) <= 2 ? 1 : 0) 
+              : (directEco !== undefined ? Number(directEco) : (heuristicClassifyLocal(desc) <= 2 ? 1 : 0));
+
+            const innowacyjnosc = directInn !== undefined ? Number(directInn) : (demoMode ? (isEco === 1 ? ((Math.abs(hash) % 3) + 1) : 0) : null);
+            const trwalosc = directTrw !== undefined ? Number(directTrw) : (demoMode ? (isEco === 1 ? ((Math.abs(hash * 3) % 3) + 1) : 0) : null);
+            const efektywnosc = directEf !== undefined ? Number(directEf) : (demoMode ? (isEco === 1 ? ((Math.abs(hash * 7) % 3) + 1) : 0) : null);
+            const transformacyjnosc = directTrsf !== undefined ? Number(directTrsf) : (demoMode ? (isEco === 1 ? ((Math.abs(hash * 11) % 3) + 1) : 0) : null);
+
+            const directTrlStart = getField(['trl_start']);
+            const directTrlKoniec = getField(['trl_koniec', 'trl']);
+            const trlStart = directTrlStart !== undefined ? Number(directTrlStart) : (demoMode ? ((Math.abs(hash) % 4) + 1) : null);
+            const trlKoniec = directTrlKoniec !== undefined ? Number(directTrlKoniec) : (demoMode ? ((trlStart || 1) + (Math.abs(hash) % 4) + 1) : null);
+
+            const directStatusWdroz = getField(['status_wdroz', 'wdrożenie']);
+            const directStatusKomerc = getField(['status_komerc', 'komercjalizacja']);
+            const statusWdroz = directStatusWdroz !== undefined ? Number(directStatusWdroz) : (demoMode ? (Math.abs(hash) % 2) : null);
+            const statusKomerc = directStatusKomerc !== undefined ? Number(directStatusKomerc) : (demoMode ? ((statusWdroz === 1 && Math.abs(hash) % 3 === 0) ? 1 : 0) : null);
+
+            const directAbs = getField(['absorpcja']);
+            const directNb = getField(['nauka_biznes']);
+            const absorpcja = directAbs !== undefined ? Number(directAbs) : (demoMode ? (0.7 + (Math.abs(hash) % 30) / 100) : null);
+            const naukaBiznes = directNb !== undefined ? Number(directNb) : (demoMode ? ((Math.abs(hash) % 5 === 0) ? 1 : 0) : null);
+
+            const benefName = getField(['nazwa beneficjenta', 'beneficjent', 'beneficjent_typ']);
+            const benefClean = benefName ? cleanBeneficiaryType(String(benefName)) : 'MŚP';
+
+            return {
+              ID_PROJ: idProj,
+              PROGRAM_KOD: prog,
+              WOJEWODZTWO: woj,
+              WART_PROJ_PLN: fundingVal,
+              TRL_START: trlStart,
+              TRL_KONIEC: trlKoniec,
+              STATUS_WDROZ: statusWdroz,
+              STATUS_KOMERC: statusKomerc,
+              OPIS_TECHNOLOGII: desc,
+              BENEFICJENT_TYP: benefClean,
+              NAUKA_BIZNES: naukaBiznes,
+              ABSORPCJA: absorpcja,
+              CZY_EKOINNOWACJA: isEco,
+              ETAP_INNOWACJI: trlStart ? mapTRLToStage(trlStart) : 'Badania',
+              INNOWACYJNOSC: innowacyjnosc,
+              TRWALOSC_LCA: trwalosc,
+              EFEKTYWNOSC_ZASOBOWA: efektywnosc,
+              TRANSFORMACYJNOSC: transformacyjnosc
+            };
+          });
 
           // Large File handling
           const totalRows = rawSheetData.length;
@@ -8428,6 +8436,31 @@ var calculateTask8Local = calculateTask8;
         }
       }
       saveSlidersToSession();
+    }
+
+    function autoNormalizeEiesiWeights() {
+      const w1 = parseInt(document.getElementById('eiesi_w1').value) || 0;
+      const w2 = parseInt(document.getElementById('eiesi_w2').value) || 0;
+      const w3 = parseInt(document.getElementById('eiesi_w3').value) || 0;
+      const w4 = parseInt(document.getElementById('eiesi_w4').value) || 0;
+      const w5 = parseInt(document.getElementById('eiesi_w5').value) || 0;
+      
+      const sum = w1 + w2 + w3 + w4 + w5;
+      if (sum === 0) return;
+      
+      const nw1 = Math.round((w1 / sum) * 100);
+      const nw2 = Math.round((w2 / sum) * 100);
+      const nw3 = Math.round((w3 / sum) * 100);
+      const nw4 = Math.round((w4 / sum) * 100);
+      const nw5 = 100 - (nw1 + nw2 + nw3 + nw4);
+
+      document.getElementById('eiesi_w1').value = nw1;
+      document.getElementById('eiesi_w2').value = nw2;
+      document.getElementById('eiesi_w3').value = nw3;
+      document.getElementById('eiesi_w4').value = nw4;
+      document.getElementById('eiesi_w5').value = nw5;
+
+      updateEiesiCalculator();
     }
 
     // ==================== TASK 8: SIMULATION & RECOMMENDER ====================
