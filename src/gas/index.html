@@ -5942,9 +5942,7 @@ var calculateTask8Local = calculateTask8;
         const trsf = (p.TRANSFORMACYJNOSC !== undefined && p.TRANSFORMACYJNOSC !== null && p.TRANSFORMACYJNOSC !== '' && p.TRANSFORMACYJNOSC !== -99 && p.TRANSFORMACYJNOSC !== '-99') ? Number(p.TRANSFORMACYJNOSC) : null;
         return (inn === 1 && trw === 1 && ef === 1 && trsf === 1);
       }).length;
-      const realEcoCount = rawSheetData.filter(p => {
-        return (p.CZY_EKOINNOWACJA == 1 || p.GEMINI_CATEGORY == 1 || p.GEMINI_CATEGORY == 2);
-      }).length;
+      const realEcoCount = rawSheetData.filter(p => isProjectEco(p)).length;
 
       document.getElementById('funnel-all').textContent = allCount;
       document.getElementById('funnel-gate').textContent = gateCount;
@@ -6063,9 +6061,7 @@ var calculateTask8Local = calculateTask8;
 
       // 9. Waterfall Funding Gap (Prawdziwy wykres kaskadowy z wyliczeniem delty luki finansowej)
       const totalFunding = rawSheetData.reduce((sum, p) => sum + (parseFloat(p.WART_PROJ_PLN) || 0), 0);
-      const ecoFunding = rawSheetData.filter(p => {
-        return (p.CZY_EKOINNOWACJA == 1 || p.GEMINI_CATEGORY == 1 || p.GEMINI_CATEGORY == 2);
-      }).reduce((sum, p) => sum + (parseFloat(p.WART_PROJ_PLN) || 0), 0);
+      const ecoFunding = rawSheetData.filter(p => isProjectEco(p)).reduce((sum, p) => sum + (parseFloat(p.WART_PROJ_PLN) || 0), 0);
 
       const totalMln = Math.round(totalFunding / 1000000);
       const ecoMln = Math.round(ecoFunding / 1000000);
@@ -7120,9 +7116,7 @@ var calculateTask8Local = calculateTask8;
       let rowHtml = '';
       
       const stats11 = backendCalculatedData.task11;
-      const trendsList = (stats11 && stats11.trends && stats11.trends.length > 0) 
-        ? stats11.trends 
-        : [2021, 2022, 2023, 2024, 2025, 2026, 2027].map(y => ({ year: y, funding: 150000000 + (y-2021)*12000000, ecoFunding: 52000000 + (y-2021)*6000000, ecoProjects: 120 + (y-2021)*15, patents: 45 + (y-2021)*4 }));
+      const trendsList = (stats11 && stats11.trends && stats11.trends.length > 0) ? stats11.trends : [];
 
       if (dbId === 'db-capacity') {
         title.textContent = "Baza 1: Innovation Capacity (Potencjał Innowacyjny GUS BDL & UPRP)";
@@ -7308,7 +7302,7 @@ var calculateTask8Local = calculateTask8;
       }
       
       if (headers) headers.innerHTML = headerHtml;
-      if (body) body.innerHTML = rowHtml;
+      if (body) body.innerHTML = rowHtml || '<tr><td colspan="5" class="p-6 text-center text-theme-secondary font-mono">Brak danych szeregów czasowych (kolumny ROK) w załadowanym zbiorze projektów.</td></tr>';
 
       const noticeEl = document.getElementById('subDbNotice');
       if (noticeEl) {
@@ -7417,8 +7411,9 @@ var calculateTask8Local = calculateTask8;
     }
 
     function populateSnaVariables() {
-      if (!backendCalculatedData) return;
+      if (!backendCalculatedData || !backendCalculatedData.task14) return;
       const net = backendCalculatedData.task14.network;
+      if (!net || !net.indices) return;
       const ind = net.indices;
       
       document.getElementById('idx-col').textContent = ind.collaborationIndex + '%';
@@ -7807,21 +7802,23 @@ var calculateTask8Local = calculateTask8;
       
       if (taskId === 'task14') {
         const eirri = backendCalculatedData ? backendCalculatedData.task14.eirri : {};
-        csvContent += ["ID_JST", "Wojewodztwo", "Innowacyjny", "Finansowy", "Wdrozeniowy", "Instytucjonalny", "Srodowiskowy", "Spoleczny", "EIRRI_Score"].join(sep) + "\n";
+        csvContent += ["ID_JST", "Wojewodztwo", "Innowacyjny", "Gospodarczy", "Wdrozeniowy", "Instytucjonalny", "Srodowiskowy", "Absorpcyjny", "EIRRI_Score"].join(sep) + "\n";
         
         let idx = 1;
         Object.keys(eirri).forEach(w => {
-          const score = eirri[w].score;
+          const item = eirri[w];
+          const score = item.score;
+          const pots = item.potentials || {};
           const line = [
             idx++,
             w.toUpperCase(),
-            Math.min(100, Math.round(55 + score*0.1)),
-            Math.min(100, Math.round(62 + score*0.05)),
-            Math.min(100, Math.round(58 + score*0.08)),
-            Math.min(100, Math.round(60 + score*0.06)),
-            Math.min(100, Math.round(65 + score*0.07)),
-            Math.min(100, Math.round(70 + score*0.05)),
-            score
+            pots.innovative !== undefined ? pots.innovative : -99,
+            pots.economic !== undefined ? pots.economic : -99,
+            pots.implementation !== undefined ? pots.implementation : -99,
+            pots.institutional !== undefined ? pots.institutional : -99,
+            pots.environmental !== undefined ? pots.environmental : -99,
+            pots.absorption !== undefined ? pots.absorption : -99,
+            score !== undefined ? score : -99
           ].map(val => typeof val === 'number' ? val.toString().replace('.', dec) : val).join(sep);
           csvContent += line + "\n";
         });
@@ -7832,10 +7829,10 @@ var calculateTask8Local = calculateTask8;
         let minVal = Infinity, maxVal = -Infinity;
         
         rawSheetData.forEach(p => {
-          const inn = p.INNOWACYJNOSC || 0;
-          const trw = p.TRWALOSC_LCA || 0;
-          const ef = p.EFEKTYWNOSC_ZASOBOWA || 0;
-          const trsf = p.TRANSFORMACYJNOSC || 0;
+          const inn = Number(p.INNOWACYJNOSC) || 0;
+          const trw = Number(p.TRWALOSC_LCA) || 0;
+          const ef = Number(p.EFEKTYWNOSC_ZASOBOWA) || 0;
+          const trsf = Number(p.TRANSFORMACYJNOSC) || 0;
           const pc = (inn + trw + ef + trsf) / 4;
           
           const deltaTrl = p.DELTA_TRL !== undefined ? p.DELTA_TRL : Math.max(0, (p.TRL_KONIEC - p.TRL_START || 0));
@@ -8189,7 +8186,7 @@ var calculateTask8Local = calculateTask8;
         NUTS2_PL.forEach(w => {
           const entry = eirri[w] || { score: 0 };
           const tot = rawSheetData.filter(p => normalizeVoivodeship(p.WOJEWODZTWO) === w).length;
-          const eco = rawSheetData.filter(p => normalizeVoivodeship(p.WOJEWODZTWO) === w && (p.CZY_EKOINNOWACJA==1||p.GEMINI_CATEGORY==1||p.GEMINI_CATEGORY==2)).length;
+          const eco = rawSheetData.filter(p => normalizeVoivodeship(p.WOJEWODZTWO) === w && isProjectEco(p)).length;
           const nClass = nuts2EIS[w] || 'Moderate Innovator';
           csvContent += `${w.toUpperCase()};${tot};${eco};${(entry.score||0)};${nClass};${nClass}\n`;
         });
@@ -8216,16 +8213,18 @@ var calculateTask8Local = calculateTask8;
         
         const eirri = backendCalculatedData.task14.eirri;
         Object.keys(eirri).forEach(w => {
-          const score = eirri[w].score;
+          const item = eirri[w];
+          const score = item.score !== undefined ? item.score : 0;
+          const pots = item.potentials || {};
           body.innerHTML += `
             <tr class="hover:bg-theme-border/20 border-b border-theme/30">
               <td class="p-3 font-semibold text-theme-primary">${w.toUpperCase()}</td>
-              <td class="p-3 font-mono">${Math.min(100, Math.round(55 + score*0.1))}%</td>
-              <td class="p-3 font-mono">${Math.min(100, Math.round(62 + score*0.05))}%</td>
-              <td class="p-3 font-mono">${Math.min(100, Math.round(58 + score*0.08))}%</td>
-              <td class="p-3 font-mono">${Math.min(100, Math.round(60 + score*0.06))}%</td>
-              <td class="p-3 font-mono">${Math.min(100, Math.round(65 + score*0.07))}%</td>
-              <td class="p-3 font-mono">${Math.min(100, Math.round(70 + score*0.05))}%</td>
+              <td class="p-3 font-mono">${pots.innovative !== undefined ? pots.innovative : 'b.d.'}%</td>
+              <td class="p-3 font-mono">${pots.economic !== undefined ? pots.economic : 'b.d.'}%</td>
+              <td class="p-3 font-mono">${pots.implementation !== undefined ? pots.implementation : 'b.d.'}%</td>
+              <td class="p-3 font-mono">${pots.institutional !== undefined ? pots.institutional : 'b.d.'}%</td>
+              <td class="p-3 font-mono">${pots.environmental !== undefined ? pots.environmental : 'b.d.'}%</td>
+              <td class="p-3 font-mono">${pots.absorption !== undefined ? pots.absorption : 'b.d.'}%</td>
               <td class="p-3 font-mono font-bold text-copper">${score}/100</td>
             </tr>
           `;
@@ -8237,17 +8236,25 @@ var calculateTask8Local = calculateTask8;
         
         const progs = backendCalculatedData.task8;
         progs.forEach(p => {
-          const gpqi = Math.round(p.eisei * 0.4 + p.eipi * 0.3 + p.trli * 0.3);
+          const acc = p.gpqi_acc !== undefined && p.gpqi_acc !== null ? Math.round(p.gpqi_acc) : 'b.d.';
+          const adm = p.gpqi_adm !== undefined && p.gpqi_adm !== null ? Math.round(p.gpqi_adm) : 'b.d.';
+          const fin = p.gpqi_fin !== undefined && p.gpqi_fin !== null ? Math.round(p.gpqi_fin) : 'b.d.';
+          const imp = p.gpqi_imp !== undefined && p.gpqi_imp !== null ? Math.round(p.gpqi_imp) : 'b.d.';
+          const inn = p.gpqi_inn !== undefined && p.gpqi_inn !== null ? Math.round(p.gpqi_inn) : 'b.d.';
+          const reg = p.gpqi_reg !== undefined && p.gpqi_reg !== null ? Math.round(p.gpqi_reg) : 'b.d.';
+          const totalGpqi = p.gpqi !== undefined && p.gpqi !== null ? Math.round(p.gpqi) : 'b.d.';
+
           body.innerHTML += `
             <tr class="hover:bg-theme-border/20 border-b border-theme/30">
               <td class="p-3 font-semibold text-theme-primary">${p.program.toUpperCase()}</td>
-              <td class="p-3 font-mono">${Math.round(p.eisei)}%</td>
-              <td class="p-3 font-mono">${Math.round(p.eipi)}%</td>
-              <td class="p-3 font-mono">${Math.round(p.trli)}%</td>
-              <td class="p-3 font-mono">${Math.round(p.eisei_comp)}%</td>
-              <td class="p-3 font-mono">${Math.round(p.eipi * 0.9)}%</td>
-              <td class="p-3 font-mono">${Math.round(p.trli * 0.85)}%</td>
-              <td class="p-3 font-mono font-bold text-gold">${gpqi}/100</td>
+              <td class="p-3 text-theme-secondary">${p.instytucja || 'NCBR/PARP/NFOŚiGW'}</td>
+              <td class="p-3 font-mono">${acc}%</td>
+              <td class="p-3 font-mono">${adm}%</td>
+              <td class="p-3 font-mono">${fin}%</td>
+              <td class="p-3 font-mono">${imp}%</td>
+              <td class="p-3 font-mono">${inn}%</td>
+              <td class="p-3 font-mono">${reg}%</td>
+              <td class="p-3 font-mono font-bold text-gold">${totalGpqi}/100</td>
             </tr>
           `;
         });
@@ -8430,18 +8437,22 @@ var calculateTask8Local = calculateTask8;
       const ownOpt = document.getElementById('rec-low-own').checked;
       const mspOpt = document.getElementById('rec-msp').checked;
       
+      let progKeyword = "FEnIKS";
+      if (evalOpt && mspOpt) progKeyword = "KPO";
+      else if (innOpt && ownOpt) progKeyword = "NCBR";
+      else if (evalOpt) progKeyword = "KPO";
+      else if (mspOpt) progKeyword = "PARP";
+
       let rec = "";
-      if (evalOpt && mspOpt) {
-        rec = "KPO - Szybka Ścieżka dla MŚP (Zgodność: 95%, GPQI: 86/100)";
-      } else if (innOpt && ownOpt) {
-        rec = "NCBR Szybka Ścieżka (Zgodność: 90%, GPQI: 84/100)";
-      } else if (evalOpt) {
-        rec = "KPO (Zielona Energia) (Zgodność: 85%, GPQI: 82/100)";
-      } else if (mspOpt) {
-        rec = "PARP Środowiskowy (Zgodność: 80%, GPQI: 78/100)";
+      if (backendCalculatedData && backendCalculatedData.task8 && backendCalculatedData.task8.length > 0) {
+        const found = backendCalculatedData.task8.find(p => p.program.toUpperCase().includes(progKeyword)) || backendCalculatedData.task8[0];
+        const matchPct = Math.min(99, Math.max(70, Math.round((found.eisei_comp || 80) * 0.9 + (innOpt ? 10 : 0))));
+        const gpqiVal = Math.round(found.gpqi || 75);
+        rec = `Rekomendowany program: ${found.program} (Zgodność: ${matchPct}%, Wynik GPQI: ${gpqiVal}/100)`;
       } else {
-        rec = "W oparciu o wybrane kryteria, najlepszym wyborem jest FEnIKS (Zgodność: 75%, GPQI: 76/100)";
+        rec = `Rekomendowany program: ${progKeyword} (Model poglądowy - wymaga zasilenia danymi arkusza)`;
       }
+      
       const recResultEl = document.getElementById('recResultText');
       if (recResultEl) recResultEl.textContent = rec;
     }
@@ -8791,18 +8802,32 @@ var calculateTask8Local = calculateTask8;
 
     function getPCA(projects) {
       const items = ['inn', 'trw', 'ef', 'trsf'];
-      const n = projects.length;
+      const n = projects ? projects.length : 0;
+      if (n < 2) {
+        return {
+          eigPairs: items.map(() => ({ eigenvalue: 1, vector: [0.5, 0.5, 0.5, 0.5] })),
+          varExplained: [25, 25, 25, 25],
+          cumVarExplained: [25, 50, 75, 100],
+          kmo: 0,
+          bartlettChi2: 0,
+          bartlettP: 1,
+          df: 6,
+          R: Array(4).fill(0).map((_, i) => Array(4).fill(0).map((_, j) => i === j ? 1 : 0)),
+          insufficientData: true
+        };
+      }
       const K = items.length;
       const R = Array(K).fill(0).map(() => Array(K).fill(0));
-      const means = items.map(k => projects.reduce((sum, p) => sum + p[k], 0) / n);
-      const sds = items.map((k, idx) => Math.sqrt(projects.reduce((sum, p) => sum + Math.pow(p[k] - means[idx], 2), 0) / Math.max(1, n - 1)));
+      const means = items.map(k => projects.reduce((sum, p) => sum + (Number(p[k]) || 0), 0) / n);
+      const sds = items.map((k, idx) => Math.sqrt(projects.reduce((sum, p) => sum + Math.pow((Number(p[k]) || 0) - means[idx], 2), 0) / Math.max(1, n - 1)));
       for (let i = 0; i < K; i++) {
         for (let j = 0; j < K; j++) {
           if (i === j) R[i][j] = 1.0;
           else {
             let cov = 0;
-            for (let l = 0; l < n; l++) { cov += (projects[l][items[i]] - means[i]) * (projects[l][items[j]] - means[j]); }
-            R[i][j] = (cov / (n - 1)) / (sds[i] * sds[j]);
+            for (let l = 0; l < n; l++) { cov += ((Number(projects[l][items[i]]) || 0) - means[i]) * ((Number(projects[l][items[j]]) || 0) - means[j]); }
+            const denom = sds[i] * sds[j];
+            R[i][j] = (denom === 0) ? 0 : ((cov / (n - 1)) / denom);
           }
         }
       }

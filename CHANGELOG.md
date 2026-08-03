@@ -2,6 +2,17 @@
 
 Wszystkie znaczące zmiany w tym projekcie będą dokumentowane w tym pliku.
 
+## [0.2.1] - 2026-08-03
+### Naprawiono / Uzupełniono (Zgodnie z RAPORT_POPRAWNOSCI_KODU_KIMI.md)
+- **K-1 (Realne 6 filarów EIRRI)**: Przepięto podgląd i eksport SPSS (Task 14) na autentyczne wyliczenia filarów z `engine.js` (`potentials.economic`, `.innovative`, `.absorption`, `.implementation`, `.environmental`, `.institutional`).
+- **K-4 (Realny GPQI i pod-wskaźniki Task 8)**: Zastąpiono wzory ad-hoc autentycznymi wyliczeniami `gpqi_acc`, `gpqi_adm`, `gpqi_fin`, `gpqi_imp`, `gpqi_inn`, `gpqi_reg`, `gpqi` z silnika.
+- **K-2 (Wiarygodny auto-recommender)**: Zastąpiono zahardkodowane teksty dynamicznym dopasowaniem z `task8` oraz oznaczono stan bez danych jako model poglądowy.
+- **K-3 (Brak fikcyjnych trendów)**: Usunięto sztuczne generowanie danych czasowych przy braku kolumny `ROK` — dodano czytelny stan pusty.
+- **B-7 (Jednolita klasyfikacja `isProjectEco`)**: Ujednolicono filtrowanie w lejkach i wykresach do kanonicznej funkcji `isProjectEco`.
+- **B-8 (Guardy PCA & korelacji)**: Dodano zabezpieczenia `n < 2` oraz dzielenia przez zero przy braku wariancji w `getPCA`.
+- **B-10 (Koercja Number)**: Dodano wymuszenie typu numerycznego w wyliczeniach eksportu SPSS.
+- **B-12 (Zabezpieczenie SNA)**: Dodano guardy `null/undefined` dla wskaźników sieciowych w `populateSnaVariables`.
+
 ## [0.2.0] - 2026-08-03
 ### Usunięto / Uproszczono (Zgodnie z INSTRUKCJA_PROJEKT_UPROSZCZONY.md)
 - **Usunięcie Chatbota Daisy (Gemini API)**: usunięto widget bota, przyciski interakcji oraz dedykowany kod w `index.html`. Usunięto z `src/gas/Code.gs` akcję `askDaisy`, funkcję `askDaisy()`, `callGemini()` oraz odwołanie do `GEMINI_API_KEY`. Wskazania klasyfikacji zastąpiono lokalną heurystyką `heuristicClassify()`.
