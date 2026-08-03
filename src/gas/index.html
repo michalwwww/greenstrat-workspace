@@ -2597,15 +2597,22 @@
       statusBadge.innerHTML = `<span class="w-2 h-2 rounded-full bg-blue-500 animate-spin"></span> Odpytywanie chmury...`;
       statusBadge.className = "flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold bg-blue-500/10 text-blue-500 border border-blue-500/20";
 
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 10000);
+
       fetch(url, {
         method: "POST",
         mode: "cors",
         headers: {
           "Content-Type": "text/plain"
         },
+        signal: controller.signal,
         body: JSON.stringify({ action: "getStats" })
       })
-      .then(res => res.json())
+      .then(res => {
+        clearTimeout(timeoutId);
+        return res.json();
+      })
       .then(data => {
         if (data.status === 'success') {
           statusBadge.innerHTML = `<span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span> Połączony (Projekty: ${data.projectCount})`;
@@ -2637,10 +2644,12 @@
         }
       })
       .catch(err => {
+        clearTimeout(timeoutId);
         console.error(err);
         statusBadge.innerHTML = `<span class="w-2 h-2 rounded-full bg-red-500"></span> Błąd Połączenia`;
         statusBadge.className = "flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold bg-red-500/10 text-red-500 border border-red-500/20";
-        alert(`Błąd połączenia: upewnij się, że wdrożyłeś skrypt jako Web App dostępną dla 'Każdego' (Anyone) i zatwierdziłeś uprawnienia.\n\nSzczegóły: ${err.message}`);
+        const errMsg = (err.name === 'AbortError') ? 'Przekroczono limit czasu połączenia z chmurą (10s).' : err.message;
+        alert(`Błąd połączenia z chmurą: ${errMsg}\n\nUpewnij się, że wdrożyłeś skrypt jako Web App dostępną dla 'Każdego' (Anyone) i zatwierdziłeś uprawnienia w Google Cloud.`);
       });
     }
 
