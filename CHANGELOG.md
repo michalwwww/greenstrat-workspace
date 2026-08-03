@@ -2,6 +2,18 @@
 
 Wszystkie znaczące zmiany w tym projekcie będą dokumentowane w tym pliku.
 
+## [0.2.2] - 2026-08-03
+### Naprawiono (B-5, B-6, B-9, B-11, B-13, N-1, N-3, N-4, N-5)
+- **B-5 / B-6 (Metadata w odpowiedzi JSON)**: Dodano blok `response.metadata` (`engineVersion`, `timestamp`, `recordCount`, `acceptedCount`, `rejectedCount`, `datasetHash`) do obu akcji `getStats` i `uploadFile` w `Code.gs`.
+- **B-9 (Stałe 75/40 w JASP)**: Usunięto fikcyjne wartości zastępcze `(p.eco ? 75 : 40)` i `(p.eco ? 80 : 50)` — gdy brak ocen operacyjnych `eiesi`/`eirri` = `null` (brak danych zamiast fikcji).
+- **B-11 (null/100 w arkuszu Sheets)**: Zabezpieczono `ps.gpqi + "/100"` i `ps.gpqi_fin + "%"` przed `null` — wyświetlane jako `"b.d."`.
+- **B-13 (Duplikaty funkcji)**: Usunięto drugi egzemplarz `toggleTheme` + `updateThemeIcon` (~linie 2574-2598) oraz zduplikowane aliasy `calculateTask4Local`/`calculateTask8Local` po bloku ENGINE.
+- **N-1 (Sprzeczne klasy RIS)**: Tabela `nuts2EIS` w eksporcie CSV zaktualizowana do wartości ze snapshotu `data/external_benchmarks_snapshot.json` v1.0.0 (źródło prawdy). Naprawiono 7 rozbieżności, m.in. mazowieckie `Leader→Strong`, dolnośląskie `Strong→Moderate`, zachodniopomorskie `Moderate→Emerging`.
+- **N-3 (Kolumna Instytucja)**: `p.instytucja` → `p.institution || p.instytucja` — silnik zapisuje pole jako `institution`, co eliminowało fałszywy fallback.
+- **N-4 (renderPCA z flagą za mało danych)**: `renderPCA()` reaguje teraz na `pca.insufficientData === true` — wyświetla czytelny baner ostrzegawczy zamiast pustych/mylących tabel.
+- **N-5 (Etykieta modelu GPQI)**: Pod suwakami symulatora GPQI (Task 8) dodano etykietę `⚠️ [Model poglądowy] — wyniki są przybliżonym oszacowaniem`.
+- `npm run sync` + `npm test` **100% GREEN [PASS]**; `verify_known_issues.js` **0 błędów [PASS]**.
+
 ## [0.2.1] - 2026-08-03
 ### Naprawiono / Uzupełniono (Zgodnie z RAPORT_POPRAWNOSCI_KODU_KIMI.md)
 - **K-1 (Realne 6 filarów EIRRI)**: Przepięto podgląd i eksport SPSS (Task 14) na autentyczne wyliczenia filarów z `engine.js` (`potentials.economic`, `.innovative`, `.absorption`, `.implementation`, `.environmental`, `.institutional`).
