@@ -671,7 +671,7 @@ function calculateTask4(projects, options) {
         wojData[woj].eco += funding;
       }
       
-      var stage = 0;
+      var stage = -1;
       var etap = (p.ETAP_INNOWACJI || '').toString().trim().toLowerCase();
       if (etap.indexOf('badania') !== -1 || etap === '1') {
         stage = 0;
@@ -683,14 +683,16 @@ function calculateTask4(projects, options) {
         stage = 3;
       } else if (etap.indexOf('skalowanie') !== -1 || etap === '5') {
         stage = 4;
-      } else {
+      } else if (trlStart !== null && trlStart !== undefined && !isNaN(trlStart)) {
         if (trlStart <= 2) stage = 0;
         else if (trlStart <= 4) stage = 1;
         else if (trlStart <= 6) stage = 2;
         else if (trlStart <= 8) stage = 3;
         else stage = 4;
       }
-      stageBudgets[stage] += funding;
+      if (stage >= 0 && stage <= 4) {
+        stageBudgets[stage] += funding;
+      }
     }
   }
   
@@ -816,7 +818,7 @@ function calculateTask8(projects, options) {
       return sum + (d > 0 ? d : 0);
     }, 0);
     var trli_A = totalCount > 0 ? (totalDelta / totalCount) : 0;
-    var trli_B = totalCount > 0 ? (list.filter(function(p) { return (parseInt(p.TRL_KONIEC) || 1) >= 8; }).length / totalCount) : 0;
+    var trli_B = totalCount > 0 ? (list.filter(function(p) { return (parseNullableNumber(p.TRL_KONIEC) !== null && parseNullableNumber(p.TRL_KONIEC) >= 8); }).length / totalCount) : 0;
     
     var eisei_C1 = eipi_B;
     var eisei_C2 = eipi_C; 
@@ -886,7 +888,7 @@ function calculateTask8(projects, options) {
     ps.trli = 0.60 * norm.trli_A + 0.40 * norm.trli_B;
     ps.trli_comp = 100;
     
-    var eiseiWeights = { eisei_C1: 0.20, eisei_C2: 0.20, eisei_C3: 0.20, eisei_C4: 0.20, eisei_C5: 0.10, eisei_C6: 0.10 };
+    var eiseiWeights = { eisei_C1: 0.30, eisei_C2: 0.25, eisei_C3: 0.20, eisei_C4: 0.15, eisei_C5: 0.05, eisei_C6: 0.05 };
     var eiseiNorm = {
       eisei_C1: norm.eisei_C1,
       eisei_C2: norm.eisei_C2,
@@ -991,8 +993,8 @@ function calculateTask11(projects, options) {
   
   projects.forEach(function(p) {
     var funding = parseFloat(p.WART_PROJ_PLN) || 0;
-    var trlStart = parseInt(p.TRL_START) || 1;
-    var trlKoniec = parseInt(p.TRL_KONIEC) || 1;
+    var trlStart = parseNullableNumber(p.TRL_START);
+    var trlKoniec = parseNullableNumber(p.TRL_KONIEC);
     var isEco = isProjectEco(p);
     var partner = parseInt(p.NAUKA_BIZNES) === 1;
     var woj = normalizeVoivodeship(p.WOJEWODZTWO);
@@ -1430,8 +1432,8 @@ function calculateTask14(projects, options) {
     
     if (regionStats[woj]) {
       var isEco = isProjectEco(p);
-      var trlStart = parseInt(p.TRL_START) || 1;
-      var trlKoniec = parseInt(p.TRL_KONIEC) || 1;
+      var trlStart = parseNullableNumber(p.TRL_START);
+      var trlKoniec = parseNullableNumber(p.TRL_KONIEC);
       var partner = parseInt(p.NAUKA_BIZNES) === 1;
       var bType = (p.BENEFICJENT_TYP || '').toString().trim().toUpperCase();
       var isMsp = bType === 'MŚP' || bType === 'MSP' || bType === '1';
