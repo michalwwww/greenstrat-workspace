@@ -69,6 +69,7 @@ function doPost(e) {
         engineVersion: gsEngineVer,
         timestamp: new Date().toISOString(),
         recordCount: allProjects.length,
+        validCount: allProjects.length,
         acceptedCount: allProjects.length,
         rejectedCount: 0,
         datasetHash: gsDataHash
@@ -170,12 +171,15 @@ function doPost(e) {
     response.task8 = calculateTask8(allProjects);
     response.task11 = calculateTask11(allProjects);
     response.task14 = calculateTask14(allProjects);
+    var validCnt = validationResult && validationResult.report ? (validationResult.report.validCount !== undefined ? validationResult.report.validCount : (validationResult.report.acceptedCount !== undefined ? validationResult.report.acceptedCount : allProjects.length)) : allProjects.length;
+    var rejCnt = validationResult && validationResult.report ? (validationResult.report.rejectedCount !== undefined ? validationResult.report.rejectedCount : 0) : 0;
     response.metadata = {
       engineVersion: gsEngineVer2,
       timestamp: new Date().toISOString(),
       recordCount: allProjects.length,
-      acceptedCount: validationResult && validationResult.report ? validationResult.report.acceptedCount : allProjects.length,
-      rejectedCount: validationResult && validationResult.report ? validationResult.report.rejectedCount : 0,
+      validCount: validCnt,
+      acceptedCount: validCnt,
+      rejectedCount: rejCnt,
       datasetHash: gsDataHash2
     };
     response.message = 'Dane pomyślnie zaimportowane i przeliczone.';
