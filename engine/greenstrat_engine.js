@@ -15,6 +15,13 @@ function getDemoMode() {
   return demoMode;
 }
 
+function parseNullableNumber(val) {
+  if (val === undefined || val === null || val === '') return null;
+  var n = Number(val);
+  if (isNaN(n) || n === -99) return null;
+  return n;
+}
+
 var baseProgramSpecs = {
   'FENIKS': { inst: 'MFiPR', acc: 85, adm: 78, fin: 80, imp: 75, inn: 70, reg: 90, days: 120, docs: 5, criteria: 12, protests: 5 },
   'KPO': { inst: 'KPRM', acc: 90, adm: 82, fin: 85, imp: 80, inn: 85, reg: 75, days: 90, docs: 4, criteria: 10, protests: 3 },
@@ -536,13 +543,28 @@ function validateProjects(projects, opts) {
       rejectedCode = 'E4';
       rejectedReason = 'Pusta lub nieprawidłowa wartość WART_PROJ_PLN';
     }
-    else if (p.TRL_START !== undefined && p.TRL_START !== null && p.TRL_KONIEC !== undefined && p.TRL_KONIEC !== null && Number(p.TRL_KONIEC) < Number(p.TRL_START)) {
-      rejectedCode = 'E5';
-      rejectedReason = 'TRL_KONIEC (' + p.TRL_KONIEC + ') < TRL_START (' + p.TRL_START + ')';
+    else if ((function() {
+      if (p.TRL_START !== undefined && p.TRL_START !== null && p.TRL_KONIEC !== undefined && p.TRL_KONIEC !== null) {
+        var ts = parseNullableNumber(p.TRL_START);
+        var tk = parseNullableNumber(p.TRL_KONIEC);
+        if (ts !== null && tk !== null && tk < ts) {
+          rejectedCode = 'E5';
+          rejectedReason = 'TRL_KONIEC (' + p.TRL_KONIEC + ') < TRL_START (' + p.TRL_START + ')';
+          return true;
+        }
+        if ((ts !== null && (ts < 1 || ts > 9)) || (tk !== null && (tk < 1 || tk > 9))) {
+          rejectedCode = 'E5';
+          rejectedReason = 'TRL poza dopuszczalnym zakresem 1-9 (TRL_START: ' + p.TRL_START + ', TRL_KONIEC: ' + p.TRL_KONIEC + ')';
+          return true;
+        }
+      }
+      return false;
+    })()) {
+      // Captured E5
     }
     else {
-      var wojNorm = (p.WOJEWODZTWO || '').toString().toLowerCase().trim();
-      if (!wojNorm || !validRegionsDict[wojNorm]) {
+      var wojRaw = (p.WOJEWODZTWO || '').toString().toLowerCase().trim();
+      if (!wojRaw || !validRegionsDict[wojRaw]) {
         rejectedCode = 'E6';
         rejectedReason = 'Nazwa regionu spoza słownika 18 regionów: ' + (p.WOJEWODZTWO || 'brak');
       }
@@ -614,10 +636,10 @@ function calculateTask4(projects, options) {
   for (var i = 0; i < projects.length; i++) {
     var p = projects[i];
     var funding = parseFloat(p.WART_PROJ_PLN) || 0;
-    var trlStart = parseInt(p.TRL_START) || 1;
-    var trlKoniec = parseInt(p.TRL_KONIEC) || 1;
-    var wdroz = parseInt(p.STATUS_WDROZ) || 0;
-    var komerc = parseInt(p.STATUS_KOMERC) || 0;
+    var trlStart = parseNullableNumber(p.TRL_START);
+    var trlKoniec = parseNullableNumber(p.TRL_KONIEC);
+    var wdroz = (parseInt(p.STATUS_WDROZ) === 1) ? 1 : 0;
+    var komerc = (parseInt(p.STATUS_KOMERC) === 1) ? 1 : 0;
     var woj = normalizeVoivodeship(p.WOJEWODZTWO);
     
     var complete = isProjectComplete(p);
@@ -773,21 +795,24 @@ function calculateTask8(projects, options) {
     var hasEco = ecoCount > 0;
     var eipi_C = hasEco ? (ecoList.filter(function(p) { return parseInt(p.STATUS_WDROZ) === 1; }).length / ecoCount) : null;
     var eipi_D = hasEco ? (ecoList.filter(function(p) { return parseInt(p.STATUS_KOMERC) === 1; }).length / ecoCount) : null;
-    var eipi_E = hasEco ? (ecoList.filter(function(p) { return (parseInt(p.TRL_KONIEC) || 1) >= 7; }).length / ecoCount) : null;
+    var eipi_E = hasEco ? (ecoList.filter(function(p) { var end = parseNullableNumber(p.TRL_KONIEC); return end !== null && end >= 7; }).length / ecoCount) : null;
     
-    var started1_5 = list.filter(function(p) { return (parseInt(p.TRL_START) || 1) <= 5; });
-    var ttei_A = started1_5.length > 0 ? (started1_5.filter(function(p) { return (parseInt(p.TRL_KONIEC) || 1) >= 6; }).length / started1_5.length) : null;
+    var started1_5 = list.filter(function(p) { var st = parseNullableNumber(p.TRL_START); return st !== null && st <= 5; });
+    var ttei_A = started1_5.length > 0 ? (started1_5.filter(function(p) { var end = parseNullableNumber(p.TRL_KONIEC); return end !== null && end >= 6; }).length / started1_5.length) : null;
     
-    var started1_6 = list.filter(function(p) { return (parseInt(p.TRL_START) || 1) <= 6; });
-    var ttei_B = started1_6.length > 0 ? (started1_6.filter(function(p) { return (parseInt(p.TRL_KONIEC) || 1) >= 7; }).length / started1_6.length) : null;
+    var started1_6 = list.filter(function(p) { var st = parseNullableNumber(p.TRL_START); return st !== null && st <= 6; });
+    var ttei_B = started1_6.length > 0 ? (started1_6.filter(function(p) { var end = parseNullableNumber(p.TRL_KONIEC); return end !== null && end >= 7; }).length / started1_6.length) : null;
     
-    var ended7_9 = list.filter(function(p) { return (parseInt(p.TRL_KONIEC) || 1) >= 7; });
+    var ended7_9 = list.filter(function(p) { var end = parseNullableNumber(p.TRL_KONIEC); return end !== null && end >= 7; });
     var ttei_C = ended7_9.length > 0 ? (ended7_9.filter(function(p) { return parseInt(p.STATUS_KOMERC) === 1; }).length / ended7_9.length) : null;
     
     var ttei_D = totalCount > 0 ? (list.filter(function(p) { return parseInt(p.NAUKA_BIZNES) === 1; }).length / totalCount) : 0;
     
     var totalDelta = list.reduce(function(sum, p) {
-      var d = (parseInt(p.TRL_KONIEC) || 1) - (parseInt(p.TRL_START) || 1);
+      var st = parseNullableNumber(p.TRL_START);
+      var end = parseNullableNumber(p.TRL_KONIEC);
+      if (st === null || end === null) return sum;
+      var d = end - st;
       return sum + (d > 0 ? d : 0);
     }, 0);
     var trli_A = totalCount > 0 ? (totalDelta / totalCount) : 0;
@@ -890,11 +915,13 @@ function calculateTask8(projects, options) {
         days: rawSpec.days, docs: rawSpec.docs, criteria: rawSpec.criteria, protests: rawSpec.protests
       } : { inst: 'Inna [DEMO / SYMULACJA]', acc: 75, adm: 70, fin: 75, imp: 75, inn: 70, reg: 70, days: 120, docs: 6, criteria: 12, protests: 5 };
     } else {
-      spec = rawSpec ? {
-        inst: rawSpec.inst,
-        acc: rawSpec.acc, adm: rawSpec.adm, fin: rawSpec.fin, imp: rawSpec.imp, inn: rawSpec.inn, reg: rawSpec.reg,
-        days: rawSpec.days, docs: rawSpec.docs, criteria: rawSpec.criteria, protests: rawSpec.protests
-      } : { inst: 'BRAK DANYCH', acc: null, adm: null, fin: null, imp: null, inn: null, reg: null, days: null, docs: null, criteria: null, protests: null };
+      var progProj = projects.find(function(p) { return (p.PROGRAM_KOD || '').toString().trim().toUpperCase() === ps.program; });
+      var instVal = (progProj && (progProj.INSTYTUCJA || progProj.institution)) ? (progProj.INSTYTUCJA || progProj.institution) : 'b.d.';
+      spec = {
+        inst: instVal,
+        acc: null, adm: null, fin: null, imp: null, inn: null, reg: null,
+        days: null, docs: null, criteria: null, protests: null
+      };
     }
 
     ps.institution = spec.inst;
@@ -1045,7 +1072,7 @@ function calculateTask11(projects, options) {
   
   var totalEcoProj = projects.filter(isProjectEco).length;
   var ecoRatio = projects.length > 0 ? (totalEcoProj / projects.length) * 100 : 0;
-  eispi = Math.min(100, Math.round(ecoRatio * 1.5 + 20));
+  eispi = Math.min(100, Math.round(ecoRatio * 1.0));
   
   var classification = {
     'liderzy': [],
@@ -1432,7 +1459,20 @@ function calculateTask14(projects, options) {
   var eirri = {};
   validRegions.forEach(function(r) {
     var st = regionStats[r];
-    var lq = eirsi[r] || 0.5;
+    if (!st || st.projects === 0) {
+      eirri[r] = {
+        score: null,
+        scoreEqual: null,
+        scorePCA: null,
+        scoreExpert: null,
+        uncertainty: "BRAK DANYCH",
+        potentials: null,
+        hasData: false
+      };
+      return;
+    }
+
+    var lq = eirsi[r] !== undefined && eirsi[r] !== null ? eirsi[r] : 0.5;
 
     // Filar 1: Potencjał Gospodarczy (economic)
     var fundingShare = totalFunding > 0 ? (st.funding / totalFunding) * 100 : 0;
@@ -1446,7 +1486,7 @@ function calculateTask14(projects, options) {
 
     // Filar 3: Zdolność Absorpcyjna (absorption)
     var projShare = projects.length > 0 ? (st.projects / projects.length) * 100 : 0;
-    var potAbs = Math.round(Math.min(100, Math.max(0, projShare * 4.0 + fundingShare * 2.0 + 20)));
+    var potAbs = Math.round(Math.min(100, Math.max(0, projShare * 4.0 + fundingShare * 2.0)));
 
     // Filar 4: Zdolność Wdrożeniowa (implementation)
     var trl7Ratio = st.ecoProjects > 0 ? (st.trlEnd7Count / st.ecoProjects) * 100 : 0;
@@ -1462,7 +1502,7 @@ function calculateTask14(projects, options) {
 
     // Filar 6: Zdolność Instytucjonalna (institutional)
     var bTypeCount = Object.keys(st.beneficiaryTypes).length;
-    var potInst = Math.round(Math.min(100, Math.max(0, bTypeCount * 12 + partnerRatio * 0.4 + 20)));
+    var potInst = Math.round(Math.min(100, Math.max(0, bTypeCount * 12 + partnerRatio * 0.4)));
 
     // 3 Warianty ważenia filarów (Produkt 14.2 / Decyzja D.2):
     // Wariant A: Równe wagi (1/6 każda)
@@ -1560,9 +1600,9 @@ function calculateTask14(projects, options) {
   var colRatio = projects.length > 0 ? (partnerProjects / projects.length) * 100 : 0;
   
   var collaborationIndex = Math.round(colRatio);
-  var networkStrength = Math.round(Math.min(100, colRatio * 1.4 + 10));
-  var knowledgeTransfer = Math.round(Math.min(100, colRatio * 1.2 + 20));
-  var connectivityIndex = Math.round(Math.min(100, colRatio * 1.5 + 5));
+  var networkStrength = colRatio > 0 ? Math.round(Math.min(100, colRatio * 1.4)) : 0;
+  var knowledgeTransfer = colRatio > 0 ? Math.round(Math.min(100, colRatio * 1.2)) : 0;
+  var connectivityIndex = colRatio > 0 ? Math.round(Math.min(100, colRatio * 1.5)) : 0;
   var ris3Alignment = isDemo ? "82 [DEMO / SYMULACJA]" : null;
   var maturityIndex = (ris3Alignment !== null)
     ? Math.round((collaborationIndex + networkStrength + knowledgeTransfer + connectivityIndex + 82) / 5)

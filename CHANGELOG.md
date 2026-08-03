@@ -20,6 +20,11 @@ Wszystkie znaczące zmiany w tym projekcie będą dokumentowane w tym pliku.
 - **Filtrowanie tabeli inspektora (Task 8)**: Poprawiono indeks filtrowanej komórki z `cells[7]` na `cells[8]` w `filterInspectTable()`, eliminując mylenie GPQI Total z Regional Impact.
 - **Sprawdzanie składni w testach**: Dodano weryfikację składni pliku `src/gas/Code.gs` w `test/run_tests.js` oraz flagę `--check` w `tools/sync_engine.js`.
 - **Kodowanie UTF-8**: Przywrócono czyste kodowanie UTF-8 (bez Mojibake) i przeprowadzono bezpieczną normalizację LF.
+- **Fabrykacja A1 (`baseProgramSpecs`)**: W trybie badawczym (`demoMode !== true`) usunięto automatyczne pobieranie wskaźników administracyjnych z `baseProgramSpecs`. Przy braku danych wierszowych zwracana jest wartość `null` zamiast fikcyjnych 75/65/150/10.
+- **Fabrykacja A2 (`EISPI`)**: Usunięto sztuczne przesunięcie `+ 20`. Wskaźnik przeliczany jest czysto z proporcji ekoinnowacji bez zmyślonej podłogi.
+- **Fabrykacja A3 (`SNA`)**: Usunięto sztuczne podłogi `+10`, `+20`, `+5` z `networkStrength`, `knowledgeTransfer` i `connectivityIndex`. Przy braku relacji nauka-biznes wskaźniki sieciowe wynoszą `0`.
+- **Fabrykacja A4 (`EIRRI dla pustych regionów`)**: Regiony bez ani jednego projektu wczytanego w zbiorze danych nie dostają domyślnej oceny 16/100, lecz otrzymują `score: null` z etykietą `"BRAK DANYCH"`.
+- **Obsługa braków danych C (`kod -99` oraz TRL)**: Wdrożono `parseNullableNumber()` traktującą `-99`, `null`, `undefined` i `''` jako brak danych dla `TRL_START`, `TRL_KONIEC`, `ABSORPCJA` i `ROK`. Usunięto milczącą jedynkę `|| 1` dla TRL. Bramka WALIDACYJNA Z-4 weryfikuje zakres TRL `[1, 9]`.
 - `npm run sync` + `npm test` **100% GREEN [PASS]** · `verify_known_issues.js` **0 błędów [PASS]**.
 
 ## [0.2.1] - 2026-08-03
