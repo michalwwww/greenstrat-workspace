@@ -2,6 +2,7 @@ const fs = require('fs');
 const path = require('path');
 
 function syncEngine() {
+  const isCheckMode = process.argv.includes('--check');
   const rootDir = path.resolve(__dirname, '..');
   const enginePath = path.join(rootDir, 'engine', 'greenstrat_engine.js');
 
@@ -60,13 +61,27 @@ function syncEngine() {
       continue;
     }
 
-    const updatedContent = content.substring(0, startIndex) + newEngineBlock + content.substring(endIndex);
-    fs.writeFileSync(target.file, updatedContent, 'utf8');
-    console.log(`[SYNCED] Zaktualizowano sekcję ENGINE w: ${path.basename(target.file)}`);
-    modifiedCount++;
+    if (isCheckMode) {
+      console.log(`[OUT OF SYNC] Plik ${path.basename(target.file)} wymaga synchronizacji.`);
+      modifiedCount++;
+    } else {
+      const updatedContent = content.substring(0, startIndex) + newEngineBlock + content.substring(endIndex);
+      fs.writeFileSync(target.file, updatedContent, 'utf8');
+      console.log(`[SYNCED] Zaktualizowano sekcję ENGINE w: ${path.basename(target.file)}`);
+      modifiedCount++;
+    }
   }
 
-  console.log(`[SUCCESS] Synchronizacja zakończona sukcesem. Zmodyfikowano plików: ${modifiedCount}.`);
+  if (isCheckMode) {
+    if (modifiedCount > 0) {
+      console.error(`[FAIL] Wykryto niezsynchronizowane pliki (${modifiedCount}). Uruchom 'npm run sync'.`);
+      process.exit(1);
+    } else {
+      console.log(`[SUCCESS] Wszystkie pliki są zsynchronizowane.`);
+    }
+  } else {
+    console.log(`[SUCCESS] Synchronizacja zakończona sukcesem. Zmodyfikowano plików: ${modifiedCount}.`);
+  }
 }
 
 syncEngine();

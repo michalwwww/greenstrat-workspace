@@ -31,7 +31,7 @@ function doPost(e) {
     if (e && e.postData && e.postData.contents) {
       payload = JSON.parse(e.postData.contents);
     } else {
-      throw new Error("Pusty payload ĹĽÄ…dania.");
+      throw new Error("Pusty payload żądania.");
     }
     
     var action = payload.action || 'upload';
@@ -39,7 +39,7 @@ function doPost(e) {
     if (action === 'clear') {
       clearAllSheets();
       logToSheet('CLEAR_DATA', null, 'SUCCESS', 'Wyczyszczono arkusz bazy danych.', new Date().getTime() - startTime);
-      response.message = 'Baza danych zostaĹ‚a pomyĹ›lnie wyczyszczona.';
+      response.message = 'Baza danych została pomyślnie wyczyszczona.';
       return ContentService.createTextOutput(JSON.stringify(response))
         .setMimeType(ContentService.MimeType.JSON);
     }
@@ -74,7 +74,7 @@ function doPost(e) {
         datasetHash: gsDataHash
       };
       response.message = 'Odczytano statystyki z bazy danych.';
-      logToSheet('GET_STATS', null, 'SUCCESS', 'Pobrano statystyki dla ' + allProjects.length + ' projektĂłw.', new Date().getTime() - startTime);
+      logToSheet('GET_STATS', null, 'SUCCESS', 'Pobrano statystyki dla ' + allProjects.length + ' projektów.', new Date().getTime() - startTime);
       return ContentService.createTextOutput(JSON.stringify(response))
         .setMimeType(ContentService.MimeType.JSON);
     }
@@ -82,7 +82,7 @@ function doPost(e) {
     if (action === 'getLogs') {
       response.logs = getLogsFromSheet();
       response.message = 'Pobrano logi systemowe z chmury.';
-      logToSheet('GET_LOGS', null, 'SUCCESS', 'Pobrano dziennik zdarzeĹ„.', new Date().getTime() - startTime);
+      logToSheet('GET_LOGS', null, 'SUCCESS', 'Pobrano dziennik zdarzeń.', new Date().getTime() - startTime);
       return ContentService.createTextOutput(JSON.stringify(response))
         .setMimeType(ContentService.MimeType.JSON);
     }
@@ -104,14 +104,14 @@ function doPost(e) {
     if (action === 'createStatisticalSpreadsheet') {
       var allProjects = payload.projects || getAllProjectsFromSheet();
       if (allProjects.length === 0) {
-        throw new Error("Brak projektĂłw w chmurze do wyeksportowania.");
+        throw new Error("Brak projektów w chmurze do wyeksportowania.");
       }
       var spreadsheetUrl = createStatisticalSpreadsheet(allProjects);
       logToSheet('CREATE_STAT_SPREADSHEET', null, 'SUCCESS', 'Utworzono sformatowany arkusz na Dysku Google.', new Date().getTime() - startTime);
       var resObj = {
         status: 'success',
         url: spreadsheetUrl,
-        message: 'PomyĹ›lnie utworzono arkusz statystyczny na Dysku Google.'
+        message: 'Pomyślnie utworzono arkusz statystyczny na Dysku Google.'
       };
       return ContentService.createTextOutput(JSON.stringify(resObj))
         .setMimeType(ContentService.MimeType.JSON);
@@ -121,7 +121,7 @@ function doPost(e) {
     var incomingProjects = payload.projects || [];
     var fileName = payload.fileName || 'nieznany_plik.xlsx';
     if (incomingProjects.length === 0) {
-      throw new Error("Brak danych projektĂłw do przetworzenia.");
+      throw new Error("Brak danych projektów do przetworzenia.");
     }
     
     var formatDur = function() {
@@ -129,7 +129,7 @@ function doPost(e) {
       return ms + 'ms (' + (ms / 1000).toFixed(2) + 's)';
     };
 
-    logToSheet('DATA_INGEST_START', null, 'SUCCESS', 'RozpoczÄ™to import ' + incomingProjects.length + ' wierszy [Plik: ' + fileName + '].', new Date().getTime() - startTime);
+    logToSheet('DATA_INGEST_START', null, 'SUCCESS', 'Rozpoczęto import ' + incomingProjects.length + ' wierszy [Plik: ' + fileName + '].', new Date().getTime() - startTime);
     
     // 1. Semantic Categorization: Local deterministic heuristics
     var processedCount = 0;
@@ -141,9 +141,9 @@ function doPost(e) {
       processedCount++;
     }
     
-    logToSheet('AI_CLASSIFICATION', null, 'SUCCESS', 'Sklasyfikowano semantycznie ' + processedCount + ' projektĂłw [Plik: ' + fileName + '] (ĹÄ…czny czas: ' + formatDur() + ').', new Date().getTime() - startTime);
+    logToSheet('AI_CLASSIFICATION', null, 'SUCCESS', 'Sklasyfikowano semantycznie ' + processedCount + ' projektów [Plik: ' + fileName + '] (Łączny czas: ' + formatDur() + ').', new Date().getTime() - startTime);
     
-    // 2. Bramka Walidacyjna Z-4 (Luka 11.1.e) - DOWĂ“D WPIÄCIA SERWERA
+    // 2. Bramka Walidacyjna Z-4 (Luka 11.1.e) - DOWÓD WPIĘCIA SERWERA
     var existingProjects = getAllProjectsFromSheet();
     var existingIdsMap = {};
     existingProjects.forEach(function(proj) {
@@ -153,11 +153,11 @@ function doPost(e) {
     var validationResult = validateProjects(incomingProjects, { existingIds: existingIdsMap });
     var validProjects = validationResult.validProjects;
     
-    // Storage in Master Ledger (WYĹÄ„CZNIE przyjÄ™te rekordy)
+    // Storage in Master Ledger (WYŁĄCZNIE przyjęte rekordy)
     writeProjectsToSheet(validProjects);
-    logToSheet('DATA_STORAGE', null, 'SUCCESS', 'Zapisano ' + validProjects.length + ' przyjÄ™tych rekordĂłw w arkuszu Projects (odrzucono: ' + validationResult.report.rejectedCount + ') [Plik: ' + fileName + '] (ĹÄ…czny czas: ' + formatDur() + ').', new Date().getTime() - startTime);
+    logToSheet('DATA_STORAGE', null, 'SUCCESS', 'Zapisano ' + validProjects.length + ' przyjętych rekordów w arkuszu Projects (odrzucono: ' + validationResult.report.rejectedCount + ') [Plik: ' + fileName + '] (Łączny czas: ' + formatDur() + ').', new Date().getTime() - startTime);
     
-    // Raport odrzuceĹ„ i lista odrzuceĹ„ w odpowiedzi JSON
+    // Raport odrzuceń i lista odrzuceń w odpowiedzi JSON
     response.validationReport = validationResult.report;
     response.rejectedProjects = validationResult.rejectedProjects;
     
@@ -178,9 +178,9 @@ function doPost(e) {
       rejectedCount: validationResult && validationResult.report ? validationResult.report.rejectedCount : 0,
       datasetHash: gsDataHash2
     };
-    response.message = 'Dane pomyĹ›lnie zaimportowane i przeliczone.';
+    response.message = 'Dane pomyślnie zaimportowane i przeliczone.';
     
-    logToSheet('CALCULATE_INDICES', null, 'SUCCESS', 'Wyliczono wskaĹşniki dla Ĺ‚Ä…cznie ' + allProjects.length + ' projektĂłw [Plik: ' + fileName + '] (ĹÄ…czny czas: ' + formatDur() + ').', new Date().getTime() - startTime);
+    logToSheet('CALCULATE_INDICES', null, 'SUCCESS', 'Wyliczono wskaźniki dla łącznie ' + allProjects.length + ' projektów [Plik: ' + fileName + '] (Łączny czas: ' + formatDur() + ').', new Date().getTime() - startTime);
     
   } catch (err) {
     var duration = new Date().getTime() - startTime;
@@ -356,9 +356,9 @@ function heuristicClassify(description) {
   var descLower = description.toLowerCase();
   
   // Keywords indicating advanced clean tech or deep eco innovation
-  var deepTechKeywords = ['nanotech', 'clean-tech', 'oze', 'wiatr', 'fotowoltaik', 'solarn', 'wodor', 'robotyk', 'przeĹ‚om', 'innowacj', 'deep tech', 'geotermia', 'biomas', 'smart grid', 'reaktor', 'ogniwo'];
+  var deepTechKeywords = ['nanotech', 'clean-tech', 'oze', 'wiatr', 'fotowoltaik', 'solarn', 'wodor', 'robotyk', 'przełom', 'innowacj', 'deep tech', 'geotermia', 'biomas', 'smart grid', 'reaktor', 'ogniwo'];
   // Keywords indicating standard eco/environmental improvements
-  var generalEcoKeywords = ['termomodernizacj', 'docieplen', 'odpad', 'recykling', 'rekultywacj', 'kanalizacj', 'wodociÄ…g', 'Ĺ›rodowisk', 'ekolog', 'las', 'drzew', 'ocieplen', 'piec', 'kocioĹ‚'];
+  var generalEcoKeywords = ['termomodernizacj', 'docieplen', 'odpad', 'recykling', 'rekultywacj', 'kanalizacj', 'wodociąg', 'środowisk', 'ekolog', 'las', 'drzew', 'ocieplen', 'piec', 'kocioł'];
   
   for (var i = 0; i < deepTechKeywords.length; i++) {
     if (descLower.indexOf(deepTechKeywords[i]) !== -1) {
@@ -2480,7 +2480,7 @@ if (typeof module !== 'undefined' && module.exports) {
  */
 function createStatisticalSpreadsheet(projects) {
   var isDemoMode = (PropertiesService.getScriptProperties().getProperty('TRYB_DEMO') === 'true') || getDemoMode();
-  // DOWĂ“D WPIÄCIA (Z-3): Realna Ĺ›cieĹĽka eksportu serwera wywoĹ‚uje exportScientificDataset
+  // DOWÓD WPIĘCIA (Z-3): Realna ścieżka eksportu serwera wywołuje exportScientificDataset
   var exportedDataset = exportScientificDataset(projects, { demoMode: isDemoMode });
   
   var timestamp = Utilities.formatDate(new Date(), "GMT+2", "yyyy-MM-dd_HH-mm");
@@ -2500,14 +2500,14 @@ function createStatisticalSpreadsheet(projects) {
     ["Utworzono:", new Date().toLocaleString("pl-PL")],
     ["Liczba przeanalizowanych wierszy:", exportedDataset.length],
     [],
-    ["1. ZAGREGOWANE WSKAĹąNIKI KRAJOWE (Zadanie 4)"],
-    ["WskaĹşnik", "WzĂłr", "WartoĹ›Ä‡", "Interpretacja"],
-    ["EIFII (IntensywnoĹ›Ä‡)", "Eco Funding / Environmental Funding * 100%", stats4.eifii.toFixed(2) + "%", "UdziaĹ‚ ekoinnowacji w budĹĽecie Ĺ›rodowiskowym"],
-    ["ISBI (Zbalansowanie)", "100 * (1 - SD/SDmax)", stats4.isbi.toFixed(2), "RĂłwnomiernoĹ›Ä‡ alokacji w 5 etapach rozwoju"],
-    ["CRI (DojrzaĹ‚oĹ›Ä‡)", "(WdroĹĽone + 2*Komerc) / (3*Eko) * 100%", stats4.cri.toFixed(2) + "%", "GotowoĹ›Ä‡ rynkowa i komercjalizacyjna"],
+    ["1. ZAGREGOWANE WSKAŹNIKI KRAJOWE (Zadanie 4)"],
+    ["Wskaźnik", "Wzór", "Wartość", "Interpretacja"],
+    ["EIFII (Intensywność)", "Eco Funding / Environmental Funding * 100%", stats4.eifii.toFixed(2) + "%", "Udział ekoinnowacji w budżecie środowiskowym"],
+    ["ISBI (Zbalansowanie)", "100 * (1 - SD/SDmax)", stats4.isbi.toFixed(2), "Równomierność alokacji w 5 etapach rozwoju"],
+    ["CRI (Dojrzałość)", "(Wdrożone + 2*Komerc) / (3*Eko) * 100%", stats4.cri.toFixed(2) + "%", "Gotowość rynkowa i komercjalizacyjna"],
     [],
-    ["2. LEADERBOARD EFEKTYWNOĹšCI PROGRAMĂ“W (Zadanie 8)"],
-    ["Nazwa Programu", "Instytucja", "GPQI (Quality Index)", "EfektywnoĹ›Ä‡ Finansowa", "SkutecznoĹ›Ä‡ WdroĹĽeĹ„", "Ĺšrednia czas oceny (dni)", "Ĺšrednia zaĹ‚Ä…cznikĂłw"],
+    ["2. LEADERBOARD EFEKTYWNOŚCI PROGRAMÓW (Zadanie 8)"],
+    ["Nazwa Programu", "Instytucja", "GPQI (Quality Index)", "Efektywność Finansowa", "Skuteczność Wdrożeń", "Średnia czas oceny (dni)", "Średnia załączników"],
   ];
   
   stats8.forEach(function(ps) {
@@ -2549,39 +2549,39 @@ function createStatisticalSpreadsheet(projects) {
   var rawRows = [spssHeaders];
   
   var wojDict = {
-    'dolnoĹ›lÄ…skie': 1, 'dolnoslaskie': 1, 'dolnoĹ›lÄ…ska': 1,
+    'dolnośląskie': 1, 'dolnoslaskie': 1, 'dolnośląska': 1,
     'kujawsko-pomorskie': 2, 'kujawsko-pomorska': 2,
     'lubelskie': 3, 'lubelska': 3,
     'lubuskie': 4, 'lubuska': 4,
-    'Ĺ‚Ăłdzkie': 5, 'lodzkie': 5, 'Ĺ‚Ăłdzka': 5,
-    'maĹ‚opolskie': 6, 'malopolskie': 6, 'maĹ‚opolska': 6,
+    'łódzkie': 5, 'lodzkie': 5, 'łódzka': 5,
+    'małopolskie': 6, 'malopolskie': 6, 'małopolska': 6,
     'mazowieckie': 7, 'mazowiecka': 7,
     'opolskie': 8, 'opolska': 8,
     'podkarpackie': 9, 'podkarpacka': 9,
     'podlaskie': 10, 'podlaska': 10,
     'pomorskie': 11, 'pomorska': 11,
-    'Ĺ›lÄ…skie': 12, 'slaskie': 12, 'Ĺ›lÄ…ska': 12,
-    'Ĺ›wiÄ™tokrzyskie': 13, 'swietokrzyskie': 13, 'Ĺ›wiÄ™tokrzyska': 13,
-    'warmiĹ„sko-mazurskie': 14, 'warminsko-mazurskie': 14, 'warmiĹ„sko-mazurska': 14,
+    'śląskie': 12, 'slaskie': 12, 'śląska': 12,
+    'świętokrzyskie': 13, 'swietokrzyskie': 13, 'świętokrzyska': 13,
+    'warmińsko-mazurskie': 14, 'warminsko-mazurskie': 14, 'warmińsko-mazurska': 14,
     'wielkopolskie': 15, 'wielkopolska': 15,
     'zachodniopomorskie': 16, 'zachodniopomorska': 16,
-    'warszawski stoĹ‚eczny': 17, 'warszawski stoleczny': 17,
+    'warszawski stołeczny': 17, 'warszawski stoleczny': 17,
     'mazowiecki regionalny': 18
   };
 
   var benefDict = {
-    'mĹ›p': 1, 'msp': 1,
+    'mśp': 1, 'msp': 1,
     'startup': 2,
     'uczelnia': 3,
     'ngo': 4,
     'instytucja naukowa': 5, 'instytucja_naukowa': 5,
-    'duĹĽe': 6, 'duze': 6
+    'duże': 6, 'duze': 6
   };
 
   var progDict = {
     'feniks': 1,
     'kpo': 2,
-    'nfoĹ›igw': 3, 'nfosigw': 3,
+    'nfośigw': 3, 'nfosigw': 3,
     'parp': 4,
     'ncbr': 5,
     'life': 6,
@@ -2593,7 +2593,7 @@ function createStatisticalSpreadsheet(projects) {
     'badania': 1,
     'prototyp': 2,
     'demonstracja': 3,
-    'wdroĹĽenie': 4, 'wdrozenie': 4,
+    'wdrożenie': 4, 'wdrozenie': 4,
     'skalowanie': 5
   };
   
@@ -2711,23 +2711,23 @@ function createMacroDataSheet() {
   }
   
   var data = [
-    ["Lp.", "WojewĂłdztwo / Region", "Liczba ludnoĹ›ci (stan 31.12.2023)", "PKB ogĂłĹ‚em (mln PLN)", "PKB na 1 mieszkaĹ„ca (PLN)", "% Ĺšredniej Krajowej"],
-    [1, "DolnoĹ›lÄ…skie", 2878948, 282459, 96826, 1.067],
+    ["Lp.", "Województwo / Region", "Liczba ludności (stan 31.12.2023)", "PKB ogółem (mln PLN)", "PKB na 1 mieszkańca (PLN)", "% Średniej Krajowej"],
+    [1, "Dolnośląskie", 2878948, 282459, 96826, 1.067],
     [2, "Kujawsko-pomorskie", 2077775, 143098, 72672, 0.801],
     [3, "Lubelskie", 2006433, 122918, 62175, 0.685],
     [4, "Lubuskie", 1014548, 70855, 72160, 0.795],
-    [5, "ĹĂłdzkie", 2344647, 205272, 85708, 0.944],
-    [6, "MaĹ‚opolskie", 3445401, 273768, 80434, 0.886],
-    [7, "Mazowieckie (OgĂłĹ‚em)", 5542355, 808345, 145848, 1.607],
-    [8, "Warszawski stoĹ‚eczny (Mazowieckie - subregion)", 3100000, 623795, 181851, 2.004],
+    [5, "Łódzkie", 2344647, 205272, 85708, 0.944],
+    [6, "Małopolskie", 3445401, 273768, 80434, 0.886],
+    [7, "Mazowieckie (Ogółem)", 5542355, 808345, 145848, 1.607],
+    [8, "Warszawski stołeczny (Mazowieckie - subregion)", 3100000, 623795, 181851, 2.004],
     [9, "Mazowiecki regionalny (Mazowieckie - subregion)", 2442355, 184550, 73000, 0.804],
     [10, "Opolskie", 938108, 66440, 72671, 0.801],
     [11, "Podkarpackie", 2121214, 128897, 64819, 0.714],
     [12, "Podlaskie", 1172136, 76428, 69796, 0.769],
     [13, "Pomorskie", 2365278, 203794, 86245, 0.950],
-    [14, "ĹšlÄ…skie", 4330022, 404740, 93566, 1.031],
-    [15, "ĹšwiÄ™tokrzyskie", 1197341, 77201, 64477, 0.710],
-    [16, "WarmiĹ„sko-mazurskie", 1416400, 83760, 63595, 0.701],
+    [14, "Śląskie", 4330022, 404740, 93566, 1.031],
+    [15, "Świętokrzyskie", 1197341, 77201, 64477, 0.710],
+    [16, "Warmińsko-mazurskie", 1416400, 83760, 63595, 0.701],
     [17, "Wielkopolskie", 3502961, 333282, 94455, 1.041],
     [18, "Zachodniopomorskie", 1671289, 120353, 73844, 0.814]
   ];
@@ -2749,5 +2749,5 @@ function createMacroDataSheet() {
   
   sheet.autoResizeColumns(1, data[0].length);
   
-  return "PomyĹ›lnie utworzono/zaktualizowano arkusz 'DaneMakroekonomiczne' w Google Sheets.";
+  return "Pomyślnie utworzono/zaktualizowano arkusz 'DaneMakroekonomiczne' w Google Sheets.";
 }

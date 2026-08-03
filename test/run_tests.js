@@ -52,6 +52,22 @@ function run() {
     if (htmlSyntaxOk) {
       console.log(`  [OK] Parsowanie JavaScript w index.html (${blockIndex} bloków <script>): SKŁADNIA POPRAWNA [PASS]`);
     }
+
+    // Walidacja składni Code.gs
+    const codeGsPath = path.join(__dirname, '..', 'src', 'gas', 'Code.gs');
+    if (fs.existsSync(codeGsPath)) {
+      const codeGsContent = fs.readFileSync(codeGsPath, 'utf8');
+      try {
+        new Function(
+          'PropertiesService', 'SpreadsheetApp', 'Logger', 'ContentService', 'DriveApp', 'Utilities',
+          codeGsContent
+        );
+        console.log('  [OK] Parsowanie JavaScript w src/gas/Code.gs: SKŁADNIA POPRAWNA [PASS]');
+      } catch (err) {
+        console.error(`  [FAIL] Błąd składni w src/gas/Code.gs: ${err.message}`);
+        hasError = true;
+      }
+    }
   }
 
   console.log("\n--- TESTY JEDNOSTKOWE SILNIKA (8 REKORDÓW SYNTETYCZNYCH Z-2) ---");

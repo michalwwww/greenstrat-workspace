@@ -14,9 +14,13 @@ Wszystkie znaczące zmiany w tym projekcie będą dokumentowane w tym pliku.
 - **N-5 (Etykieta modelu GPQI)**: Pod suwakami symulatora GPQI (Task 8) dodano etykietę `⚠️ [Model poglądowy] — wyniki są przybliżonym oszacowaniem`.
 - `npm run sync` + `npm test` **100% GREEN [PASS]**; `verify_known_issues.js` **0 błędów [PASS]**.
 
-- **N-6 (Mieszane końce linii)**: Znormalizowano zakończenia linii do LF w całym `index.html` (10 221 linii) i `Code.gs`. Ustawiono `core.autocrlf=false`.
-- **N-2 (Snapshot regionalny)**: Zweryfikowano — `externalSnapshot` NIE jest martwym kodem. W środowisku Node/testów ładowany jest plik `data/external_benchmarks_snapshot.json`; w przeglądarce/GAS używana jest kopia wbudowana w blok ENGINE. Brakujący `tools/import_external_datasets.js` (wspomniany w komentarzu) to odrębne zadanie ETL — nie blokuje działania, nie wymaga interwencji.
-- `npm test` **100% GREEN [PASS]** · `verify_known_issues.js` **0 błędów [PASS]**.
+- **BLOKER (Code.gs:342)**: Przywrócono brakujące 3 linie w `clearAllSheets()` (` appendRow([ ... ])`, klamrę zamykającą, reset `Logs_History` oraz nagłówek JSDoc). Przechodzi `node --check` i nie powoduje już awarii całego serwera GAS.
+- **Wysokie (Struktura HTML index.html)**: Usunięto 17 nadmiarowych zamykających tagów `</div>` i 1 nadmiarowy `</button>` stanowiących osierocone fragmenty po wycięciu bloków "KREATOR ARTYKUŁÓW" w zakładkach Task 4, Task 8, Task 11 oraz Task 14. Panele JASP powróciły do swoich kontenerów zakładek, usunięto sieroty przycisków `btn-dl-docx-*`.
+- **Fabrykacja danych / Auto-recommender**: Usunięto zmyślone wartości `75`/`80` z `runAutoRecommender()`. W przypadku braku ocen wyświetlana jest wartość "b.d.". Poprawiono dopasowanie wielkości liter słowa kluczowego programu (`FENIKS`).
+- **Filtrowanie tabeli inspektora (Task 8)**: Poprawiono indeks filtrowanej komórki z `cells[7]` na `cells[8]` w `filterInspectTable()`, eliminując mylenie GPQI Total z Regional Impact.
+- **Sprawdzanie składni w testach**: Dodano weryfikację składni pliku `src/gas/Code.gs` w `test/run_tests.js` oraz flagę `--check` w `tools/sync_engine.js`.
+- **Kodowanie UTF-8**: Przywrócono czyste kodowanie UTF-8 (bez Mojibake) i przeprowadzono bezpieczną normalizację LF.
+- `npm run sync` + `npm test` **100% GREEN [PASS]** · `verify_known_issues.js` **0 błędów [PASS]**.
 
 ## [0.2.1] - 2026-08-03
 ### Naprawiono / Uzupełniono (Zgodnie z RAPORT_POPRAWNOSCI_KODU_KIMI.md)
