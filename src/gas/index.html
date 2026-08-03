@@ -1391,7 +1391,10 @@
                   <input type="range" id="gpqi_freq" min="1" max="6" value="1" class="w-full" oninput="runGpqiSimulation()">
                 </div>
               </div>
-              <div class="mt-4 p-3 bg-theme-border rounded-xl text-[10px] text-theme-secondary flex justify-between items-center">
+              <div class="mt-3 text-[9px] text-amber-400 bg-amber-500/10 border border-amber-500/20 p-2 rounded-lg">
+                ⚠️ [Model poglądowy] Wyniki są przybliżonym oszacowaniem — nie zastępują danych z systemu monitoringu.
+              </div>
+              <div class="mt-2 p-3 bg-theme-border rounded-xl text-[10px] text-theme-secondary flex justify-between items-center">
                 <span>Szacowany wzrost absorpcji:</span>
                 <span class="font-bold text-gold font-mono" id="simAbsorpcjaVal">+0.0%</span>
               </div>
@@ -2567,32 +2570,7 @@
       injectImageExportButtons();
     });
 
-    // Theme Toggle Functionality
-    function toggleTheme() {
-      const html = document.documentElement;
-      const currentTheme = html.getAttribute('data-theme');
-      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-      html.setAttribute('data-theme', newTheme);
-      localStorage.setItem('greenstrat-theme', newTheme);
-      updateThemeIcon(newTheme);
-      
-      // Re-render charts with new theme colors if data exists
-      if (backendCalculatedData) {
-        renderAllCharts();
-      }
-    }
-
-    function updateThemeIcon(theme) {
-      const sun = document.getElementById('theme-sun');
-      const moon = document.getElementById('theme-moon');
-      if (theme === 'dark') {
-        sun.classList.add('hidden');
-        moon.classList.remove('hidden');
-      } else {
-        sun.classList.remove('hidden');
-        moon.classList.add('hidden');
-      }
-    }
+    // toggleTheme i updateThemeIcon zdefiniowane wyżej (linie ~67-65) — tutaj usunięty duplikat (B-13)
 
     // Switch tabs
     function switchTab(tabId) {
@@ -8189,7 +8167,8 @@ var calculateTask8Local = calculateTask8;
         filename = 'GREENSTRAT_EIRRI_Wojewodztwa';
         csvContent += 'Województwo;Projekty_ogółem;Projekty_eko;EIRRI_Score;Klasa_NUTS2;Klasa_EIS\n';
         const eirri = (backendCalculatedData.task14 && backendCalculatedData.task14.eirri) ? backendCalculatedData.task14.eirri : {};
-        const nuts2EIS = {'mazowieckie':'Leader Innovator','dolnośląskie':'Strong Innovator','małopolskie':'Strong Innovator','wielkopolskie':'Strong Innovator','pomorskie':'Strong Innovator','śląskie':'Moderate Innovator','łódzkie':'Moderate Innovator','kujawsko-pomorskie':'Moderate Innovator','podkarpackie':'Moderate Innovator','zachodniopomorskie':'Moderate Innovator','lubelskie':'Emerging Innovator','opolskie':'Emerging Innovator','lubuskie':'Emerging Innovator','podlaskie':'Emerging Innovator','świętokrzyskie':'Emerging Innovator','warmińsko-mazurskie':'Emerging Innovator'};
+        // Źródło prawdy: data/external_benchmarks_snapshot.json v1.0.0 (regionsNuts2[*].risClass)
+        const nuts2EIS = {'mazowieckie':'Strong Innovator','dolnośląskie':'Moderate Innovator','małopolskie':'Moderate Innovator','wielkopolskie':'Moderate Innovator','pomorskie':'Moderate Innovator','śląskie':'Moderate Innovator','podkarpackie':'Moderate Innovator','łódzkie':'Emerging Innovator','kujawsko-pomorskie':'Emerging Innovator','zachodniopomorskie':'Emerging Innovator','lubelskie':'Emerging Innovator','opolskie':'Emerging Innovator','lubuskie':'Emerging Innovator','podlaskie':'Emerging Innovator','świętokrzyskie':'Emerging Innovator','warmińsko-mazurskie':'Emerging Innovator'};
         const NUTS2_PL = ['dolnośląskie','kujawsko-pomorskie','lubelskie','lubuskie','łódzkie','małopolskie','mazowieckie','opolskie','podkarpackie','podlaskie','pomorskie','śląskie','świętokrzyskie','warmińsko-mazurskie','wielkopolskie','zachodniopomorskie'];
         NUTS2_PL.forEach(w => {
           const entry = eirri[w] || { score: 0 };
@@ -8255,7 +8234,7 @@ var calculateTask8Local = calculateTask8;
           body.innerHTML += `
             <tr class="hover:bg-theme-border/20 border-b border-theme/30">
               <td class="p-3 font-semibold text-theme-primary">${p.program.toUpperCase()}</td>
-              <td class="p-3 text-theme-secondary">${p.instytucja || 'NCBR/PARP/NFOŚiGW'}</td>
+              <td class="p-3 text-theme-secondary">${p.institution || p.instytucja || 'b.d.'}</td>
               <td class="p-3 font-mono">${acc}%</td>
               <td class="p-3 font-mono">${adm}%</td>
               <td class="p-3 font-mono">${fin}%</td>
@@ -9227,6 +9206,14 @@ var calculateTask8Local = calculateTask8;
 
     function renderPCA(projects, taskId) {
       const pca = getPCA(projects);
+      if (pca.insufficientData) {
+        return `<div class="themed-card rounded-xl p-5 border border-amber-500/40 flex flex-col gap-2">
+          <h4 class="font-display font-semibold text-xs text-amber-400 border-b border-amber-500/30 pb-2">📋 ETAP III: Analiza PCA</h4>
+          <p class="text-[10px] text-amber-300 bg-amber-500/10 border border-amber-500/20 p-3 rounded-lg">
+            ⚠️ Za mało danych do przeprowadzenia PCA — wymagane są co najmniej 2 projekty z kompletnymi ocenami operacyjnymi (INNOWACYJNOSC, TRWALOSC_LCA, EFEKTYWNOSC_ZASOBOWA, TRANSFORMACYJNOSC). Wczytaj plik z danymi lub uzupełnij oceny.
+          </p>
+        </div>`;
+      }
       const items = ["Innowacyjnosc", "Trwalosc_LCA", "Efektywnosc_Zasobowa", "Transformacyjnosc"];
       let factorRows = "";
       pca.eigPairs.forEach((pair, idx) => {
@@ -9765,8 +9752,9 @@ var calculateTask8Local = calculateTask8;
             p.normPC = (maxPC > minPC) ? 100 * (p.pc - minPC) / (maxPC - minPC) : 50;
             p.normTRL = (maxTRL > minTRL) ? 100 * (p.deltaTrl - minTRL) / (maxTRL - minTRL) : 50;
             p.normDotacja = (maxVal > minVal) ? 100 * (p.funding - minVal) / (maxVal - minVal) : 50;
-            p.eiesi = p.pc > 0 ? (p.pc * 20) : (p.eco ? 75 : 40);
-            p.eirri = p.pc > 0 ? (p.pc * 20) : (p.eco ? 80 : 50);
+            // B-9: stałe 75/40 zastąpione null — brak danych ocen = brak wyniku
+            p.eiesi = p.pc > 0 ? (p.pc * 20) : null;
+            p.eirri = p.pc > 0 ? (p.pc * 20) : null;
           });
           const indexVar = (taskId === 'task4') ? 'eiesi' : 'eirri';
           const indexName = (taskId === 'task4') ? 'EIESI' : 'EIRRI';

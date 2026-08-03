@@ -57,12 +57,22 @@ function doPost(e) {
     
     if (action === 'getStats') {
       var allProjects = getAllProjectsFromSheet();
+      var gsDataHash = (typeof calculateDatasetHash === 'function') ? calculateDatasetHash(allProjects) : null;
+      var gsEngineVer = (typeof ENGINE_VERSION !== 'undefined') ? ENGINE_VERSION : '0.5.0';
       response.projectCount = allProjects.length;
       response.projects = allProjects;
       response.task4 = calculateTask4(allProjects);
       response.task8 = calculateTask8(allProjects);
       response.task11 = calculateTask11(allProjects);
       response.task14 = calculateTask14(allProjects);
+      response.metadata = {
+        engineVersion: gsEngineVer,
+        timestamp: new Date().toISOString(),
+        recordCount: allProjects.length,
+        acceptedCount: allProjects.length,
+        rejectedCount: 0,
+        datasetHash: gsDataHash
+      };
       response.message = 'Odczytano statystyki z bazy danych.';
       logToSheet('GET_STATS', null, 'SUCCESS', 'Pobrano statystyki dla ' + allProjects.length + ' projektów.', new Date().getTime() - startTime);
       return ContentService.createTextOutput(JSON.stringify(response))
@@ -153,11 +163,21 @@ function doPost(e) {
     
     // 3. Recalculate Task 4 and Task 8 indices on cumulative dataset
     var allProjects = getAllProjectsFromSheet();
+    var gsDataHash2 = (typeof calculateDatasetHash === 'function') ? calculateDatasetHash(allProjects) : null;
+    var gsEngineVer2 = (typeof ENGINE_VERSION !== 'undefined') ? ENGINE_VERSION : '0.5.0';
     response.projectCount = allProjects.length;
     response.task4 = calculateTask4(allProjects);
     response.task8 = calculateTask8(allProjects);
     response.task11 = calculateTask11(allProjects);
     response.task14 = calculateTask14(allProjects);
+    response.metadata = {
+      engineVersion: gsEngineVer2,
+      timestamp: new Date().toISOString(),
+      recordCount: allProjects.length,
+      acceptedCount: validationResult && validationResult.report ? validationResult.report.acceptedCount : allProjects.length,
+      rejectedCount: validationResult && validationResult.report ? validationResult.report.rejectedCount : 0,
+      datasetHash: gsDataHash2
+    };
     response.message = 'Dane pomyślnie zaimportowane i przeliczone.';
     
     logToSheet('CALCULATE_INDICES', null, 'SUCCESS', 'Wyliczono wskaźniki dla łącznie ' + allProjects.length + ' projektów [Plik: ' + fileName + '] (Łączny czas: ' + formatDur() + ').', new Date().getTime() - startTime);
@@ -2484,9 +2504,9 @@ function createStatisticalSpreadsheet(projects) {
     content.push([
       ps.program,
       ps.institution,
-      ps.gpqi + "/100",
-      ps.gpqi_fin + "%",
-      ps.gpqi_imp + "%",
+      (ps.gpqi !== null && ps.gpqi !== undefined) ? ps.gpqi + '/100' : 'b.d.',
+      (ps.gpqi_fin !== null && ps.gpqi_fin !== undefined) ? ps.gpqi_fin + '%' : 'b.d.',
+      (ps.gpqi_imp !== null && ps.gpqi_imp !== undefined) ? ps.gpqi_imp + '%' : 'b.d.',
       ps.adm_days,
       ps.adm_docs
     ]);
