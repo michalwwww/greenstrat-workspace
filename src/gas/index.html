@@ -3015,7 +3015,11 @@
           }
 
           document.getElementById('btnProcess').removeAttribute('disabled');
-          updateLoadProgress(100, 'Zakończono wczytywanie pliku. Gotowy do analizy Gatekeepera.', `${sizeKb} / ${sizeKb} KB`, `${totalRows} wierszy (gotowe)`);
+          updateLoadProgress(100, 'Zakończono wczytywanie pliku. Automatyczne uruchamianie analizy...', `${sizeKb} / ${sizeKb} KB`, `${totalRows} wierszy (gotowe)`);
+          
+          setTimeout(() => {
+            uploadAndProcess();
+          }, 300);
           } catch (err) {
             console.error(err);
             alert("Błąd odczytu pliku. Upewnij się, że plik to poprawny arkusz .xlsx lub .csv. " + err.message);
@@ -3353,6 +3357,7 @@
         rawSheetData = cleanProjects;
         renderResultsDashboard(localData);
         updateWeightsAndRecalculate();
+        switchTab('tab-task4');
         
         const statusBadge = document.getElementById('connectionStatus');
         if (statusBadge) {
