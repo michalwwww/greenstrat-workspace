@@ -8707,21 +8707,38 @@ var calculateTask8Local = calculateTask8;
       
       const rowsHtml = displayList.map(p => {
         const isEco = p.CZY_EKOINNOWACJA == 1 || p.INNOWACYJNOSC > 0;
-        const gateStr = `[${p.INNOWACYJNOSC || 0}, ${p.TRWALOSC_LCA || 0}, ${p.EFEKTYWNOSC_ZASOBOWA || 0}, ${p.TRANSFORMACYJNOSC || 0}]`;
-        const deltaTrl = p.DELTA_TRL !== undefined ? p.DELTA_TRL : Math.max(0, (p.TRL_KONIEC - p.TRL_START || 0));
+        
+        const innStr = (p.INNOWACYJNOSC !== null && p.INNOWACYJNOSC !== undefined) ? p.INNOWACYJNOSC : 'b.d.';
+        const trwStr = (p.TRWALOSC_LCA !== null && p.TRWALOSC_LCA !== undefined) ? p.TRWALOSC_LCA : 'b.d.';
+        const efStr = (p.EFEKTYWNOSC_ZASOBOWA !== null && p.EFEKTYWNOSC_ZASOBOWA !== undefined) ? p.EFEKTYWNOSC_ZASOBOWA : 'b.d.';
+        const trsfStr = (p.TRANSFORMACYJNOSC !== null && p.TRANSFORMACYJNOSC !== undefined) ? p.TRANSFORMACYJNOSC : 'b.d.';
+        const gateStr = `[${innStr}, ${trwStr}, ${efStr}, ${trsfStr}]`;
+        
+        const trlStartStr = (p.TRL_START !== null && p.TRL_START !== undefined) ? p.TRL_START : 'b.d.';
+        const trlEndStr = (p.TRL_KONIEC !== null && p.TRL_KONIEC !== undefined) ? p.TRL_KONIEC : 'b.d.';
+        const trlDisplay = (p.TRL_START !== null || p.TRL_KONIEC !== null) ? `${trlStartStr} &rarr; ${trlEndStr}` : 'b.d.';
+
+        const deltaVal = p.DELTA_TRL !== undefined ? p.DELTA_TRL : ((p.TRL_KONIEC !== null && p.TRL_START !== null) ? (p.TRL_KONIEC - p.TRL_START) : null);
+        const deltaDisplay = (deltaVal !== null && deltaVal !== undefined && !isNaN(deltaVal)) ? `+${deltaVal} TRL` : 'b.d.';
+
+        const wdrozStr = (p.STATUS_WDROZ !== null && p.STATUS_WDROZ !== undefined) ? (p.STATUS_WDROZ == 1 ? 'TAK' : 'NIE') : 'b.d.';
+        const komercStr = (p.STATUS_KOMERC !== null && p.STATUS_KOMERC !== undefined) ? (p.STATUS_KOMERC == 1 ? 'TAK' : 'NIE') : 'b.d.';
+        const benefStr = (p.BENEFICJENT_TYP && p.BENEFICJENT_TYP !== '') ? p.BENEFICJENT_TYP : 'b.d.';
+        const absStr = (p.ABSORPCJA !== null && p.ABSORPCJA !== undefined && p.ABSORPCJA !== '') ? (typeof p.ABSORPCJA === 'number' ? p.ABSORPCJA.toFixed(2) : p.ABSORPCJA) : 'b.d.';
+
         return `
           <tr class="hover:bg-theme-border/20 border-b border-theme/30 text-[11px]">
             <td class="p-3 font-mono font-semibold">${p.ID_PROJ || 'N/A'}</td>
-            <td class="p-3">${p.PROGRAM_KOD || 'N/A'}</td>
-            <td class="p-3">${p.WOJEWODZTWO || 'N/A'}</td>
-            <td class="p-3 font-mono">${p.WART_PROJ_PLN ? Number(p.WART_PROJ_PLN).toLocaleString() : '0'} PLN</td>
-            <td class="p-3 font-mono">${p.TRL_START || '1'} &rarr; ${p.TRL_KONIEC || '1'}</td>
-            <td class="p-3 font-mono text-copper font-semibold">+${deltaTrl} TRL</td>
-            <td class="p-3">${p.STATUS_WDROZ == 1 ? 'TAK' : 'NIE'}</td>
-            <td class="p-3">${p.STATUS_KOMERC == 1 ? 'TAK' : 'NIE'}</td>
+            <td class="p-3">${p.PROGRAM_KOD || 'Nieokreślony'}</td>
+            <td class="p-3">${p.WOJEWODZTWO || 'Nieokreślone'}</td>
+            <td class="p-3 font-mono">${p.WART_PROJ_PLN ? Number(p.WART_PROJ_PLN).toLocaleString('pl-PL') : '0'} PLN</td>
+            <td class="p-3 font-mono">${trlDisplay}</td>
+            <td class="p-3 font-mono text-copper font-semibold">${deltaDisplay}</td>
+            <td class="p-3">${wdrozStr}</td>
+            <td class="p-3">${komercStr}</td>
             <td class="p-3 font-mono ${isEco ? 'text-green-500 font-bold' : 'text-theme-secondary'}">${gateStr}</td>
-            <td class="p-3">${p.BENEFICJENT_TYP || 'N/A'}</td>
-            <td class="p-3 font-mono">${p.ABSORPCJA || '0.00'}</td>
+            <td class="p-3">${benefStr}</td>
+            <td class="p-3 font-mono">${absStr}</td>
             <td class="p-3"><a href="https://mapadotacji.gov.pl/projekt/?id=${encodeURIComponent(p.ID_PROJ)}" target="_blank" class="text-copper hover:underline font-semibold">Dokumentacja &rarr;</a></td>
           </tr>
         `;
