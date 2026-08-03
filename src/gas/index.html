@@ -5506,13 +5506,13 @@ var calculateTask8Local = calculateTask8;
         document.getElementById('realEngineHash').innerHTML = `Hash: <strong class="text-white font-mono">${data.metadata.datasetHash}</strong>`;
       }
 
-      if (document.getElementById('t11-eispi-val') && data.task11 && data.task11.eispi !== undefined) {
+      if (document.getElementById('t11-eispi-val') && data.task11 && data.task11.eispi !== undefined && data.task11.eispi !== null) {
         document.getElementById('t11-eispi-val').textContent = `${data.task11.eispi.toFixed(1)}/100`;
       }
       if (document.getElementById('t14-eirri-val') && data.task14 && data.task14.eirri) {
-        const eirriValues = Object.values(data.task14.eirri).map(v => v.score);
-        const avgScore = eirriValues.length > 0 ? Math.round(eirriValues.reduce((a,b)=>a+b,0)/eirriValues.length) : 85;
-        document.getElementById('t14-eirri-val').textContent = `${avgScore}/100`;
+        const eirriValues = Object.values(data.task14.eirri).map(v => v.score).filter(s => s !== null && s !== undefined && !isNaN(s));
+        const avgScore = eirriValues.length > 0 ? Math.round(eirriValues.reduce((a,b)=>a+b,0)/eirriValues.length) : null;
+        document.getElementById('t14-eirri-val').textContent = avgScore !== null ? `${avgScore}/100` : 'b.d.';
       }
 
       document.getElementById('btnExportGoogleDrive').removeAttribute('disabled');
@@ -6013,7 +6013,8 @@ var calculateTask8Local = calculateTask8;
         ];
         
         tileWoj.forEach(w => {
-          const lq = data.task4.eirsi[w.name] || data.task4.eirsi[w.name + ' '] || 0.0;
+          const wKey = w.name.toLowerCase();
+          const lq = (data.task4 && data.task4.eirsi && data.task4.eirsi[wKey] !== undefined && data.task4.eirsi[wKey] !== null) ? data.task4.eirsi[wKey] : 0.0;
           let bgColor = 'bg-zinc-900 border border-zinc-800 text-zinc-500';
           if (lq >= 1.2) bgColor = 'bg-copper border border-copper text-white font-bold shadow-md shadow-copper/20';
           else if (lq >= 1.0) bgColor = 'bg-gold border border-gold text-zinc-950 font-semibold shadow-md shadow-gold/20';
@@ -7372,22 +7373,36 @@ var calculateTask8Local = calculateTask8;
       };
       
       Object.keys(eirri).forEach(w => {
-        const wKey = w.toLowerCase();
+        const wKey = w.toLowerCase().trim();
         const pop = popList[wKey] || 1500000;
         const pkb = pkbList[wKey] || 75000;
-        const score = eirri[w].score;
+        const item = eirri[w];
+        const score = (item && item.score !== undefined) ? item.score : null;
         let cls = 'Wymaga interwencji';
-        if (score >= 80) cls = 'Lider innowacji';
-        else if (score >= 65) cls = 'Średni poziom gotowości';
-        else if (score >= 50) cls = 'Rozwijający się potencjał';
+        let clsColor = 'bg-red-500/10 text-red-500';
+        if (score === null || score === undefined) {
+          cls = 'Brak danych';
+          clsColor = 'bg-zinc-800 text-zinc-400';
+        } else if (score >= 80) {
+          cls = 'Lider innowacji';
+          clsColor = 'bg-green-500/10 text-green-500';
+        } else if (score >= 65) {
+          cls = 'Średni poziom gotowości';
+          clsColor = 'bg-amber-500/10 text-amber-500';
+        } else if (score >= 50) {
+          cls = 'Rozwijający się potencjał';
+          clsColor = 'bg-amber-500/10 text-amber-500';
+        }
+        
+        const scoreDisplay = (score !== null && score !== undefined) ? `${score}/100` : 'b.d.';
         
         body.innerHTML += `
           <tr class="hover:bg-theme-border/20 text-theme-secondary">
             <td class="p-3 font-semibold text-theme-primary">${w}</td>
             <td class="p-3 font-mono">${pop.toLocaleString()}</td>
             <td class="p-3 font-mono">${pkb.toLocaleString()} PLN</td>
-            <td class="p-3 font-mono font-bold text-copper">${score}/100</td>
-            <td class="p-3"><span class="px-2 py-0.5 rounded text-[10px] ${score >= 80 ? 'bg-green-500/10 text-green-500' : (score >= 65 ? 'bg-amber-500/10 text-amber-500' : 'bg-red-500/10 text-red-500')}">${cls}</span></td>
+            <td class="p-3 font-mono font-bold text-copper">${scoreDisplay}</td>
+            <td class="p-3"><span class="px-2 py-0.5 rounded text-[10px] ${clsColor}">${cls}</span></td>
           </tr>
         `;
       });
@@ -7438,12 +7453,17 @@ var calculateTask8Local = calculateTask8;
       // Update overall EIRRI score on screen
       let totalEirri = 0;
       let count = 0;
-      Object.keys(backendCalculatedData.task14.eirri).forEach(k => {
-        totalEirri += backendCalculatedData.task14.eirri[k].score;
-        count++;
-      });
-      const avgEirri = count > 0 ? Math.round(totalEirri / count) : 0;
-      document.getElementById('t14-eirri-val').textContent = avgEirri + '/100';
+      if (backendCalculatedData.task14.eirri) {
+        Object.keys(backendCalculatedData.task14.eirri).forEach(k => {
+          const item = backendCalculatedData.task14.eirri[k];
+          if (item && item.score !== null && item.score !== undefined && !isNaN(item.score)) {
+            totalEirri += item.score;
+            count++;
+          }
+        });
+      }
+      const avgEirri = count > 0 ? Math.round(totalEirri / count) : null;
+      document.getElementById('t14-eirri-val').textContent = avgEirri !== null ? avgEirri + '/100' : 'b.d.';
       
       // Render SVG network graph
       renderSnaNetworkGraph(net);
@@ -7545,11 +7565,16 @@ var calculateTask8Local = calculateTask8;
       
       let totalEirri = 0;
       let count = 0;
-      Object.keys(backendCalculatedData.task14.eirri).forEach(k => {
-        totalEirri += backendCalculatedData.task14.eirri[k].score;
-        count++;
-      });
-      const avgEirri = count > 0 ? Math.round(totalEirri / count) : 0;
+      if (backendCalculatedData.task14 && backendCalculatedData.task14.eirri) {
+        Object.keys(backendCalculatedData.task14.eirri).forEach(k => {
+          const item = backendCalculatedData.task14.eirri[k];
+          if (item && item.score !== null && item.score !== undefined && !isNaN(item.score)) {
+            totalEirri += item.score;
+            count++;
+          }
+        });
+      }
+      const avgEirri = count > 0 ? Math.round(totalEirri / count) : 50;
       
       const newScore = Math.min(100, Math.round(avgEirri + (trlVal * 0.3) + (budgetVal * 0.2) + (connVal * 0.4)));
       document.getElementById('t14-eirri-val').textContent = newScore + '/100';
