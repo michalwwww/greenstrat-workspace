@@ -3734,17 +3734,25 @@
             const rawWoj = row.WOJEWODZTWO || row.Wojewodztwo || row.Województwo || row.REGION || '';
 
             // Clean statuses (e.g. "Tak" -> 1, "Nie" -> 0)
-            let rawWdroz = row.STATUS_WDROZ || row.Status_Wdroz || 0;
+            let rawWdroz = (row.STATUS_WDROZ !== undefined && row.STATUS_WDROZ !== null) ? row.STATUS_WDROZ : (row.Status_Wdroz || 0);
             let cleanWdroz = 0;
-            if (rawWdroz.toString().trim() === '1' || rawWdroz.toString().toLowerCase().includes('tak') || rawWdroz.toString().toLowerCase().includes('wdrozon') || rawWdroz.toString().toLowerCase().includes('yes') || rawWdroz.toString().toLowerCase().includes('true')) {
+            let strWdroz = (rawWdroz || '').toString().toLowerCase().trim();
+            if (strWdroz === '1' || strWdroz.includes('tak') || strWdroz.includes('wdrozon') || strWdroz.includes('yes') || strWdroz.includes('true')) {
               cleanWdroz = 1;
             }
             
-            let rawKomerc = row.STATUS_KOMERC || row.Status_Komerc || 0;
+            let rawKomerc = (row.STATUS_KOMERC !== undefined && row.STATUS_KOMERC !== null) ? row.STATUS_KOMERC : (row.Status_Komerc || 0);
             let cleanKomerc = 0;
-            if (rawKomerc.toString().trim() === '1' || rawKomerc.toString().toLowerCase().includes('tak') || rawKomerc.toString().toLowerCase().includes('komerc') || rawKomerc.toString().toLowerCase().includes('yes') || rawKomerc.toString().toLowerCase().includes('true')) {
+            let strKomerc = (rawKomerc || '').toString().toLowerCase().trim();
+            if (strKomerc === '1' || strKomerc.includes('tak') || strKomerc.includes('komerc') || strKomerc.includes('yes') || strKomerc.includes('true')) {
               cleanKomerc = 1;
             }
+
+            let absVal = (row.ABSORPCJA !== undefined && row.ABSORPCJA !== null && row.ABSORPCJA !== '') ? Number(row.ABSORPCJA.toString().replace(',', '.')) : 0;
+            if (isNaN(absVal)) absVal = 0;
+
+            let naukaVal = (row.NAUKA_BIZNES !== undefined && row.NAUKA_BIZNES !== null && row.NAUKA_BIZNES !== '') ? Number(row.NAUKA_BIZNES) : 0;
+            if (isNaN(naukaVal)) naukaVal = 0;
 
             return {
               ID_PROJ: (row.ID_PROJ || row.Id_Proj || row.ID || '').toString().trim() || `AUTO-${rIdx + 1}`,
@@ -3758,8 +3766,8 @@
               STATUS_KOMERC: cleanKomerc,
               OPIS_TECHNOLOGII: row.OPIS_TECHNOLOGII || row.OPIS_PROJEKTU || row.Opis_Technologii || '',
               BENEFICJENT_TYP: row.BENEFICJENT_TYP || row.Beneficjent_Typ || '',
-              NAUKA_BIZNES: row.NAUKA_BIZNES !== undefined ? Number(row.NAUKA_BIZNES) : 0,
-              ABSORPCJA: row.ABSORPCJA !== undefined ? Number(row.ABSORPCJA.toString().replace(',', '.')) : 0,
+              NAUKA_BIZNES: naukaVal,
+              ABSORPCJA: absVal,
               CZY_EKOINNOWACJA: isEco,
               ETAP_INNOWACJI: row.ETAP_INNOWACJI || row.Etap_Innowacji || '',
               INNOWACYJNOSC: inn,
