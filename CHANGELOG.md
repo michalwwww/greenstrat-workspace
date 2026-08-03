@@ -2,6 +2,17 @@
 
 Wszystkie znaczące zmiany w tym projekcie będą dokumentowane w tym pliku.
 
+## [0.2.0] - 2026-08-03
+### Usunięto / Uproszczono (Zgodnie z INSTRUKCJA_PROJEKT_UPROSZCZONY.md)
+- **Usunięcie Chatbota Daisy (Gemini API)**: usunięto widget bota, przyciski interakcji oraz dedykowany kod w `index.html`. Usunięto z `src/gas/Code.gs` akcję `askDaisy`, funkcję `askDaisy()`, `callGemini()` oraz odwołanie do `GEMINI_API_KEY`. Wskazania klasyfikacji zastąpiono lokalną heurystyką `heuristicClassify()`.
+- **Usunięcie Kreatora Artykułów Naukowych**: usunięto podzakładki `ai` (`btn-sub-task*-ai`), panele HTML `panel-sub-task*-ai` oraz funkcje `generateResearchPaper()`, `simulatePaperText()`, `downloadPaperFile()`. Usunięto `'ai'` z funkcji przełączania podzakładek `switchSubTab()`.
+- **Usunięcie Pustych Kart UI (A-4)**: usunięto nieużywane i nie-renderowane karty `chartGpqiBenchmarking` i `chartGpqiBottleneck` z przyciskami eksportu. Połączono `chartGpqiRadar` i `chartWorkflowFunnel` w spójny układ responsywny.
+- **Naprawa Sygnatur Błędów Skanera (verify_known_issues.js)**:
+  - **C-002**: Całkowite usunięcie nie-bezpiecznego parsowania zapytań Gemini w `Code.gs`.
+  - **Ks.#17**: Dodano zwalnianie zasobów `URL.revokeObjectURL(url)` dla wszystkich generowanych plików Blob.
+  - **Ks.#32**: Wdrożono deterministyczne sortowanie rankingów z drugim kryterium rozstrzygającym przy remisach.
+  - Wykonano synchronizację `npm run sync`. Weryfikacja skanerem `verify_known_issues.js` zakończona wynikiem **0 błędów [PASS]**, `npm test` **100% GREEN [PASS]**.
+
 ## [0.1.0] - 2026-07-26
 ### Dodano
 - Inicjalizacja workspace `greenstrat-workspace`.

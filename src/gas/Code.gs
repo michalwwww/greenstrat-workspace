@@ -36,16 +36,6 @@ function doPost(e) {
     
     var action = payload.action || 'upload';
     
-    if (action === 'askDaisy') {
-      var reply = askDaisy(payload.chatHistory || payload.history, payload.message, payload.dataSummary);
-      var chatResponse = {
-        status: 'success',
-        reply: reply
-      };
-      return ContentService.createTextOutput(JSON.stringify(chatResponse))
-        .setMimeType(ContentService.MimeType.JSON);
-    }
-    
     if (action === 'clear') {
       clearAllSheets();
       logToSheet('CLEAR_DATA', null, 'SUCCESS', 'Wyczyszczono arkusz bazy danych.', new Date().getTime() - startTime);
@@ -131,13 +121,12 @@ function doPost(e) {
 
     logToSheet('DATA_INGEST_START', null, 'SUCCESS', 'Rozpoczęto import ' + incomingProjects.length + ' wierszy [Plik: ' + fileName + '].', new Date().getTime() - startTime);
     
-    // 1. Semantic AI Categorization: Local heuristics for bulk sample (> 5 items) to prevent GAS execution timeouts; Gemini API for single/small sample testing (<= 5)
+    // 1. Semantic Categorization: Local deterministic heuristics
     var processedCount = 0;
-    var useHeuristics = incomingProjects.length > 5;
     for (var i = 0; i < incomingProjects.length; i++) {
       var p = incomingProjects[i];
       var desc = p.OPIS_TECHNOLOGII || p.OPIS_PROJEKTU || '';
-      var category = useHeuristics ? heuristicClassify(desc) : callGemini(desc);
+      var category = heuristicClassify(desc);
       p.GEMINI_CATEGORY = category;
       processedCount++;
     }
@@ -330,81 +319,6 @@ function clearAllSheets() {
       'INNOWACYJNOSC', 'TRWALOSC_LCA', 'EFEKTYWNOSC_ZASOBOWA', 'TRANSFORMACYJNOSC',
       'GEMINI_CATEGORY', 'TIMESTAMP'
     ]);
-  }
-  
-  var lSheet = ss.getSheetByName('Logs_History');
-  if (lSheet) {
-    lSheet.clear();
-    lSheet.appendRow(['Timestamp', 'ActionType', 'RowIndex', 'Status', 'Message', 'Duration']);
-  }
-}
-
-/**
- * Call Gemini API using UrlFetchApp (Google AI Studio model)
- */
-function callGemini(description) {
-  var apiKey = PropertiesService.getScriptProperties().getProperty('GEMINI_API_KEY');
-  if (!apiKey) {
-    return heuristicClassify(description);
-  }
-  
-  var url = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=' + apiKey;
-  
-  var prompt = "Przeanalizuj poniższy opis projektu pod kątem ekoinnowacji i sklasyfikuj go do jednej z kategorii numerycznych:\n" +
-               "1 - Deep Tech (nanotechnologia, zaawansowane materiały, robotyka, clean-tech, zaawansowane OZE, innowacje przełomowe)\n" +
-               "2 - General Eco (klasyczne projekty środowiskowe, termomodernizacja, podstawowa ochrona środowiska, gospodarka odpadami, rekultywacja)\n" +
-               "3 - Inna / Niezwiązana (brak komponentu ekologicznego lub innowacyjnego)\n\n" +
-               "Opis: \"" + (description || '').replace(/"/g, '\\"') + "\"\n\n" +
-               "Zwróć WYŁĄCZNIE pojedynczą cyfrę (1, 2 lub 3) reprezentującą kod kategorii. Nie dołączaj żadnego innego tekstu ani formatowania.";
-               
-  var payload = {
-    "contents": [{
-      "parts": [{
-        "text": prompt
-      }]
-    }],
-    "generationConfig": {
-      "temperature": 0.1,
-      "maxOutputTokens": 5,
-      "thinkingConfig": {
-        "thinkingBudget": 0
-      }
-    }
-  };
-  
-  var options = {
-    'method': 'post',
-    'contentType': 'application/json',
-    'payload': JSON.stringify(payload),
-    'muteHttpExceptions': true
-  };
-  
-  try {
-    var response = UrlFetchApp.fetch(url, options);
-    var responseCode = response.getResponseCode();
-    if (responseCode === 200) {
-      var responseText = response.getContentText();
-      var json = JSON.parse(responseText);
-      if (json && json.candidates && json.candidates.length > 0 && 
-          json.candidates[0].content && json.candidates[0].content.parts && 
-          json.candidates[0].content.parts.length > 0 && 
-          json.candidates[0].content.parts[0].text) {
-        var textResult = json.candidates[0].content.parts[0].text.trim();
-        var match = textResult.match(/[1-3]/);
-        if (match) {
-          return parseInt(match[0]);
-        }
-      }
-    } else {
-      Logger.log("Gemini API error code: " + responseCode + " - " + response.getContentText());
-    }
-  } catch (e) {
-    Logger.log("Gemini API exception: " + e.toString());
-  }
-  return heuristicClassify(description);
-}
-
-/**
  * Heuristic Local Classifier as Zero-Error Fallback
  */
 function heuristicClassify(description) {
@@ -2751,97 +2665,6 @@ function createStatisticalSpreadsheet(projects) {
   return ss.getUrl();
 }
 
-/**
- * Cloned Daisy Chatbot Logic - Scientific Advisor for GREENSTRAT
- */
-function askDaisy(chatHistory, userMessage, dataSummary) {
-  var apiKey = PropertiesService.getScriptProperties().getProperty('GEMINI_API_KEY');
-  if (!apiKey) {
-    return "Błąd: Brak zdefiniowanego klucza GEMINI_API_KEY w ustawieniach serwera.";
-  }
-  
-  var url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=" + apiKey;
-  var contents = [];
-  
-  // Format chat history
-  if (chatHistory && chatHistory.length > 0) {
-    for (var i = 0; i < chatHistory.length; i++) {
-      var role = chatHistory[i].role;
-      if (role === "bot" || role === "model") {
-        role = "model";
-      } else {
-        role = "user";
-      }
-      contents.push({
-        role: role,
-        parts: [{ text: chatHistory[i].text }]
-      });
-    }
-  }
-  
-  // Current user message
-  contents.push({
-    role: "user",
-    parts: [{ text: userMessage }]
-  });
-
-  var dataContext = dataSummary || "\n\nAKTUALNY STAN BAZY DANYCH: Baza danych jest obecnie pusta (brak wczytanych projektów).";
-  
-  var systemText = "Nazywasz się Daisy. Jesteś wirtualnym asystentem naukowo-badawczym i doradcą zintegrowanym z systemem GREENSTRAT Cloud Engine.\n\n" +
-                  "ZASADY METODOLOGICZNE I ROLA:\n" +
-                  "1. Odpowiadasz w pierwszej osobie jako samodzielna, kompetentna asystentka. Jesteś profesjonalna, konkretna i posługujesz się językiem naukowym dostosowanym do badacza.\n" +
-                  "2. Twoim jedynym zadaniem jest wsparcie merytoryczne i analiza wskaźników badawczych. Masz pełną wiedzę na temat:\n" +
-                  "   - Zadanie 4 (Specyfika Regionalna): EIFII (intensywność finansowania eko), ISBI (zbalansowanie budżetu na 5 etapów technologii), CRI (dojrzałość komercyjna projektów eko) oraz EIRSI (Regional Location Quotient - LQ specjalizacji województw względem kraju).\n" +
-                  "   - Zadanie 8 (Ewaluacja i Rankingi): Podindeksy EIPI (Eco-Innovation Performance), TTEI (Technology Transfer Efficiency), TRLI (TRL Progression Index z teoretycznymi granicami przyrostu [0, 8] oraz końcowym TRL 8-9) i Master Index EISEI (synthesis evaluation).\n" +
-                  "   - Zadanie 11 (Monitorowanie i Bazy Danych): Wskaźnik EISPI (Eco-Innovation System Performance Index) z 6 podbazami (Innovation Capacity, Eco-Innovation, Financial, Implementation, Regional, Environmental Impact) oraz CAGR nakładów i patentów.\n" +
-                  "   - Zadanie 14 (Zdolność Regionalna i SNA): Wskaźnik EIRRI (Regional Readiness Index), analiza sieciowa SNA (Regional Collaboration Index, Network Strength, Knowledge Transfer, Connectivity, Smart Specialisation) oraz symulator Marszałka.\n" +
-                  "   - Zgodność SPSS/JASP/R: Pliki CSV z nagłówkiem BOM, kategorialne kodowanie numeryczne (1-16, 1-8, 1-5), kodowanie braków wartościami '-99', nagłówki ANSI bez znaków diakrytycznych i spacji (max 64 znaki).\n" +
-                  "   - Zarządzanie brakami danych: Stosujemy dynamiczne przeskalowanie wag (dynamic weight rescaling) dla aktywnych elementów, tak by suma wag zawsze wynosiła 100%, a poziom kompletności (wiarygodności) jest wyświetlany w leaderboardzie.\n" +
-                  "3. KATEGORYCZNE OGRANICZENIA: Nie wykonujesz żadnych zapisów na szkolenia, rezerwacji terminów, rejestracji zgłoszeń ani płatności. Jeśli użytkownik zapyta o te sprawy, grzecznie odmów i wyjaśnij, że Twoja rola w tym projekcie jest wyłącznie naukowo-badawcza.\n" +
-                  "4. STYL ROZMOWY: Odpowiadaj zwięźle i precyzyjnie (maksymalnie 2-3 akapity). Używaj znaku nowej linii \\n\\n do oddzielania akapitów." +
-                  dataContext;
- 
-  var payload = {
-    contents: contents,
-    systemInstruction: {
-      parts: [{ text: systemText }]
-    },
-    generationConfig: {
-      temperature: 0.7,
-      maxOutputTokens: 2048,
-      thinkingConfig: {
-        thinkingBudget: 0
-      }
-    }
-  };
-  
-  var options = {
-    method: "post",
-    contentType: "application/json",
-    payload: JSON.stringify(payload),
-    muteHttpExceptions: true
-  };
-  
-  try {
-    var startTime = new Date().getTime();
-    var response = UrlFetchApp.fetch(url, options);
-    var responseCode = response.getResponseCode();
-    var responseText = response.getContentText();
-    
-    if (responseCode !== 200) {
-      return "Błąd API Gemini: " + responseText;
-    }
-    
-    var json = JSON.parse(responseText);
-    var replyText = json.candidates[0].content.parts[0].text.trim();
-    
-    logToSheet('CHAT_QUESTION', null, 'SUCCESS', 'Pytanie badacza: ' + userMessage.substring(0, 100), new Date().getTime() - startTime);
-    
-    return replyText;
-  } catch(e) {
-    return "Wyjątek podczas połączenia z Gemini API: " + e.toString();
-  }
-}
 
 /**
  * Creates or updates 'DaneMakroekonomiczne' sheet with GUS 2023 statistics

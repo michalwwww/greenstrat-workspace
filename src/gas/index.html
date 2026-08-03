@@ -1537,22 +1537,6 @@
                 </div>
               </div>
 
-              <!-- Diverging Bars chart -->
-              <div class="themed-card rounded-2xl p-6 flex flex-col justify-between min-h-[420px]">
-                <div class="flex items-center justify-between mb-4">
-                  <h4 class="font-display font-semibold text-sm">Analiza Odchyleń Programów od Średniej Krajowej</h4>
-                  <div class="flex gap-1.5">
-                    <button onclick="downloadModulePng('chartGpqiBenchmarking', 'Odchylenia_Programow')" title="Pobierz PNG" class="text-[9px] px-2 py-1 rounded-lg bg-zinc-800 hover:bg-copper/20 border border-zinc-700 hover:border-copper/40 text-theme-secondary hover:text-copper transition-all">📷 PNG</button>
-                    <button onclick="downloadModuleXls('task8')" title="Pobierz XLS" class="text-[9px] px-2 py-1 rounded-lg bg-zinc-800 hover:bg-gold/20 border border-zinc-700 hover:border-gold/40 text-theme-secondary hover:text-gold transition-all">📊 XLS</button>
-                  </div>
-                </div>
-                <div class="flex-1 flex items-center justify-center">
-                  <div id="chartGpqiBenchmarking" class="w-full h-72"></div>
-                </div>
-              </div>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
               <!-- Workflow Funnel chart -->
               <div class="themed-card rounded-2xl p-6 flex flex-col justify-between min-h-[420px]">
                 <div>
@@ -1561,17 +1545,6 @@
                 </div>
                 <div class="flex-1 flex items-center justify-center">
                   <div id="chartWorkflowFunnel" class="w-full h-72"></div>
-                </div>
-              </div>
-
-              <!-- Bottleneck funnel & Sankey timeline -->
-              <div class="themed-card rounded-2xl p-6 flex flex-col justify-between min-h-[420px]">
-                <div>
-                  <h4 class="font-display font-semibold text-sm mb-1">Mapa Wąskich Gardeł i Eliminacji Wniosków</h4>
-                  <p class="text-[10px] text-theme-secondary mb-3">Średni czas procedowania i wskaźnik odrzutów formalnych/merytorycznych.</p>
-                </div>
-                <div class="flex-1 flex items-center justify-center">
-                  <div id="chartGpqiBottleneck" class="w-full h-72"></div>
                 </div>
               </div>
             </div>
@@ -5882,7 +5855,7 @@ var calculateTask8Local = calculateTask8;
       const rankContainer = document.getElementById('rankingsContainer');
       rankContainer.innerHTML = '';
       
-      const sortedProgs = [...data.task8].sort((a, b) => b.eisei - a.eisei);
+      const sortedProgs = [...data.task8].sort((a, b) => (b.eisei - a.eisei) || (a.program || '').localeCompare(b.program || ''));
 
       sortedProgs.forEach((ps, idx) => {
         const medals = ['🏆', '🥈', '🥉'];
@@ -6500,6 +6473,7 @@ var calculateTask8Local = calculateTask8;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
     }
 
     // Embed and download test templates
@@ -6516,11 +6490,13 @@ var calculateTask8Local = calculateTask8;
       let csvContent = cleanData.map(e => e.join(",")).join("\n");
       const blob = new Blob([new Uint8Array([0xEF, 0xBB, 0xBF]), csvContent], { type: 'text/csv;charset=utf-8;' });
       const link = document.createElement("a");
-      link.href = URL.createObjectURL(blob);
+      const url = URL.createObjectURL(blob);
+      link.href = url;
       link.download = "greenstrat_clean_sample.csv";
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
     }
 
     function downloadInvalidTemplate() {
@@ -6702,7 +6678,7 @@ var calculateTask8Local = calculateTask8;
       md += `| Miejsce | Program | EISEI (Master) | EIPI (Eco) | TTEI (Transfer) | TRLI (Progression) | Wiarygodność danych |\n`;
       md += `| :---: | :--- | :---: | :---: | :---: | :---: | :---: |\n`;
       
-      const sorted = [...d.task8].sort((a,b) => b.eisei - a.eisei);
+      const sorted = [...d.task8].sort((a, b) => (b.eisei - a.eisei) || (a.program || '').localeCompare(b.program || ''));
       sorted.forEach((ps, idx) => {
         md += `| ${idx + 1} | ${ps.program} | **${safeFixed(ps.eisei, 1)}** | ${safeFixed(ps.eipi, 1)} | ${safeFixed(ps.ttei, 1)} | ${safeFixed(ps.trli, 1)} | ${safeFixed(ps.eisei_comp, 0)}% |\n`;
       });
@@ -6715,9 +6691,11 @@ var calculateTask8Local = calculateTask8;
       
       const blob = new Blob([md], { type: 'text/markdown;charset=utf-8;' });
       const link = document.createElement("a");
-      link.href = URL.createObjectURL(blob);
+      const url = URL.createObjectURL(blob);
+      link.href = url;
       link.download = `GREENSTRAT_Raport_Badawczy_${new Date().toISOString().slice(0,10)}.md`;
       link.click();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
     }
 
     function exportReportPDF() {
@@ -6828,7 +6806,7 @@ var calculateTask8Local = calculateTask8;
             <tbody>
       `;
       
-      const sorted = [...d.task8].sort((a,b) => b.eisei - a.eisei);
+      const sorted = [...d.task8].sort((a, b) => (b.eisei - a.eisei) || (a.program || '').localeCompare(b.program || ''));
       sorted.forEach((ps, idx) => {
         html += `
           <tr>
@@ -7078,7 +7056,7 @@ var calculateTask8Local = calculateTask8;
       }
 
       if (currentSlide === 3) {
-        const sorted = [...backendCalculatedData.task8].sort((a,b) => b.eisei - a.eisei);
+        const sorted = [...backendCalculatedData.task8].sort((a, b) => (b.eisei - a.eisei) || (a.program || '').localeCompare(b.program || ''));
         const container = document.getElementById('slideEiseiTable');
         container.innerHTML = '';
         sorted.forEach((ps, idx) => {
@@ -7966,11 +7944,13 @@ var calculateTask8Local = calculateTask8;
       
       const blob = new Blob(["\ufeff" + csvContent], { type: 'text/csv;charset=utf-8;' });
       const link = document.createElement("a");
-      link.href = URL.createObjectURL(blob);
+      const url = URL.createObjectURL(blob);
+      link.href = url;
       link.setAttribute("download", `spss_export_${taskId}_${format}.csv`);
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
     }
 
     function downloadSnaEdgesCsv() {
@@ -8173,7 +8153,7 @@ var calculateTask8Local = calculateTask8;
       } else if (taskId === 'task8') {
         filename = 'GREENSTRAT_Ranking_Programow_EISEI';
         csvContent += 'Miejsce;Program;Instytucja;EISEI;EIPI;TTEI;TRLI;Kompletność_danych\n';
-        const sorted = [...backendCalculatedData.task8].sort((a,b) => b.eisei - a.eisei);
+        const sorted = [...backendCalculatedData.task8].sort((a, b) => (b.eisei - a.eisei) || (a.program || '').localeCompare(b.program || ''));
         sorted.forEach((ps, idx) => {
           csvContent += `${idx+1};${ps.program};${ps.institution || ''};${(ps.eisei||0).toFixed(2).replace('.',dec)};${(ps.eipi||0).toFixed(2).replace('.',dec)};${(ps.ttei||0).toFixed(2).replace('.',dec)};${(ps.trli||0).toFixed(2).replace('.',dec)};${(ps.eisei_comp||0).toFixed(0)}%\n`;
         });
