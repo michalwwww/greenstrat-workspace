@@ -3075,9 +3075,6 @@
       updateThemeIcon(savedTheme);
 
       // Restore Script Endpoint
-      const wojIdx = (wojCodeMap && wojCodeMap[woj]) ? wojCodeMap[woj] : -99;
-      const benefIdx = (benefCodeMap && benefCodeMap[benef]) ? benefCodeMap[benef] : -99;
-      const catIdx = (p.GEMINI_CATEGORY !== undefined && p.GEMINI_CATEGORY !== null && p.GEMINI_CATEGORY !== -99 && p.GEMINI_CATEGORY !== '-99') ? Number(p.GEMINI_CATEGORY) : -99;
       const savedEndpoint = localStorage.getItem('greenstrat-endpoint') || '';
       document.getElementById('endpointUrl').value = savedEndpoint;
       checkEndpointStatus();
