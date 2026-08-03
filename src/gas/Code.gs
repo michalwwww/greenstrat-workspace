@@ -1,4 +1,4 @@
-﻿/**
+/**
  * GREENSTRAT Cloud Engine - Backend Cloud Infrastructure
  * Deployment: Deploy as a Google Apps Script Web App (accessible to anyone, even anonymous).
  * Master scientific ledger database hosted on Google Drive / Google Sheets.
@@ -339,6 +339,16 @@ function clearAllSheets() {
       'INNOWACYJNOSC', 'TRWALOSC_LCA', 'EFEKTYWNOSC_ZASOBOWA', 'TRANSFORMACYJNOSC',
       'GEMINI_CATEGORY', 'TIMESTAMP'
     ]);
+  }
+
+  var lSheet = ss.getSheetByName('Logs_History');
+  if (lSheet) {
+    lSheet.clear();
+    lSheet.appendRow(['Timestamp', 'Action', 'Row_Index', 'Status', 'Message', 'Duration_ms']);
+  }
+}
+
+/**
  * Heuristic Local Classifier as Zero-Error Fallback
  */
 function heuristicClassify(description) {
