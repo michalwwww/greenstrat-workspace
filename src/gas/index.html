@@ -2551,6 +2551,14 @@
         if (t === tabId) {
           panel.classList.remove('hidden');
           btn.className = "px-5 py-3 border-b-2 border-copper text-copper text-sm font-semibold flex items-center gap-2 whitespace-nowrap transition-all duration-300 focus:outline-none";
+          
+          const taskName = t.replace('tab-', '');
+          if (backendCalculatedData && ['task4', 'task8', 'task11', 'task14'].includes(taskName)) {
+            const noDataEl = document.getElementById(`${taskName}-no-data`);
+            const dataEl = document.getElementById(`${taskName}-data`);
+            if (noDataEl) noDataEl.classList.add('hidden');
+            if (dataEl) dataEl.classList.remove('hidden');
+          }
         } else {
           panel.classList.add('hidden');
           btn.className = "px-5 py-3 border-b-2 border-transparent text-theme-secondary hover:text-theme-primary text-sm font-semibold flex items-center gap-2 whitespace-nowrap transition-all duration-300 focus:outline-none";
