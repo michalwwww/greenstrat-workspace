@@ -5504,10 +5504,11 @@ var calculateTask8Local = calculateTask8;
       document.getElementById('ingestOverview').classList.remove('hidden');
 
       // Update summaries
-      document.getElementById('overviewProjCount').textContent = data.projectCount;
-      document.getElementById('overviewEifii').textContent = `${data.task4.eifii.toFixed(1)}%`;
-      document.getElementById('overviewIsbi').textContent = data.task4.isbi.toFixed(1);
-      document.getElementById('overviewCri').textContent = `${data.task4.cri.toFixed(1)}%`;
+      const hasEcoEval = data.task4 && data.task4.eifii > 0;
+      document.getElementById('overviewProjCount').textContent = (data.projectCount || 0).toLocaleString('pl-PL');
+      document.getElementById('overviewEifii').textContent = hasEcoEval ? `${data.task4.eifii.toFixed(1)}%` : 'b.d.';
+      document.getElementById('overviewIsbi').textContent = hasEcoEval ? data.task4.isbi.toFixed(1) : 'b.d.';
+      document.getElementById('overviewCri').textContent = hasEcoEval ? `${data.task4.cri.toFixed(1)}%` : 'b.d.';
 
       // Update Gatekeeper real-time indicators
       if (document.getElementById('realGatekeeperStatus')) {
