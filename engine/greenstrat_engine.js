@@ -87,6 +87,315 @@ function normalizeVoivodeship(raw) {
 }
 
 /**
+ * Z-16 / A-1: Statyczny snapshot danych zewnętrznych wbudowany w blok ENGINE.
+ * Źródło prawdy: data/external_benchmarks_snapshot.json (ETL: tools/import_external_datasets.js).
+ * Wbudowany, ponieważ przeglądarka i Google Apps Script nie mają dostępu do modułów Node ani do systemu plików.
+ * Aktualizacja: zmień plik JSON i przenieś tę samą treść tutaj — `npm test` zawiera asercję
+ * równości obu kopii i zgłosi rozjazd, więc nie da się zaktualizować tylko jednej strony.
+ */
+var EXTERNAL_BENCHMARKS_SNAPSHOT = {
+  "version": "1.0.0",
+  "generatedAt": "2026-07-27T21:10:00Z",
+  "description": "GREENSTRAT Statyczny Snapshot Danych Zewnętrznych GUS BDL, Eurostat NUTS 2, RIS i UPRP (2021-2024)",
+  "polandNational": {
+    "year": 2024,
+    "summaryInnovationIndex": 72.4,
+    "eu27AverageIndex": 100,
+    "distanceToEuAverage": -27.6,
+    "v4Benchmark": {
+      "czechia": 91.2,
+      "slovakia": 68.5,
+      "hungary": 69.8
+    },
+    "indicators": {
+      "gerdPercentGdp": 1.46,
+      "berdPerCapitaPln": 520.4,
+      "rdPersonnelPer1000": 7.8,
+      "greenPatentsPer100k": 3.4,
+      "environmentalInvestmentsPerCapitaPln": 412,
+      "renewableEnergySharePercent": 27.2,
+      "highTechEnterpriseSharePercent": 14.8,
+      "stemGraduatesPer10k": 18.5,
+      "lifelongLearningPercent": 6.1
+    }
+  },
+  "regionsNuts2": {
+    "dolnośląskie": {
+      "risClass": "Moderate Innovator",
+      "risScore": 74.2,
+      "structuralTwins": [
+        "HU10 (Közép-Magyarország)",
+        "CZ06 (Jihovýchod)"
+      ],
+      "aspirationalRegion": "DE1 (Baden-Württemberg)",
+      "pillarsData": {
+        "innovative": 72.5,
+        "financial": 70.4,
+        "implementation": 78.1,
+        "institutional": 75,
+        "environmental": 68.2,
+        "social": 74
+      }
+    },
+    "kujawsko-pomorskie": {
+      "risClass": "Emerging Innovator",
+      "risScore": 58.4,
+      "structuralTwins": [
+        "SK02 (Západné Slovensko)",
+        "HU21 (Közép-Dunántúl)"
+      ],
+      "aspirationalRegion": "CZ06 (Jihovýchod)",
+      "pillarsData": {
+        "innovative": 55,
+        "financial": 58.2,
+        "implementation": 62,
+        "institutional": 60.1,
+        "environmental": 64,
+        "social": 59.5
+      }
+    },
+    "lubelskie": {
+      "risClass": "Emerging Innovator",
+      "risScore": 56.1,
+      "structuralTwins": [
+        "SK04 (Východné Slovensko)",
+        "HU32 (Észak-Alföld)"
+      ],
+      "aspirationalRegion": "CZ06 (Jihovýchod)",
+      "pillarsData": {
+        "innovative": 58,
+        "financial": 52.1,
+        "implementation": 54,
+        "institutional": 61.2,
+        "environmental": 65.5,
+        "social": 62
+      }
+    },
+    "lubuskie": {
+      "risClass": "Emerging Innovator",
+      "risScore": 54.8,
+      "structuralTwins": [
+        "SK02 (Západné Slovensko)",
+        "HU23 (Dél-Dunántúl)"
+      ],
+      "aspirationalRegion": "CZ06 (Jihovýchod)",
+      "pillarsData": {
+        "innovative": 50.2,
+        "financial": 55.4,
+        "implementation": 57,
+        "institutional": 56,
+        "environmental": 62.1,
+        "social": 55.8
+      }
+    },
+    "łódzkie": {
+      "risClass": "Emerging Innovator",
+      "risScore": 62.5,
+      "structuralTwins": [
+        "CZ04 (Severozápad)",
+        "HU21 (Közép-Dunántúl)"
+      ],
+      "aspirationalRegion": "HU10 (Közép-Magyarország)",
+      "pillarsData": {
+        "innovative": 61,
+        "financial": 60.5,
+        "implementation": 65.2,
+        "institutional": 64,
+        "environmental": 61.8,
+        "social": 63.5
+      }
+    },
+    "małopolskie": {
+      "risClass": "Moderate Innovator",
+      "risScore": 79.5,
+      "structuralTwins": [
+        "CZ06 (Jihovýchod)",
+        "HU10 (Közép-Magyarország)"
+      ],
+      "aspirationalRegion": "AT13 (Wien)",
+      "pillarsData": {
+        "innovative": 82.1,
+        "financial": 75.4,
+        "implementation": 77,
+        "institutional": 81.2,
+        "environmental": 65,
+        "social": 80.5
+      }
+    },
+    "mazowieckie": {
+      "risClass": "Strong Innovator",
+      "risScore": 92.4,
+      "structuralTwins": [
+        "CZ01 (Praha)",
+        "HU10 (Közép-Magyarország)"
+      ],
+      "aspirationalRegion": "NL31 (Utrecht)",
+      "pillarsData": {
+        "innovative": 95.2,
+        "financial": 89,
+        "implementation": 92.1,
+        "institutional": 98.5,
+        "environmental": 56.4,
+        "social": 94
+      }
+    },
+    "opolskie": {
+      "risClass": "Emerging Innovator",
+      "risScore": 59.2,
+      "structuralTwins": [
+        "CZ07 (Střední Morava)",
+        "SK02 (Západné Slovensko)"
+      ],
+      "aspirationalRegion": "CZ06 (Jihovýchod)",
+      "pillarsData": {
+        "innovative": 54.1,
+        "financial": 61,
+        "implementation": 63.5,
+        "institutional": 59.2,
+        "environmental": 67,
+        "social": 58
+      }
+    },
+    "podkarpackie": {
+      "risClass": "Moderate Innovator",
+      "risScore": 68.1,
+      "structuralTwins": [
+        "CZ07 (Střední Morava)",
+        "SK04 (Východné Slovensko)"
+      ],
+      "aspirationalRegion": "CZ06 (Jihovýchod)",
+      "pillarsData": {
+        "innovative": 71,
+        "financial": 65.2,
+        "implementation": 69.4,
+        "institutional": 68,
+        "environmental": 63.1,
+        "social": 66.5
+      }
+    },
+    "podlaskie": {
+      "risClass": "Emerging Innovator",
+      "risScore": 55.4,
+      "structuralTwins": [
+        "SK04 (Východné Slovensko)",
+        "HU32 (Észak-Alföld)"
+      ],
+      "aspirationalRegion": "CZ06 (Jihovýchod)",
+      "pillarsData": {
+        "innovative": 53,
+        "financial": 54.1,
+        "implementation": 56.2,
+        "institutional": 58,
+        "environmental": 69.5,
+        "social": 57.1
+      }
+    },
+    "pomorskie": {
+      "risClass": "Moderate Innovator",
+      "risScore": 76.8,
+      "structuralTwins": [
+        "CZ06 (Jihovýchod)",
+        "HU10 (Közép-Magyarország)"
+      ],
+      "aspirationalRegion": "SE11 (Stockholm)",
+      "pillarsData": {
+        "innovative": 78.4,
+        "financial": 72.1,
+        "implementation": 75,
+        "institutional": 76.5,
+        "environmental": 71.2,
+        "social": 77
+      }
+    },
+    "śląskie": {
+      "risClass": "Moderate Innovator",
+      "risScore": 73.1,
+      "structuralTwins": [
+        "CZ08 (Moravskoslezsko)",
+        "HU21 (Közép-Dunántúl)"
+      ],
+      "aspirationalRegion": "DE30 (Berlin)",
+      "pillarsData": {
+        "innovative": 72,
+        "financial": 74.5,
+        "implementation": 79.2,
+        "institutional": 73.1,
+        "environmental": 54,
+        "social": 72
+      }
+    },
+    "świętokrzyskie": {
+      "risClass": "Emerging Innovator",
+      "risScore": 52.1,
+      "structuralTwins": [
+        "SK04 (Východné Slovensko)",
+        "HU33 (Dél-Alföld)"
+      ],
+      "aspirationalRegion": "CZ06 (Jihovýchod)",
+      "pillarsData": {
+        "innovative": 48.5,
+        "financial": 51,
+        "implementation": 53.2,
+        "institutional": 55,
+        "environmental": 61.5,
+        "social": 54
+      }
+    },
+    "warmińsko-mazurskie": {
+      "risClass": "Emerging Innovator",
+      "risScore": 53.2,
+      "structuralTwins": [
+        "SK04 (Východné Slovensko)",
+        "HU32 (Észak-Alföld)"
+      ],
+      "aspirationalRegion": "CZ06 (Jihovýchod)",
+      "pillarsData": {
+        "innovative": 49,
+        "financial": 53,
+        "implementation": 55,
+        "institutional": 56.4,
+        "environmental": 68,
+        "social": 55.1
+      }
+    },
+    "wielkopolskie": {
+      "risClass": "Moderate Innovator",
+      "risScore": 75.4,
+      "structuralTwins": [
+        "CZ06 (Jihovýchod)",
+        "HU21 (Közép-Dunántúl)"
+      ],
+      "aspirationalRegion": "NL31 (Utrecht)",
+      "pillarsData": {
+        "innovative": 74,
+        "financial": 73.2,
+        "implementation": 78.5,
+        "institutional": 74.1,
+        "environmental": 67,
+        "social": 75
+      }
+    },
+    "zachodniopomorskie": {
+      "risClass": "Emerging Innovator",
+      "risScore": 60.1,
+      "structuralTwins": [
+        "CZ04 (Severozápad)",
+        "HU22 (Nyugat-Dunántúl)"
+      ],
+      "aspirationalRegion": "CZ06 (Jihovýchod)",
+      "pillarsData": {
+        "innovative": 57.2,
+        "financial": 59,
+        "implementation": 61.4,
+        "institutional": 62,
+        "environmental": 70.1,
+        "social": 61
+      }
+    }
+  }
+};
+
+/**
  * Z-5: Deterministyczny algorytm FNV-1a z jawnym sortowaniem kluczy pól (Zasada Z.6)
  */
 function calculateDatasetHash(projects) {
@@ -764,14 +1073,9 @@ function calculateTask11(projects, options) {
     }
   }
   
-  var benchmark = {
-    polska: eispi,
-    eu27: 100.0,
-    v4: 76.5,
-    oecd: 85.0,
-    label: isDemo ? "[DEMO / SYMULACJA]" : "[LOKALNY SNAPSHOT GUS/EUROSTAT 2024]"
-  };
-  
+  // A-1: Usunięto martwy obiekt `benchmark` (przypisywany, nigdy nieodczytywany — zwracany jest
+  // `internationalBenchmark`). Zawierał literały eu27/v4/oecd bez pokrycia w źródle danych.
+
   // PRODUKT 11.7: System progów z rozkładów statystycznych i Rejestr Alarmów
   var eirsiValues = Object.keys(eirsi).map(function(k) { return eirsi[k]; }).sort(function(a, b) { return a - b; });
   
@@ -1013,53 +1317,27 @@ function calculateTask11(projects, options) {
   });
 
   // PRODUKT 11.5: International Benchmark Polski na tle UE27, V4 i Liderów Innowacji
+  // A-1: Wyłącznie wartości mające pokrycie w snapshocie. Zakaz literałów referencyjnych w kodzie.
+  // Snapshot pochodzi z options.externalSnapshot (Node/ETL) albo z EXTERNAL_BENCHMARKS_SNAPSHOT
+  // wbudowanego w blok ENGINE (przeglądarka / Google Apps Script — brak dostępu do plików).
   var internationalBenchmark = null;
-  if (isDemo) {
+  var benchSnapshot = (options && options.externalSnapshot) ? options.externalSnapshot : EXTERNAL_BENCHMARKS_SNAPSHOT;
+  var natSnap = (benchSnapshot && benchSnapshot.polandNational) ? benchSnapshot.polandNational : null;
+
+  if (natSnap) {
     internationalBenchmark = {
-      label: "[DEMO / SYMULACJA] Polska na tle Unii Europejskiej i Grupy V4 (2024)",
-      summaryInnovationIndex: 72.4,
-      polska: 72.4,
-      eu27Average: 100.0,
-      eu27: 100.0,
-      v4: 76.5,
-      oecd: 85.0,
-      distanceToEuAverage: -27.6,
-      v4Benchmark: { czechia: 91.2, slovakia: 68.5, hungary: 69.8 },
-      convergenceStatus: "Umiarkowane tempo konwergencji",
-      source: "European Innovation Scoreboard / Eurostat DEMO"
-    };
-  } else if (options && options.externalSnapshot && options.externalSnapshot.polandNational) {
-    var natSnap = options.externalSnapshot.polandNational;
-    internationalBenchmark = {
-      label: "Polska na tle Unii Europejskiej i Grupy V4 (GUS BDL / Eurostat)",
+      label: (isDemo ? "[DEMO / SYMULACJA] " : "") + "Polska na tle Unii Europejskiej i Grupy V4 (GUS BDL / Eurostat)",
       year: natSnap.year,
       summaryInnovationIndex: natSnap.summaryInnovationIndex,
       polska: natSnap.summaryInnovationIndex,
       eu27Average: natSnap.eu27AverageIndex,
       eu27: natSnap.eu27AverageIndex,
-      v4: 76.5,
-      oecd: 85.0,
       distanceToEuAverage: natSnap.distanceToEuAverage,
-      v4Benchmark: { czechia: 91.2, slovakia: 68.5, hungary: 69.8 },
-      convergenceStatus: "Dane zasilone z BDL / Eurostat",
-      source: "GUS BDL / Eurostat 2024"
-    };
-  } else if (options && options.useExternalBenchmark) {
-    var polskaBenchmarkScore = Math.min(95.0, Math.max(50.0, Math.round((eispi * 0.724) * 10) / 10));
-    if (!polskaBenchmarkScore || isNaN(polskaBenchmarkScore)) polskaBenchmarkScore = 72.4;
-    internationalBenchmark = {
-      label: "Polska na tle Unii Europejskiej i Grupy V4 (GUS BDL / Eurostat 2024)",
-      year: 2024,
-      summaryInnovationIndex: polskaBenchmarkScore,
-      polska: polskaBenchmarkScore,
-      eu27Average: 100.0,
-      eu27: 100.0,
-      v4: 76.5,
-      oecd: 85.0,
-      distanceToEuAverage: Math.round((polskaBenchmarkScore - 100.0) * 10) / 10,
-      v4Benchmark: { czechia: 91.2, slovakia: 68.5, hungary: 69.8 },
-      convergenceStatus: "Umiarkowane tempo konwergencji (GUS BDL / Eurostat)",
-      source: "GUS BDL / Eurostat 2024 Snapshot"
+      v4Benchmark: natSnap.v4Benchmark,
+      indicators: natSnap.indicators,
+      snapshotVersion: benchSnapshot.version,
+      snapshotGeneratedAt: benchSnapshot.generatedAt,
+      source: "GUS BDL / Eurostat — snapshot " + benchSnapshot.version
     };
   }
 
@@ -1776,6 +2054,7 @@ if (typeof module !== 'undefined' && module.exports) {
     setDemoMode: setDemoMode,
     getDemoMode: getDemoMode,
     baseProgramSpecs: baseProgramSpecs,
+    EXTERNAL_BENCHMARKS_SNAPSHOT: EXTERNAL_BENCHMARKS_SNAPSHOT,
     calculateDatasetHash: calculateDatasetHash,
     isProjectComplete: isProjectComplete,
     isProjectEco: isProjectEco,

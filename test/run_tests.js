@@ -288,10 +288,51 @@ function run() {
     }
   }
 
-  if (!hasForbiddenLiteral && task11Research.benchmark === null && task14Research.network.indices.ris3Alignment === null) {
-    console.log("  [OK] Tryb badawczy dla proba_1000 (Z-6): benchmark === null, ris3Alignment === null, brak zakazanych literałów symulowanych.");
+  // A-1: kontrakt zmieniony — benchmark nie jest już `null`, lecz musi pochodzić ze snapshotu
+  // z jawnym oznaczeniem pochodzenia. Zakazane pozostają wartości bez pokrycia w źródle.
+  const snapForAssert = require('../data/external_benchmarks_snapshot.json');
+
+  // A-1: snapshot istnieje w dwóch kopiach — plik JSON (źródło prawdy dla ETL/Node) oraz stała
+  // wbudowana w blok ENGINE (jedyna dostępna dla przeglądarki i Google Apps Script).
+  // Ta asercja pilnuje, żeby nie dało się zaktualizować jednej strony bez drugiej.
+  if (JSON.stringify(engine.EXTERNAL_BENCHMARKS_SNAPSHOT) === JSON.stringify(snapForAssert)) {
+    console.log(`  [OK] A-1 Snapshot wbudowany w ENGINE jest identyczny z data/external_benchmarks_snapshot.json (wersja ${snapForAssert.version}).`);
+  } else {
+    console.error("  [FAIL] A-1 ROZJAZD: stała EXTERNAL_BENCHMARKS_SNAPSHOT w silniku różni się od pliku data/external_benchmarks_snapshot.json!");
+    hasError = true;
+  }
+
+  const bmR = task11Research.benchmark;
+  const benchmarkFromSnapshot = !!bmR &&
+    bmR.summaryInnovationIndex === snapForAssert.polandNational.summaryInnovationIndex &&
+    bmR.distanceToEuAverage === snapForAssert.polandNational.distanceToEuAverage &&
+    bmR.snapshotVersion === snapForAssert.version &&
+    !('v4' in bmR) && !('oecd' in bmR);
+
+  if (!hasForbiddenLiteral && benchmarkFromSnapshot && task14Research.network.indices.ris3Alignment === null) {
+    console.log(`  [OK] Tryb badawczy dla proba_1000 (Z-6/A-1): benchmark ze snapshotu ${bmR.snapshotVersion} (indeks=${bmR.summaryInnovationIndex}, brak pól v4/oecd), ris3Alignment === null, brak zakazanych literałów symulowanych.`);
   } else {
     console.error("  [FAIL] Niezgodność strukturalna wyników trybu badawczego dla Task 11 / Task 14!");
+    hasError = true;
+  }
+
+  // A-1: REGRESJA ŚCIEŻKI PRODUKCYJNEJ — dokładnie tak wywołuje silnik klient (index.html)
+  // i Google Apps Script: bez `externalSnapshot`, bo nie mają dostępu do modułów Node.
+  // Audyt UI (31 301) wykazał, że ta ścieżka zwracała wartość wyliczoną wzorem clamp(EISPI*0.724, 50, 95)
+  // pod etykietą źródła GUS BDL / Eurostat, a żaden test jej nie pokrywał.
+  const task11Prod = engine.calculateTask11(sampleData, { demoMode: false, useExternalBenchmark: true });
+  const bmProd = task11Prod.benchmark;
+  const fabricatedValue = Math.min(95.0, Math.max(50.0, Math.round((task11Prod.eispi * 0.724) * 10) / 10));
+  const prodOk = !!bmProd &&
+    bmProd.summaryInnovationIndex === snapForAssert.polandNational.summaryInnovationIndex &&
+    bmProd.summaryInnovationIndex !== fabricatedValue &&
+    !('v4' in bmProd) && !('oecd' in bmProd) &&
+    typeof bmProd.source === 'string' && bmProd.source.indexOf(snapForAssert.version) !== -1;
+
+  if (prodOk) {
+    console.log(`  [OK] A-1 Ścieżka produkcyjna (useExternalBenchmark, bez externalSnapshot): indeks=${bmProd.summaryInnovationIndex} ze snapshotu, a NIE wartość ze wzoru (${fabricatedValue}); źródło="${bmProd.source}".`);
+  } else {
+    console.error(`  [FAIL] A-1 Ścieżka produkcyjna zwraca wartość spoza snapshotu! Otrzymano indeks=${bmProd ? bmProd.summaryInnovationIndex : 'null'}, oczekiwano ${snapForAssert.polandNational.summaryInnovationIndex} (wartość ze wzoru: ${fabricatedValue}).`);
     hasError = true;
   }
 

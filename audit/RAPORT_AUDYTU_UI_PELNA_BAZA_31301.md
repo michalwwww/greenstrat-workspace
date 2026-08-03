@@ -36,7 +36,9 @@ Poprawki z commitów `effd5e1`, `886e629`, `e9834ee`, `db106f5` działają — n
 
 ## 2. ZNALEZISKA
 
-### A-1 (KRYTYCZNE) — Produkt 11.5 pokazuje liczbę wyliczoną ze wzoru pod etykietą źródła GUS BDL / Eurostat
+### A-1 (KRYTYCZNE) — ROZWIĄZANE 03.08.2026 — Produkt 11.5 pokazuje liczbę wyliczoną ze wzoru pod etykietą źródła GUS BDL / Eurostat
+
+> **STATUS: ROZWIĄZANE.** Snapshot wbudowano jako stałą `EXTERNAL_BENCHMARKS_SNAPSHOT` w bloku `ENGINE`, gałąź `useExternalBenchmark` ze wzorem usunięto, pola `v4` i `oecd` bez pokrycia w źródle usunięto z kontraktu wyjścia oraz z miejsc renderowania (wykres i eksport CSV). Weryfikacja w aplikacji na 31 301 rekordach: indeks **72,4** (dystans −27,6) zamiast wyliczonych **52,9**, 29 przejść nawigacyjnych bez błędu. Szczegóły w `CHANGELOG.md`.
 
 **Objaw:** W trybie badawczym karta „Polska na tle UE" prezentuje `summaryInnovationIndex = 52.9` z polem `source: "GUS BDL / Eurostat 2024 Snapshot"` i **bez** etykiety `[DEMO / SYMULACJA]`.
 
