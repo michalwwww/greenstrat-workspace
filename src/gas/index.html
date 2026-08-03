@@ -3630,8 +3630,8 @@
         const excelRowNumber = index + 2; 
         const projId = row.ID_PROJ || '';
 
-        // Critical: TRL bounds
-        if (row.TRL_START < 1 || row.TRL_START > 9 || !Number.isInteger(row.TRL_START)) {
+        // Critical: TRL bounds (validate only if present)
+        if (row.TRL_START !== null && row.TRL_START !== undefined && (row.TRL_START < 1 || row.TRL_START > 9 || !Number.isInteger(row.TRL_START))) {
           errors.push({
             row: excelRowNumber,
             id: projId,
@@ -3639,7 +3639,7 @@
             desc: `Poziom TRL musi być liczbą całkowitą 1-9 (wykryto: '${row.TRL_START}')`
           });
         }
-        if (row.TRL_KONIEC < 1 || row.TRL_KONIEC > 9 || !Number.isInteger(row.TRL_KONIEC)) {
+        if (row.TRL_KONIEC !== null && row.TRL_KONIEC !== undefined && (row.TRL_KONIEC < 1 || row.TRL_KONIEC > 9 || !Number.isInteger(row.TRL_KONIEC))) {
           errors.push({
             row: excelRowNumber,
             id: projId,
@@ -3648,8 +3648,8 @@
           });
         }
 
-        // Critical: STATUS must be 0 or 1
-        if (row.STATUS_WDROZ !== 0 && row.STATUS_WDROZ !== 1) {
+        // Critical: STATUS must be 0 or 1 (validate only if present)
+        if (row.STATUS_WDROZ !== null && row.STATUS_WDROZ !== undefined && row.STATUS_WDROZ !== 0 && row.STATUS_WDROZ !== 1) {
           errors.push({
             row: excelRowNumber,
             id: projId,
@@ -3657,7 +3657,7 @@
             desc: `Status wdrożenia musi wynosić 0 lub 1 (wykryto: '${row.STATUS_WDROZ}')`
           });
         }
-        if (row.STATUS_KOMERC !== 0 && row.STATUS_KOMERC !== 1) {
+        if (row.STATUS_KOMERC !== null && row.STATUS_KOMERC !== undefined && row.STATUS_KOMERC !== 0 && row.STATUS_KOMERC !== 1) {
           errors.push({
             row: excelRowNumber,
             id: projId,
