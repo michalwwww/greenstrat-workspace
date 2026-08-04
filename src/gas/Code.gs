@@ -1055,7 +1055,25 @@ function calculateTask4(projects, options) {
       }
     }
 
-    var isEco = isProjectEco(p);
+    var isEco = isProjectEco(p) || (
+      !isProjectComplete(p) && (
+        parseInt(p.CZY_EKOINNOWACJA) === 1 || 
+        p.CZY_EKOINNOWACJA === '1' || 
+        p.CZY_EKOINNOWACJA === 'Tak' || 
+        p.CZY_EKOINNOWACJA === true || 
+        p.GEMINI_CATEGORY === 1 || 
+        p.GEMINI_CATEGORY === 2 ||
+        (function(desc) {
+          if (!desc) return false;
+          var s = desc.toString().toLowerCase();
+          return s.indexOf('oze') !== -1 || s.indexOf('fotowoltaika') !== -1 || s.indexOf('wiatr') !== -1 || 
+                 s.indexOf('wodór') !== -1 || s.indexOf('smart grid') !== -1 || s.indexOf('bateria') !== -1 || 
+                 s.indexOf('recykling') !== -1 || s.indexOf('termoizolacja') !== -1 || s.indexOf('efektywność') !== -1 || 
+                 s.indexOf('efektywnosc') !== -1 || s.indexOf('eko') !== -1 || s.indexOf('środowisk') !== -1 ||
+                 s.indexOf('srodowisk') !== -1 || s.indexOf('klimat') !== -1 || s.indexOf('emisj') !== -1;
+        })(p.OPIS_TECHNOLOGII || p.OPIS_PROJEKTU)
+      )
+    );
     
     totalEnvFunding += funding;
     
@@ -1400,7 +1418,25 @@ function calculateTask11(projects, options) {
     var funding = parseFloat(p.WART_PROJ_PLN) || 0;
     var trlStart = parseNullableNumber(p.TRL_START);
     var trlKoniec = parseNullableNumber(p.TRL_KONIEC);
-    var isEco = isProjectEco(p);
+    var isEco = isProjectEco(p) || (
+      !isProjectComplete(p) && (
+        parseInt(p.CZY_EKOINNOWACJA) === 1 || 
+        p.CZY_EKOINNOWACJA === '1' || 
+        p.CZY_EKOINNOWACJA === 'Tak' || 
+        p.CZY_EKOINNOWACJA === true || 
+        p.GEMINI_CATEGORY === 1 || 
+        p.GEMINI_CATEGORY === 2 ||
+        (function(desc) {
+          if (!desc) return false;
+          var s = desc.toString().toLowerCase();
+          return s.indexOf('oze') !== -1 || s.indexOf('fotowoltaika') !== -1 || s.indexOf('wiatr') !== -1 || 
+                 s.indexOf('wodór') !== -1 || s.indexOf('smart grid') !== -1 || s.indexOf('bateria') !== -1 || 
+                 s.indexOf('recykling') !== -1 || s.indexOf('termoizolacja') !== -1 || s.indexOf('efektywność') !== -1 || 
+                 s.indexOf('efektywnosc') !== -1 || s.indexOf('eko') !== -1 || s.indexOf('środowisk') !== -1 ||
+                 s.indexOf('srodowisk') !== -1 || s.indexOf('klimat') !== -1 || s.indexOf('emisj') !== -1;
+        })(p.OPIS_TECHNOLOGII || p.OPIS_PROJEKTU)
+      )
+    );
     var partner = parseInt(p.NAUKA_BIZNES) === 1;
     var woj = normalizeVoivodeship(p.WOJEWODZTWO);
     var bType = (p.BENEFICJENT_TYP || '').toString().trim().toUpperCase();
@@ -1678,7 +1714,25 @@ function calculateTask11(projects, options) {
   projects.forEach(function(p) {
     var pCode = (p.PROGRAM_KOD || 'INNY').toString().trim().toUpperCase();
     var funding = parseFloat(p.WART_PROJ_PLN) || 0;
-    var isEco = isProjectEco(p);
+    var isEco = isProjectEco(p) || (
+      !isProjectComplete(p) && (
+        parseInt(p.CZY_EKOINNOWACJA) === 1 || 
+        p.CZY_EKOINNOWACJA === '1' || 
+        p.CZY_EKOINNOWACJA === 'Tak' || 
+        p.CZY_EKOINNOWACJA === true || 
+        p.GEMINI_CATEGORY === 1 || 
+        p.GEMINI_CATEGORY === 2 ||
+        (function(desc) {
+          if (!desc) return false;
+          var s = desc.toString().toLowerCase();
+          return s.indexOf('oze') !== -1 || s.indexOf('fotowoltaika') !== -1 || s.indexOf('wiatr') !== -1 || 
+                 s.indexOf('wodór') !== -1 || s.indexOf('smart grid') !== -1 || s.indexOf('bateria') !== -1 || 
+                 s.indexOf('recykling') !== -1 || s.indexOf('termoizolacja') !== -1 || s.indexOf('efektywność') !== -1 || 
+                 s.indexOf('efektywnosc') !== -1 || s.indexOf('eko') !== -1 || s.indexOf('środowisk') !== -1 ||
+                 s.indexOf('srodowisk') !== -1 || s.indexOf('klimat') !== -1 || s.indexOf('emisj') !== -1;
+        })(p.OPIS_TECHNOLOGII || p.OPIS_PROJEKTU)
+      )
+    );
     if (!programMap[pCode]) {
       programMap[pCode] = { projects: 0, ecoProjects: 0, funding: 0, maxProjectFunding: 0 };
     }
@@ -1836,7 +1890,25 @@ function calculateTask14(projects, options) {
     totalFunding += funding;
     
     if (regionStats[woj]) {
-      var isEco = isProjectEco(p);
+      var isEco = isProjectEco(p) || (
+      !isProjectComplete(p) && (
+        parseInt(p.CZY_EKOINNOWACJA) === 1 || 
+        p.CZY_EKOINNOWACJA === '1' || 
+        p.CZY_EKOINNOWACJA === 'Tak' || 
+        p.CZY_EKOINNOWACJA === true || 
+        p.GEMINI_CATEGORY === 1 || 
+        p.GEMINI_CATEGORY === 2 ||
+        (function(desc) {
+          if (!desc) return false;
+          var s = desc.toString().toLowerCase();
+          return s.indexOf('oze') !== -1 || s.indexOf('fotowoltaika') !== -1 || s.indexOf('wiatr') !== -1 || 
+                 s.indexOf('wodór') !== -1 || s.indexOf('smart grid') !== -1 || s.indexOf('bateria') !== -1 || 
+                 s.indexOf('recykling') !== -1 || s.indexOf('termoizolacja') !== -1 || s.indexOf('efektywność') !== -1 || 
+                 s.indexOf('efektywnosc') !== -1 || s.indexOf('eko') !== -1 || s.indexOf('środowisk') !== -1 ||
+                 s.indexOf('srodowisk') !== -1 || s.indexOf('klimat') !== -1 || s.indexOf('emisj') !== -1;
+        })(p.OPIS_TECHNOLOGII || p.OPIS_PROJEKTU)
+      )
+    );
       var trlStart = parseNullableNumber(p.TRL_START);
       var trlKoniec = parseNullableNumber(p.TRL_KONIEC);
       var partner = parseInt(p.NAUKA_BIZNES) === 1;
