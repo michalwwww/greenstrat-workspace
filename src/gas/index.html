@@ -2549,8 +2549,8 @@
         const panel = document.getElementById(t);
         const btn = document.getElementById(`btn-${t}`);
         if (t === tabId) {
-          panel.classList.remove('hidden');
-          btn.className = "px-5 py-3 border-b-2 border-copper text-copper text-sm font-semibold flex items-center gap-2 whitespace-nowrap transition-all duration-300 focus:outline-none";
+          if (panel) panel.classList.remove('hidden');
+          if (btn) btn.className = "px-5 py-3 border-b-2 border-copper text-copper text-sm font-semibold flex items-center gap-2 whitespace-nowrap transition-all duration-300 focus:outline-none";
           
           const taskName = t.replace('tab-', '');
           if (backendCalculatedData && ['task4', 'task8', 'task11', 'task14'].includes(taskName)) {
@@ -2560,11 +2560,16 @@
             if (dataEl) dataEl.classList.remove('hidden');
           }
         } else {
-          panel.classList.add('hidden');
-          btn.className = "px-5 py-3 border-b-2 border-transparent text-theme-secondary hover:text-theme-primary text-sm font-semibold flex items-center gap-2 whitespace-nowrap transition-all duration-300 focus:outline-none";
+          if (panel) panel.classList.add('hidden');
+          if (btn) btn.className = "px-5 py-3 border-b-2 border-transparent text-theme-secondary hover:text-theme-primary text-sm font-semibold flex items-center gap-2 whitespace-nowrap transition-all duration-300 focus:outline-none";
         }
       });
       
+      // Dispatch window resize event so ApexCharts recalculates chart container dimensions for visible tab
+      setTimeout(() => {
+        window.dispatchEvent(new Event('resize'));
+      }, 50);
+
       // If switching to logs, fetch logs automatically if URL configured
       if (tabId === 'tab-logs') {
         fetchCloudLogs();
@@ -6138,10 +6143,10 @@ var calculateTask8Local = calculateTask8;
         series: [{
           name: 'Kwota (mln PLN)',
           data: [
-            { x: 'Budżet całkowity', y: [0, totalMln] },
-            { x: 'Budżet ekoinnowacji', y: [0, ecoMln] },
-            { x: 'Luka finansowa', y: [ecoMln, totalMln] },
-            { x: 'Wdrożone (CRI)', y: [0, criMln] }
+            { x: 'Budżet całkowity', y: totalMln },
+            { x: 'Budżet ekoinnowacji', y: ecoMln },
+            { x: 'Luka finansowa (Delta)', y: gapMln },
+            { x: 'Wdrożone (CRI)', y: criMln }
           ]
         }],
         chart: { type: 'bar', height: 340, toolbar: { show: false }, background: 'transparent' },
@@ -7799,6 +7804,9 @@ var calculateTask8Local = calculateTask8;
       if (subTabId === 'inspector') {
         populateInspectTable(taskId);
       }
+      setTimeout(() => {
+        window.dispatchEvent(new Event('resize'));
+      }, 50);
     }
 
     // ==================== DATA SOURCE INSPECTOR SIDEBAR ====================
