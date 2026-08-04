@@ -2567,6 +2567,9 @@
       
       // Dispatch window resize event so ApexCharts recalculates chart container dimensions for visible tab
       setTimeout(() => {
+        if (backendCalculatedData) {
+          renderAllCharts();
+        }
         window.dispatchEvent(new Event('resize'));
       }, 50);
 
