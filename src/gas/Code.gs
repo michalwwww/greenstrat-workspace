@@ -878,17 +878,6 @@ function isProjectEco(p) {
   return (inn > 0 && trw > 0 && ef > 0 && trsf > 0);
 }
 
-/**
- * Z-4: Bramka Walidacyjna 2.0 (Luka 11.1.e)
- */
-function validateProjects(projects, opts) {
-  var options = opts || {};
-  var existingIds = options.existingIds || {};
-  
-  var validProjects = [];
-  var rejectedProjects = [];
-  
-  var byCode = { E1: 0, E2: 0, E3: 0, E4: 0, E5: 0, E6: 0 };
   
   if (!projects || !Array.isArray(projects)) {
     return {
@@ -1176,16 +1165,16 @@ function calculateTask4(projects, options) {
  * Calculate Task 8 Indices with Z-5 Metadata Stamping
  */
 function calculateTask8(projects, options) {
+  var programStats = [];
   if (!projects || projects.length === 0) {
-    var emptyRes = [];
-    emptyRes.metadata = {
+    programStats.metadata = {
       engineVersion: ENGINE_VERSION,
       timestamp: new Date().toISOString(),
       recordCount: 0,
       incompleteCount: 0,
       datasetHash: "00000000"
     };
-    return emptyRes;
+    return programStats;
   }
 
   var isDemo = (options && options.demoMode !== undefined) ? options.demoMode : demoMode;
